@@ -17,6 +17,7 @@ class TestModel implements ModelInterface
 
     public $id;
     protected $otherId;
+    protected $custom;
 
     public function __construct($id = null, $otherId = null)
     {
@@ -32,5 +33,10 @@ class TestModel implements ModelInterface
     public function setOtherModel(TestModel $model)
     {
         $this->otherId = $model->getId();
+    }
+
+    public function getCustom()
+    {
+        return $this->custom;
     }
 }
