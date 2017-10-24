@@ -45,4 +45,13 @@ interface RepositoryInterface
     public function delete(ModelInterface $model);
 
     public function getQueryCount():int;
+
+    /**
+     * Освобождает из памяти загруженные модели.
+     * ВНИМАНИЕ: после освобождения памяти в случае сохранения существующей модели через self::save()
+     * в БД будет вставлена новая запись вместо обновления существующей
+     */
+    public function freeUpMemory();
+
+    public static function getModelClass(): ?string;
 }

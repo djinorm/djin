@@ -18,11 +18,6 @@ class TestModelRepository extends Repository
         2 => ['id' => 2, 'otherId' => 1],
     ];
 
-    protected static function getModelClass(): string
-    {
-        return TestModel::class;
-    }
-
     /**
      * Превращает массив в объект нужного класса
      * @param array $data
@@ -42,8 +37,8 @@ class TestModelRepository extends Repository
     protected function extract(ModelInterface $object): array
     {
         return [
-            $object->getId()->getId(),
-            $object->getOtherId()->getId()
+            $object->getId()->toScalar(),
+            $object->getOtherId()->toScalar()
         ];
     }
 
@@ -84,20 +79,20 @@ class TestModelRepository extends Repository
     public function insert(ModelInterface $model)
     {
         $this->incQueryCount();
-        $this->repository[$model->getId()->getId()] = $this->extract($model);
+        $this->repository[$model->getId()->toScalar()] = $this->extract($model);
     }
 
     public function update(ModelInterface $model)
     {
         $this->queryCount++;
         $data = $this->getDiffDataForUpdate($model);
-        $this->repository[$model->getId()->getId()] = $data;
+        $this->repository[$model->getId()->toScalar()] = $data;
     }
 
     public function delete(ModelInterface $model)
     {
         $this->incQueryCount();
-        unset($this->repository[$model->getId()->getId()]);
+        unset($this->repository[$model->getId()->toScalar()]);
     }
 
     /**
@@ -108,5 +103,10 @@ class TestModelRepository extends Repository
     public function isTransactional(): bool
     {
         return false;
+    }
+
+    public static function getModelClass(): string
+    {
+        return TestModel::class;
     }
 }

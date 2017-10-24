@@ -92,4 +92,13 @@ class RepositoryTest extends TestCase
         $this->repo->findByIdOrException(777, $exception);
     }
 
+    public function testFreeUpMemory()
+    {
+        $this->repo->findById(1);
+        $this->repo->findById(1);
+        $this->assertEquals(1, $this->repo->getQueryCount());
+        $this->repo->freeUpMemory();
+        $this->repo->findById(1);
+    }
+
 }

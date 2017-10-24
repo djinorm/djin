@@ -8,6 +8,7 @@ namespace DjinORM\Djin\Helpers;
 
 
 use DjinORM\Djin\Id\Id;
+use DjinORM\Djin\Model\ModelInterface;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -28,52 +29,89 @@ class RepoHelper
         return self::$reflectionClasses[$class]->newInstanceWithoutConstructor();
     }
 
-    public static function getProperty($object, $property)
+    public static function getProperty($object, string $property)
     {
         $className = get_class($object);
         $refProperty = self::getReflectionProperty($className, $property);
         return $refProperty->getValue($object);
     }
 
-    public static function setProperty($object, $property, $value)
+    public static function setProperty($object, string $property, $value)
     {
         $className = get_class($object);
         $refProperty = self::getReflectionProperty($className, $property);
         $refProperty->setValue($object, $value);
     }
 
-    public static function setIdFromScalar($object, $property, array $data)
+    /**
+     * @param ModelInterface $object
+     * @param string $property
+     * @param array|string|int $data
+     */
+    public static function setIdFromScalar($object, string $property, $data)
     {
-        self::setProperty($object, $property, new Id((int) $data[$property]));
+        $id = is_array($data) ? $data[$property] : $data;
+        self::setProperty($object, $property, new Id($id));
     }
 
-    public static function setDateTime($object, $property, array $data, $immutable = true)
+    /**
+     * @param $object
+     * @param string $property
+     * @param array|string $data
+     * @param bool $immutable
+     */
+    public static function setDateTime($object, string $property, $data, $immutable = true)
     {
         $class = $immutable ? \DateTimeImmutable::class : \DateTime::class;
-        self::setProperty($object, $property, new $class($data[$property]));
+        $datetime = is_array($data) ? $data[$property] : $data;
+        self::setProperty($object, $property, new $class($datetime));
     }
 
-    public static function setString($object, $property, array $data)
+    /**
+     * @param $object
+     * @param string $property
+     * @param array|string $data
+     */
+    public static function setString($object, string $property, $data)
     {
-        self::setProperty($object, $property, (string)$data[$property]);
+        $string = is_array($data) ? $data[$property] : $data;
+        self::setProperty($object, $property, (string) $string);
     }
 
-    public static function setInt($object, $property, array $data)
+    /**
+     * @param $object
+     * @param string $property
+     * @param array|string|int $data
+     */
+    public static function setInt($object, string $property, $data)
     {
-        self::setProperty($object, $property, (int) $data[$property]);
+        $int = is_array($data) ? $data[$property] : $data;
+        self::setProperty($object, $property, (int) $int);
     }
 
-    public static function setFloat($object, $property, array $data)
+    /**
+     * @param $object
+     * @param string $property
+     * @param array|string|int|float $data
+     */
+    public static function setFloat($object, string $property, $data)
     {
-        self::setProperty($object, $property, (float) $data[$property]);
+        $float = is_array($data) ? $data[$property] : $data;
+        self::setProperty($object, $property, (float) $float);
     }
 
-    public static function setBool($object, $property, array $data)
+    /**
+     * @param $object
+     * @param string $property
+     * @param array|string|int|bool $data
+     */
+    public static function setBool($object, string $property, $data)
     {
-        self::setProperty($object, $property, (bool) $data[$property]);
+        $bool = is_array($data) ? $data[$property] : $data;
+        self::setProperty($object, $property, (bool) $bool);
     }
 
-    private static function getReflectionProperty($className, $property)
+    private static function getReflectionProperty($className, string $property)
     {
         $key = $className . '::' . $property;
         if (!isset(self::$reflectionProperties[$key])) {

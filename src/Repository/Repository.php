@@ -50,6 +50,12 @@ abstract class Repository implements RepositoryInterface
         return $model;
     }
 
+    public function freeUpMemory()
+    {
+        $this->rawData = [];
+        $this->models = [];
+    }
+
     protected function incQueryCount(): int
     {
         return $this->queryCount++;
@@ -96,8 +102,6 @@ abstract class Repository implements RepositoryInterface
         }
         return $models;
     }
-
-    abstract protected static function getModelClass(): string;
 
     /**
      * Превращает массив в объект нужного класса

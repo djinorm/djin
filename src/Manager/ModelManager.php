@@ -37,7 +37,7 @@ class ModelManager
      * @return ModelConfig
      * @throws UnknownModelException
      */
-    public function getModelConfig($modelClassOrObject):ModelConfig
+    public function getModelConfig($modelClassOrObject): ModelConfig
     {
         $class = is_object($modelClassOrObject) ? get_class($modelClassOrObject) : $modelClassOrObject;
         if (!isset($this->config[$class])) {
@@ -46,12 +46,25 @@ class ModelManager
         return $this->config[$class];
     }
 
-    public function setModelConfig(string $modelClass, RepositoryInterface $repository, IdGeneratorInterface $idGenerator = null)
+    /**
+     * @param RepositoryInterface $repository
+     * @param string|array|null $modelClass имя класса модели, массив имен классов моделей или null,
+     *        чтобы модель была взята из репозитория
+     * @param IdGeneratorInterface|null $idGenerator
+     */
+    public function setModelConfig(RepositoryInterface $repository, $modelClass = null, IdGeneratorInterface $idGenerator = null)
     {
         if ($idGenerator === null) {
             $idGenerator = $this->idGenerator;
         }
-        $this->config[$modelClass] = new ModelConfig($repository, $idGenerator);
+
+        if (is_array($modelClass)) {
+            foreach ($modelClass as $class) {
+                $this->config[$class] = new ModelConfig($repository, $idGenerator);
+            }
+        } else {
+            $this->config[$modelClass ?? $repository::getModelClass()] = new ModelConfig($repository, $idGenerator);
+        }
     }
 
     /**
@@ -59,7 +72,7 @@ class ModelManager
      * @return RepositoryInterface
      * @throws UnknownModelException
      */
-    public function getModelRepository($modelClassOrObject):RepositoryInterface
+    public function getModelRepository($modelClassOrObject): RepositoryInterface
     {
         return $this->getModelConfig($modelClassOrObject)->getRepository();
     }
@@ -210,6 +223,18 @@ class ModelManager
             $count += $config->getRepository()->getQueryCount();
         }
         return $count;
+    }
+
+    /**
+     * Освобождает из памяти всех репозиториев загруженные модели.
+     * ВНИМАНИЕ: после освобождения памяти в случае сохранения существующей модели через self::save()
+     * в БД будет вставлена новая запись вместо обновления существующей
+     */
+    public function freeUpMemory()
+    {
+        foreach ($this->config as $config) {
+            $config->getRepository()->freeUpMemory();
+        }
     }
 
     /**

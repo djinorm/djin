@@ -31,9 +31,29 @@ class ModelManagerTest extends TestCase
     public function setUp()
     {
         $this->manager = new ModelManager(new MemoryIdGenerator());
-        $this->manager->setModelConfig(TestModel::class, new TestModelRepository(), new MemoryIdGenerator());
-        $this->manager->setModelConfig(TestSecondModel::class, new TestModelRepository(), new MemoryIdGenerator());
+        $this->manager->setModelConfig(new TestModelRepository(), TestModel::class, new MemoryIdGenerator());
+        $this->manager->setModelConfig(new TestModelRepository(), TestSecondModel::class, new MemoryIdGenerator());
         $this->repository = $this->manager->getModelConfig(TestModel::class)->getRepository();
+    }
+
+    public function testSetModelConfigByRepoOnly()
+    {
+        $repo = new TestModelRepository();
+        $manager = new ModelManager(new MemoryIdGenerator());
+        $manager->setModelConfig($repo);
+
+        $config = $manager->getModelConfig(TestModel::class);
+        $this->assertSame($repo, $config->getRepository());
+    }
+
+    public function testSetModelConfigModelsArray()
+    {
+        $repo = new TestModelRepository();
+        $manager = new ModelManager(new MemoryIdGenerator());
+        $manager->setModelConfig($repo, [TestModel::class, TestSecondModel::class]);
+
+        $this->assertSame($repo, $manager->getModelConfig(TestModel::class)->getRepository());
+        $this->assertSame($repo, $manager->getModelConfig(TestSecondModel::class)->getRepository());
     }
 
     public function testGetModelConfigByClassName()
@@ -59,25 +79,25 @@ class ModelManagerTest extends TestCase
 
     public function testGetModelRepository()
     {
-        self::assertEquals($this->repository, $this->manager->getModelRepository(TestModel::class));
+        $this->assertEquals($this->repository, $this->manager->getModelRepository(TestModel::class));
     }
 
     public function testPersistsAsArray()
     {
-        self::assertEquals(0, $this->manager->persists());
+        $this->assertEquals(0, $this->manager->persists());
         $model_1 = new TestModel();
         $model_2 = new TestModel();
         $this->manager->persists([$model_1, $model_2]);
-        self::assertEquals(2, $this->manager->persists());
+        $this->assertEquals(2, $this->manager->persists());
     }
 
     public function testPersistsAsArguments()
     {
-        self::assertEquals(0, $this->manager->persists());
+        $this->assertEquals(0, $this->manager->persists());
         $model_1 = new TestModel();
         $model_2 = new TestModel();
         $this->manager->persists($model_1, $model_2);
-        self::assertEquals(2, $this->manager->persists());
+        $this->assertEquals(2, $this->manager->persists());
     }
 
     public function testPersistsNotModelInterface()
@@ -90,11 +110,11 @@ class ModelManagerTest extends TestCase
 
     public function testPersistsStub()
     {
-        self::assertEquals(0, $this->manager->persists());
+        $this->assertEquals(0, $this->manager->persists());
         $model_1 = new TestModel();
         $model_2 = new TestStubModel();
         $this->manager->persists($model_1, $model_2);
-        self::assertEquals(1, $this->manager->persists());
+        $this->assertEquals(1, $this->manager->persists());
     }
 
     public function testGetPersistedModels()
@@ -127,7 +147,7 @@ class ModelManagerTest extends TestCase
     {
         $model = new TestModel();
         $model->getId()->setPermanentId(1);
-        self::assertEquals(1, $this->manager->delete($model));
+        $this->assertEquals(1, $this->manager->delete($model));
     }
 
     public function testDeletePermanentPersistedModel()
@@ -135,22 +155,22 @@ class ModelManagerTest extends TestCase
         $model = new TestModel();
         $model->getId()->setPermanentId(1);
         $this->manager->persists($model);
-        self::assertEquals(1, $this->manager->delete($model));
+        $this->assertEquals(1, $this->manager->delete($model));
     }
 
     public function testDeleteNotPermanentModel()
     {
         $model = new TestModel();
         $this->manager->persists($model);
-        self::assertEquals(1, $this->manager->persists());
-        self::assertEquals(0, $this->manager->delete($model));
-        self::assertEquals(0, $this->manager->persists());
+        $this->assertEquals(1, $this->manager->persists());
+        $this->assertEquals(0, $this->manager->delete($model));
+        $this->assertEquals(0, $this->manager->persists());
     }
 
     public function testDeleteStub()
     {
         $model = new TestStubModel();
-        self::assertEquals(0, $this->manager->delete($model));
+        $this->assertEquals(0, $this->manager->delete($model));
     }
 
     public function testGetPreparedToDeleteModels()
@@ -192,37 +212,54 @@ class ModelManagerTest extends TestCase
 
         $newModel = new TestModel();
         $this->manager->persists($newModel);
-        self::assertFalse($newModel->getId()->isPermanent());
+        $this->assertFalse($newModel->getId()->isPermanent());
 
         $this->manager->commit();
 
-        self::assertTrue($newModel->getId()->isPermanent());
-        self::assertEquals(2, $this->repository->getQueryCount());
-        self::assertEquals(0, $this->manager->persists());
+        $this->assertTrue($newModel->getId()->isPermanent());
+        $this->assertEquals(2, $this->repository->getQueryCount());
+        $this->assertEquals(0, $this->manager->persists());
 
         $model = new TestStubModel();
-        self::assertEquals(0, $this->manager->delete($model));
+        $this->assertEquals(0, $this->manager->delete($model));
     }
 
     public function testGetTotalQueryCount()
     {
         $manager = $this->manager;
-        $manager->setModelConfig(TestSecondModel::class, new TestModelSecondRepository());
+        $manager->setModelConfig(new TestModelSecondRepository(), TestSecondModel::class);
         $repo_1 = $manager->getModelRepository(TestModel::class);
         $repo_2 = $manager->getModelRepository(TestSecondModel::class);
         $repo_1->findById(1);
+        $repo_1->findById(1);
         $repo_2->findById(1);
-        self::assertEquals(2, $manager->getTotalQueryCount());
+        $repo_2->findById(1);
+        $this->assertEquals(2, $manager->getTotalQueryCount());
     }
 
     public function testIsNewModel()
     {
         $isNew = new TestModel();
-        self::assertTrue($this->manager::isNewModel($isNew));
+        $this->assertTrue($this->manager::isNewModel($isNew));
 
         $notNew = new TestModel();
         $notNew->getId()->setPermanentId(1);
-        self::assertFalse($this->manager::isNewModel($notNew));
+        $this->assertFalse($this->manager::isNewModel($notNew));
+    }
+
+    public function testFreeUpMemory()
+    {
+        $manager = $this->manager;
+        $manager->setModelConfig(new TestModelSecondRepository(), TestSecondModel::class);
+        $repo_1 = $manager->getModelRepository(TestModel::class);
+        $repo_2 = $manager->getModelRepository(TestSecondModel::class);
+        $repo_1->findById(1);
+        $repo_2->findById(1);
+        $this->assertEquals(2, $manager->getTotalQueryCount());
+        $manager->freeUpMemory();
+        $repo_1->findById(1);
+        $repo_2->findById(1);
+        $this->assertEquals(4, $manager->getTotalQueryCount());
     }
 
 }

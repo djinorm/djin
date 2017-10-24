@@ -24,14 +24,6 @@ class Id
         }
     }
 
-    public function getId()
-    {
-        if ($this->isPermanent()) {
-            return $this->permanentId;
-        }
-        return $this->getTempId();
-    }
-
     public function getPermanentOrNull()
     {
         if ($this->isPermanent()) {
@@ -62,6 +54,11 @@ class Id
     {
         $this->guardWrongIdType($id);
         $this->guardAlreadyPermanent();
+
+        if (preg_match('~^\d+$~', $id)) {
+            $id = (int) $id;
+        }
+
         $this->permanentId = $id;
     }
 
@@ -72,17 +69,17 @@ class Id
     public function isEqual($modelOrId): bool
     {
         if ($modelOrId instanceof self) {
-            return $modelOrId === $this || $modelOrId->getId() == $this->getId();
+            return $modelOrId === $this || $modelOrId->toScalar() == $this->toScalar();
         }
 
         if ($modelOrId instanceof ModelInterface) {
             /** @var Id $id */
             $id = $modelOrId->getId();
-            return $id === $this || $id->getId() == $this->getId();
+            return $id === $this || $id->toScalar() == $this->toScalar();
         }
 
         if (is_scalar($modelOrId)) {
-            return $modelOrId == $this->getId();
+            return $modelOrId == $this->toScalar();
         }
 
         return false;
@@ -90,7 +87,10 @@ class Id
 
     public function toScalar()
     {
-        return $this->getId();
+        if ($this->isPermanent()) {
+            return $this->permanentId;
+        }
+        return $this->getTempId();
     }
 
     public function __toString()
@@ -116,7 +116,7 @@ class Id
     private function guardAlreadyPermanent()
     {
         if ($this->isPermanent()) {
-            throw new LogicException('Id already setted');
+            throw new LogicException('Id already set');
         }
     }
 

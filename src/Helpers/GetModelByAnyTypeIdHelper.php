@@ -45,7 +45,7 @@ class GetModelByAnyTypeIdHelper
 
         if ($modelObjectOrAnyId instanceof Id) {
             /** @var $modelObjectOrAnyId Id */
-            return $repo->findByIdOrException($modelObjectOrAnyId->getId(), $exception);
+            return $repo->findByIdOrException($modelObjectOrAnyId->toScalar(), $exception);
         }
 
         throw new InvalidArgumentException('Incorrect ID type');

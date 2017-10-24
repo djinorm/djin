@@ -44,13 +44,6 @@ class IdTest extends TestCase
         new Id([]);
     }
 
-    public function testGetId()
-    {
-        $this->assertEquals(1, $this->permanent->getId());
-        $this->assertNotEquals($this->permanent->getTempId(), $this->permanent->getId());
-        $this->assertEquals($this->temp->getTempId(), $this->temp->getId());
-    }
-
     public function testGetPermanentOrNull()
     {
         $this->assertEquals(1, $this->permanent->getPermanentOrNull());
