@@ -8,7 +8,6 @@ namespace DjinORM\Djin\Helpers;
 
 
 use DjinORM\Djin\Id\Id;
-use DjinORM\Djin\Model\ModelInterface;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -44,7 +43,7 @@ class RepoHelper
     }
 
     /**
-     * @param ModelInterface $object
+     * @param $object
      * @param string $property
      * @param array|string|int $data
      */
