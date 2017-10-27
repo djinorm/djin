@@ -4,12 +4,11 @@
  * Datetime: 20.06.2017 19:46
  */
 
-namespace DjinORM\Djin\tests\Unit\Id;
+namespace DjinORM\Djin\Id;
 
 
 use DjinORM\Djin\Exceptions\InvalidArgumentException;
 use DjinORM\Djin\Exceptions\LogicException;
-use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Model\ModelInterface;
 use PHPUnit\Framework\TestCase;
 

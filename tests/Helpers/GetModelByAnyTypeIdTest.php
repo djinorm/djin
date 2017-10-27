@@ -4,12 +4,11 @@
  * Datetime: 07.07.2017 2:33
  */
 
-namespace DjinORM\Djin\tests\Unit\Helpers;
+namespace DjinORM\Djin\Helpers;
 
 use DjinORM\Djin\Exceptions\InvalidArgumentException;
 use DjinORM\Djin\Exceptions\LogicException;
 use DjinORM\Djin\Exceptions\NotFoundException;
-use DjinORM\Djin\Helpers\GetModelByAnyTypeIdHelper;
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Model\ModelInterface;
 use DjinORM\Djin\Repository\RepositoryInterface;

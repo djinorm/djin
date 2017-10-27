@@ -15,13 +15,14 @@
     "php": ">=7.1.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^6.0"
+    "phpunit/phpunit": "^6.0",
+    "sebastian/comparator": "^2.0"
   },
   "autoload": {
-    "psr-4": {"DjinORM\\Djin\\": "src"}
+    "psr-4": {"DjinORM\\Djin\\": "src/"}
   },
   "autoload-dev": {
-    "psr-4": {"DjinORM\\Djin\\tests\\": "tests"}
+    "psr-4": {"DjinORM\\Djin\\": "tests/"}
   },
   "type": "library",
   "license": "BSD-3-Clause"

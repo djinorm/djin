@@ -4,15 +4,14 @@
  * Datetime: 27.09.2017 20:15
  */
 
-namespace DjinORM\Djin\tests\Unit\Helpers;
+namespace DjinORM\Djin\Helpers;
 
 use DjinORM\Djin\Exceptions\InvalidArgumentException;
 use DjinORM\Djin\Exceptions\MismatchModelException;
 use DjinORM\Djin\Exceptions\NotPermanentIdException;
-use DjinORM\Djin\Helpers\GetScalarIdHelper;
 use DjinORM\Djin\Id\Id;
-use DjinORM\Djin\tests\Mock\TestModel;
-use DjinORM\Djin\tests\Mock\TestSecondModel;
+use DjinORM\Djin\Mock\TestModel;
+use DjinORM\Djin\Mock\TestSecondModel;
 use PHPUnit\Framework\TestCase;
 
 class GetScalarIdHelperTest extends TestCase

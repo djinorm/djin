@@ -4,10 +4,9 @@
  * Datetime: 07.08.2017 2:33
  */
 
-namespace DjinORM\Djin\tests\Unit\Id;
+namespace DjinORM\Djin\Id;
 
-use DjinORM\Djin\Id\UuidGenerator;
-use DjinORM\Djin\tests\Mock\TestModel;
+use DjinORM\Djin\Mock\TestModel;
 use PHPUnit\Framework\TestCase;
 
 class UuidGeneratorTest extends TestCase

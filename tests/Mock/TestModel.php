@@ -4,7 +4,7 @@
  * Datetime: 24.03.2017 17:44
  */
 
-namespace DjinORM\Djin\tests\Mock;
+namespace DjinORM\Djin\Mock;
 
 
 use DjinORM\Djin\Id\Id;

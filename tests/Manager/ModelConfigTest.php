@@ -4,14 +4,13 @@
  * Datetime: 21.06.2017 22:33
  */
 
-namespace DjinORM\Djin\tests\Unit\Manager;
+namespace DjinORM\Djin\Manager;
 
 
 use DjinORM\Djin\Id\IdGeneratorInterface;
-use DjinORM\Djin\Manager\ModelConfig;
 use DjinORM\Djin\Repository\RepositoryInterface;
 use DjinORM\Djin\Id\MemoryIdGenerator;
-use DjinORM\Djin\tests\Mock\TestModelRepository;
+use DjinORM\Djin\Mock\TestModelRepository;
 use PHPUnit\Framework\TestCase;
 
 class ModelConfigTest extends TestCase

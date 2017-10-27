@@ -4,7 +4,7 @@
  * Datetime: 21.06.2017 23:19
  */
 
-namespace DjinORM\Djin\tests\Mock;
+namespace DjinORM\Djin\Mock;
 
 
 use DjinORM\Djin\Model\ModelInterface;

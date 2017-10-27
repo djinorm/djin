@@ -4,11 +4,11 @@
  * Datetime: 30.09.2017 0:10
  */
 
-namespace DjinORM\Djin\tests\Unit\Helpers;
+namespace DjinORM\Djin\Helpers;
 
-use DjinORM\Djin\Helpers\RepoHelper;
+
 use DjinORM\Djin\Id\Id;
-use DjinORM\Djin\tests\Mock\TestModel;
+use DjinORM\Djin\Mock\TestModel;
 use PHPUnit\Framework\TestCase;
 
 class RepoHelperTest extends TestCase

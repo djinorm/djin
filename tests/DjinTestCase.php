@@ -4,13 +4,13 @@
  * Datetime: 03.04.2017 23:41
  */
 
-namespace DjinORM\Djin\tests;
+namespace DjinORM\Djin;
 
 
 use DjinORM\Djin\Manager\ModelManager;
 use DjinORM\Djin\Id\MemoryIdGenerator;
-use DjinORM\Djin\tests\Mock\TestModel;
-use DjinORM\Djin\tests\Mock\TestModelRepository;
+use DjinORM\Djin\Mock\TestModel;
+use DjinORM\Djin\Mock\TestModelRepository;
 use PHPUnit\Framework\TestCase;
 
 abstract class DjinTestCase extends TestCase

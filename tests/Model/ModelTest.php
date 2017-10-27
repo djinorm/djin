@@ -4,11 +4,11 @@
  * Datetime: 20.06.2017 20:02
  */
 
-namespace DjinORM\Djin\tests\Unit\Model;
+namespace DjinORM\Djin\Model;
 
 
 use DjinORM\Djin\Id\Id;
-use DjinORM\Djin\tests\Mock\TestModel;
+use DjinORM\Djin\Mock\TestModel;
 use PHPUnit\Framework\TestCase;
 
 class ModelTest extends TestCase

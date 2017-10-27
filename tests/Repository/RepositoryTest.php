@@ -4,12 +4,12 @@
  * Datetime: 05.04.2017 8:22
  */
 
-namespace DjinORM\Djin\tests\Unit\Repository;
+namespace DjinORM\Djin\Repository;
 
 
 use DjinORM\Djin\Exceptions\NotFoundException;
-use DjinORM\Djin\tests\Mock\TestModel;
-use DjinORM\Djin\tests\Mock\TestModelRepository;
+use DjinORM\Djin\Mock\TestModel;
+use DjinORM\Djin\Mock\TestModelRepository;
 use PHPUnit\Framework\TestCase;
 
 class RepositoryTest extends TestCase
