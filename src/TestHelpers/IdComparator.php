@@ -1,9 +1,8 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: user
- * Date: 27.10.2017
- * Time: 11:39
+ * Created for DjinORM.
+ * Datetime: 27.10.2017 11:39
+ * @author Timur Kasumov aka XAKEPEHOK
  */
 
 
