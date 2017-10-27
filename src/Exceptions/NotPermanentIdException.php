@@ -7,7 +7,7 @@
 namespace DjinORM\Djin\Exceptions;
 
 
-class NotPermanentIdException extends \Exception
+class NotPermanentIdException extends \Exception implements DjinExceptionInterface
 {
 
 }

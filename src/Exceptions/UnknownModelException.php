@@ -7,7 +7,7 @@
 namespace DjinORM\Djin\Exceptions;
 
 
-class UnknownModelException extends \Exception
+class UnknownModelException extends \Exception implements DjinExceptionInterface
 {
 
 }

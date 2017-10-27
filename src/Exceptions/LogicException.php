@@ -7,7 +7,7 @@
 namespace DjinORM\Djin\Exceptions;
 
 
-class LogicException extends \Exception
+class LogicException extends \Exception implements DjinExceptionInterface
 {
 
 }

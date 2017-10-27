@@ -7,7 +7,7 @@
 namespace DjinORM\Djin\Exceptions;
 
 
-class NotModelInterfaceException extends \Exception
+class NotModelInterfaceException extends \Exception implements DjinExceptionInterface
 {
 
     public function __construct()

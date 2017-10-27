@@ -7,7 +7,7 @@
 namespace DjinORM\Djin\Exceptions;
 
 
-class InvalidArgumentException extends \Exception
+class InvalidArgumentException extends \Exception implements DjinExceptionInterface
 {
 
 }

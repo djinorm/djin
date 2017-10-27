@@ -7,7 +7,7 @@
 namespace DjinORM\Djin\Exceptions;
 
 
-class MismatchModelException extends \Exception
+class MismatchModelException extends \Exception implements DjinExceptionInterface
 {
 
 }

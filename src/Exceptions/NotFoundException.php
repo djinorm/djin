@@ -7,7 +7,7 @@
 namespace DjinORM\Djin\Exceptions;
 
 
-class NotFoundException extends \Exception
+class NotFoundException extends \Exception implements DjinExceptionInterface
 {
 
     public function __construct($message = "")
