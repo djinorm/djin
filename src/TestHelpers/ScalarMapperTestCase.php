@@ -34,11 +34,10 @@ abstract class ScalarMapperTestCase extends TestCase
         $mapper->hydrate([], $this->testClassValue);
         $this->assertNull($this->testClassValue->getScalarValue());
 
-        $mapper->hydrate(['value' => 7], $this->testClassValue);
-        $this->assertEquals(7, $this->testClassValue->getScalarValue());
-
-        $mapper->hydrate(['value' => null], $this->testClassValue);
-        $this->assertNull($this->testClassValue->getScalarValue());
+        foreach ($mapper->getFixtures() as $fixture) {
+            $mapper->hydrate(['value' => $fixture], $this->testClassValue);
+            $this->assertEquals($fixture, $this->testClassValue->getScalarValue());
+        }
     }
 
     public function nullArrayProvider()
