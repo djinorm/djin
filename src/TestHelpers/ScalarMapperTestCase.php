@@ -11,22 +11,21 @@ namespace DjinORM\Djin\TestHelpers;
 use DjinORM\Djin\Exceptions\ExtractorException;
 use DjinORM\Djin\Exceptions\HydratorException;
 use DjinORM\Djin\Mappers\ScalarMapper;
-use DjinORM\Djin\Mock\TestMapper;
 use PHPUnit\Framework\TestCase;
 
 abstract class ScalarMapperTestCase extends TestCase
 {
 
-    /** @var TestMapper */
+    /** @var MockForMapperTest */
     protected $testClassValue;
 
-    /** @var TestMapper */
+    /** @var MockForMapperTest */
     protected $testClassNull;
 
     public function setUp()
     {
-        $this->testClassNull = new TestMapper();
-        $this->testClassValue = new TestMapper($this->getTestClassValue());
+        $this->testClassNull = new MockForMapperTest();
+        $this->testClassValue = new MockForMapperTest($this->getTestClassValue());
     }
 
     public function testHydrateAllowNull()

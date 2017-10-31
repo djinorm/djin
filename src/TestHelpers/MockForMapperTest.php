@@ -5,10 +5,10 @@
  * @author Timur Kasumov aka XAKEPEHOK
  */
 
-namespace DjinORM\Djin\Mock;
+namespace DjinORM\Djin\TestHelpers;
 
 
-class TestMapper
+class MockForMapperTest
 {
 
     public $value;

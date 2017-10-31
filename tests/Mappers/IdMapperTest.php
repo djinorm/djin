@@ -8,7 +8,7 @@
 namespace DjinORM\Djin\Mappers;
 
 use DjinORM\Djin\Id\Id;
-use DjinORM\Djin\Mock\TestMapper;
+use DjinORM\Djin\TestHelpers\MockForMapperTest;
 use DjinORM\Djin\TestHelpers\ScalarMapperTestCase;
 
 class IdMapperTest extends ScalarMapperTestCase
@@ -16,7 +16,7 @@ class IdMapperTest extends ScalarMapperTestCase
 
     public function setUp()
     {
-        $this->testClassValue = new class(new Id(777)) extends TestMapper{
+        $this->testClassValue = new class(new Id(777)) extends MockForMapperTest{
             /** @var Id */
             public $value;
 
@@ -26,7 +26,7 @@ class IdMapperTest extends ScalarMapperTestCase
             }
         };
 
-        $this->testClassNull = new class() extends TestMapper {
+        $this->testClassNull = new class() extends MockForMapperTest {
             /** @var Id */
             public $value;
 
