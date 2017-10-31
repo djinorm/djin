@@ -35,7 +35,7 @@ class RepositoryTest extends TestCase
         /** @var TestModel $model */
         $model = $this->repo->findById(1);
         $this->assertEquals(1, $model->getId()->toScalar());
-        $this->assertFalse($model->getOtherId()->isPermanent());
+        $this->assertNull($model->getOtherId());
     }
 
     public function testLoadedById()
@@ -76,7 +76,7 @@ class RepositoryTest extends TestCase
         /** @var TestModel $model */
         $model = $this->repo->findByIdOrException(1);
         $this->assertEquals(1, $model->getId()->toScalar());
-        $this->assertFalse($model->getOtherId()->isPermanent());
+        $this->assertNull($model->getOtherId());
     }
 
     public function testFindByNonExistedIdOrException()

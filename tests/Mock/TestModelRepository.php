@@ -7,10 +7,12 @@
 namespace DjinORM\Djin\Mock;
 
 
+use DjinORM\Djin\Mappers\IdMapper;
+use DjinORM\Djin\Mappers\MapperInterface;
 use DjinORM\Djin\Model\ModelInterface;
-use DjinORM\Djin\Repository\Repository;
+use DjinORM\Djin\Repository\MapperRepository;
 
-class TestModelRepository extends Repository
+class TestModelRepository extends MapperRepository
 {
 
     private $repository = [
@@ -19,26 +21,13 @@ class TestModelRepository extends Repository
     ];
 
     /**
-     * Превращает массив в объект нужного класса
-     * @param array $data
-     * @return ModelInterface
+     * @return MapperInterface[]
      */
-    protected function hydrate(array $data): ModelInterface
-    {
-        /** @var TestModel $className */
-        $className = self::getModelClass();
-        return new $className($data['id'], $data['otherId']);
-    }
-
-    /**
-     * @param ModelInterface|TestModel $object
-     * @return array
-     */
-    protected function extract(ModelInterface $object): array
+    protected function map(): array
     {
         return [
-            $object->getId()->toScalar(),
-            $object->getOtherId()->toScalar()
+            new IdMapper('id'),
+            new IdMapper('otherId', null, true),
         ];
     }
 

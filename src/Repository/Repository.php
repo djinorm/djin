@@ -118,7 +118,9 @@ abstract class Repository implements RepositoryInterface
 
     protected function populate($data): ?ModelInterface
     {
-        if ($data === null) return null;
+        if ($data === null) {
+            return null;
+        }
 
         /** @var ModelInterface $className */
         $className = static::getModelClass();
