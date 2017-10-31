@@ -5,11 +5,12 @@
  * @author Timur Kasumov aka XAKEPEHOK
  */
 
-namespace DjinORM\Djin\Mappers;
+namespace DjinORM\Djin\TestHelpers;
 
 
 use DjinORM\Djin\Exceptions\ExtractorException;
 use DjinORM\Djin\Exceptions\HydratorException;
+use DjinORM\Djin\Mappers\ScalarMapper;
 use DjinORM\Djin\Mock\TestMapper;
 use PHPUnit\Framework\TestCase;
 

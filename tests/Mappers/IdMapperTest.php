@@ -9,6 +9,7 @@ namespace DjinORM\Djin\Mappers;
 
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Mock\TestMapper;
+use DjinORM\Djin\TestHelpers\ScalarMapperTestCase;
 
 class IdMapperTest extends ScalarMapperTestCase
 {

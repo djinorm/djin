@@ -8,6 +8,7 @@
 namespace DjinORM\Djin\Mappers;
 
 use DjinORM\Djin\Exceptions\ExtractorException;
+use DjinORM\Djin\TestHelpers\ScalarMapperTestCase;
 
 class StringMapperTest extends ScalarMapperTestCase
 {

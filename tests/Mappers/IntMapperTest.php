@@ -8,6 +8,8 @@
 namespace DjinORM\Djin\Mappers;
 
 
+use DjinORM\Djin\TestHelpers\ScalarMapperTestCase;
+
 class IntMapperTest extends ScalarMapperTestCase
 {
 
