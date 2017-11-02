@@ -57,15 +57,4 @@ class IntMapper extends ScalarMapper
         ];
     }
 
-    public function getFixtures(): array
-    {
-        $fixtures = range(0, 100, 10);
-
-        if ($this->isAllowNull()) {
-            $fixtures[] = null;
-        }
-
-        return $fixtures;
-    }
-
 }

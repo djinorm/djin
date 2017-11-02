@@ -7,39 +7,32 @@
 
 namespace DjinORM\Djin\Mappers;
 
+use DjinORM\Djin\Exceptions\ExtractorException;
+use DjinORM\Djin\Exceptions\HydratorException;
 use DjinORM\Djin\Id\Id;
-use DjinORM\Djin\TestHelpers\MockForMapperTest;
-use DjinORM\Djin\TestHelpers\ScalarMapperTestCase;
+use DjinORM\Djin\TestHelpers\MapperTestCase;
 
-class IdMapperTest extends ScalarMapperTestCase
+class IdMapperTest extends MapperTestCase
 {
 
-    public function setUp()
+    public function testHydrate()
     {
-        $this->testClassValue = new class(new Id(777)) extends MockForMapperTest{
-            /** @var Id */
-            public $value;
+        $this->assertHydrated(null, null, $this->getMapperAllowNull());
+        $this->assertHydrated('0', new Id(0), $this->getMapperAllowNull());
+        $this->assertHydrated('10', new Id(10), $this->getMapperAllowNull());
 
-            public function getScalarValue()
-            {
-                return $this->value ? $this->value->toScalar() : null;
-            }
-        };
-
-        $this->testClassNull = new class() extends MockForMapperTest {
-            /** @var Id */
-            public $value;
-
-            public function getScalarValue()
-            {
-                return $this->value ? $this->value->toScalar() : null;
-            }
-        };
+        $this->expectException(HydratorException::class);
+        $this->assertHydrated(null, null, $this->getMapperDisallowNull());
     }
 
-    public function testGetFixtures()
+    public function testExtract()
     {
-        $this->assertGetFixtures(range(0, 9));
+        $this->assertExtracted(null, null, $this->getMapperAllowNull());
+        $this->assertExtracted(new Id(0), 0, $this->getMapperAllowNull());
+        $this->assertExtracted(new Id(10), 10, $this->getMapperAllowNull());
+
+        $this->expectException(ExtractorException::class);
+        $this->assertExtracted(null, null, $this->getMapperDisallowNull());
     }
 
     protected function getMapperAllowNull(): ScalarMapper
@@ -50,10 +43,5 @@ class IdMapperTest extends ScalarMapperTestCase
     protected function getMapperDisallowNull(): ScalarMapper
     {
         return new IdMapper('value', 'value', false);
-    }
-
-    protected function getTestClassValue()
-    {
-        return;
     }
 }

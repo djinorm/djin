@@ -8,20 +8,31 @@
 namespace DjinORM\Djin\Mappers;
 
 
-use DjinORM\Djin\TestHelpers\ScalarMapperTestCase;
+use DjinORM\Djin\Exceptions\ExtractorException;
+use DjinORM\Djin\Exceptions\HydratorException;
+use DjinORM\Djin\TestHelpers\MapperTestCase;
 
-class IntMapperTest extends ScalarMapperTestCase
+class IntMapperTest extends MapperTestCase
 {
 
-
-    public function testGetFixtures()
+    public function testHydrate()
     {
-        $this->assertGetFixtures(range(0, 100, 10));
+        $this->assertHydrated(null, null, $this->getMapperAllowNull());
+        $this->assertHydrated('0', 0, $this->getMapperAllowNull());
+        $this->assertHydrated('10', 10, $this->getMapperAllowNull());
+
+        $this->expectException(HydratorException::class);
+        $this->assertHydrated(null, null, $this->getMapperDisallowNull());
     }
 
-    protected function getTestClassValue()
+    public function testExtract()
     {
-        return 999;
+        $this->assertExtracted(null, null, $this->getMapperAllowNull());
+        $this->assertExtracted(0, 0, $this->getMapperAllowNull());
+        $this->assertExtracted(10, 10, $this->getMapperAllowNull());
+
+        $this->expectException(ExtractorException::class);
+        $this->assertExtracted(null, null, $this->getMapperDisallowNull());
     }
 
     protected function getMapperAllowNull(): ScalarMapper

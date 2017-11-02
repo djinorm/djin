@@ -61,15 +61,4 @@ class IdMapper extends ScalarMapper
             $this->getDbColumn() => $id->toScalar()
         ];
     }
-
-    public function getFixtures(): array
-    {
-        $fixtures = range(0, 9);
-
-        if ($this->isAllowNull()) {
-            $fixtures[] = null;
-        }
-
-        return $fixtures;
-    }
 }

@@ -21,6 +21,4 @@ interface MapperInterface
 
     public function extract($object): array;
 
-    public function getFixtures(): array;
-
 }

@@ -8,41 +8,38 @@
 namespace DjinORM\Djin\Mappers;
 
 use DjinORM\Djin\Exceptions\ExtractorException;
-use DjinORM\Djin\TestHelpers\ScalarMapperTestCase;
+use DjinORM\Djin\Exceptions\HydratorException;
+use DjinORM\Djin\TestHelpers\MapperTestCase;
 
-class StringMapperTest extends ScalarMapperTestCase
+class StringMapperTest extends MapperTestCase
 {
 
-    public function testGetFixtures()
+    public function testHydrate()
     {
-        $fixtures = [
-            '0V1D2OJxaviY8rzGS0RK',
-            'KqS8Gr19sEeA87WgQ01D',
-            'ltIkmQxtW7fgsFiywArY',
-            'lFXhUAyyi5gAqkl5FSm8',
-            'zg3f5dDH78O6QA1oTc1n',
-            'xLlvPL7DKhi62CfkQwIp',
-            '9egIDzBp69woT1GBUY7U',
-            'SSevqiSgFY0dNA6wdaph',
-        ];
+        $this->assertHydrated(null, null, $this->getMapperAllowNull());
+        $this->assertHydrated('', '', $this->getMapperAllowNull());
+        $this->assertHydrated('qwerty', 'qwerty', $this->getMapperAllowNull());
 
-        $fixtures = array_map(function ($value) {
-            return substr($value, 0, 10);
-        }, $fixtures);
+        $this->expectException(HydratorException::class);
+        $this->assertHydrated(null, null, $this->getMapperDisallowNull());
+    }
 
-        $this->assertGetFixtures($fixtures);
+    public function testExtract()
+    {
+        $this->assertExtracted(null, '', $this->getMapperAllowNull());
+        $this->assertExtracted('', '', $this->getMapperAllowNull());
+        $this->assertExtracted('qwerty', 'qwerty', $this->getMapperAllowNull());
+
+        $this->expectException(ExtractorException::class);
+        $this->assertExtracted(null, null, $this->getMapperDisallowNull());
     }
 
     public function testExtractMaxLength()
     {
         $mapper = new StringMapper('value', 'value', true, 3);
         $this->expectException(ExtractorException::class);
-        $mapper->extract($this->testClassValue);
-    }
-
-    protected function getTestClassValue()
-    {
-        return 'qwerty';
+        $this->testClass->setValue('qwerty');
+        $mapper->extract($this->testClass);
     }
 
     protected function getMapperAllowNull(): ScalarMapper
@@ -54,4 +51,5 @@ class StringMapperTest extends ScalarMapperTestCase
     {
         return new StringMapper('value', 'value', false, 10);
     }
+
 }

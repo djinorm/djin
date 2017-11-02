@@ -57,15 +57,4 @@ class FloatMapper extends ScalarMapper
             $this->getDbColumn() => (float) $value
         ];
     }
-
-    public function getFixtures(): array
-    {
-        $fixtures = range(0, 5, 0.5);
-
-        if ($this->isAllowNull()) {
-            $fixtures[] = null;
-        }
-
-        return $fixtures;
-    }
 }

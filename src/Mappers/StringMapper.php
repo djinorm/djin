@@ -71,30 +71,4 @@ class StringMapper extends ScalarMapper
         ];
     }
 
-    public function getFixtures(): array
-    {
-        $fixtures = [
-            '0V1D2OJxaviY8rzGS0RK',
-            'KqS8Gr19sEeA87WgQ01D',
-            'ltIkmQxtW7fgsFiywArY',
-            'lFXhUAyyi5gAqkl5FSm8',
-            'zg3f5dDH78O6QA1oTc1n',
-            'xLlvPL7DKhi62CfkQwIp',
-            '9egIDzBp69woT1GBUY7U',
-            'SSevqiSgFY0dNA6wdaph',
-        ];
-
-        if ($this->maxLength && $this->maxLength < 20) {
-            $fixtures = array_map(function ($value) {
-                return substr($value, 0, $this->maxLength);
-            }, $fixtures);
-        }
-
-        if ($this->isAllowNull()) {
-            $fixtures[] = null;
-        }
-
-        return $fixtures;
-    }
-
 }
