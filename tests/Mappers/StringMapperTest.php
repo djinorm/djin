@@ -26,7 +26,7 @@ class StringMapperTest extends MapperTestCase
 
     public function testExtract()
     {
-        $this->assertExtracted(null, '', $this->getMapperAllowNull());
+        $this->assertExtracted('', null, $this->getMapperAllowNull());
         $this->assertExtracted('', '', $this->getMapperAllowNull());
         $this->assertExtracted('qwerty', 'qwerty', $this->getMapperAllowNull());
 
@@ -42,12 +42,12 @@ class StringMapperTest extends MapperTestCase
         $mapper->extract($this->testClass);
     }
 
-    protected function getMapperAllowNull(): ScalarMapper
+    protected function getMapperAllowNull(): StringMapper
     {
         return new StringMapper('value', 'value', true, 10);
     }
 
-    protected function getMapperDisallowNull(): ScalarMapper
+    protected function getMapperDisallowNull(): StringMapper
     {
         return new StringMapper('value', 'value', false, 10);
     }

@@ -39,17 +39,17 @@ abstract class MapperTestCase extends TestCase
         };
     }
 
-    public function assertHydrated($scalarValue, $hydratedValue, MapperInterface $mapper)
+    public function assertHydrated($expected, $input, MapperInterface $mapper)
     {
-        $mapper->hydrate(['value' => $scalarValue], $this->testClass);
-        $this->assertEquals($hydratedValue, $this->testClass->getValue());
+        $mapper->hydrate(['value' => $input], $this->testClass);
+        $this->assertEquals($expected, $this->testClass->getValue());
     }
 
-    public function assertExtracted($value, $extractedValue, MapperInterface $mapper)
+    public function assertExtracted($expected, $input, MapperInterface $mapper)
     {
-        $this->testClass->setValue($value);
+        $this->testClass->setValue($input);
         $this->assertEquals(
-            ['value' => $extractedValue],
+            ['value' => $expected],
             $mapper->extract($this->testClass)
         );
     }

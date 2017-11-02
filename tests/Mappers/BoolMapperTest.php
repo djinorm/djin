@@ -16,32 +16,32 @@ class BoolMapperTest extends MapperTestCase
     {
         $mapper = new BoolMapper('value', 'value');
 
-        $this->assertHydrated('', false, $mapper);
-        $this->assertHydrated(0, false, $mapper);
-        $this->assertHydrated(null, false, $mapper);
+        $this->assertHydrated(false, '', $mapper);
+        $this->assertHydrated(false, 0, $mapper);
+        $this->assertHydrated(false, null, $mapper);
         $this->assertHydrated(false, false, $mapper);
-        $this->assertHydrated('false', false, $mapper);
+        $this->assertHydrated(false, 'false', $mapper);
 
-        $this->assertHydrated(1, true, $mapper);
+        $this->assertHydrated(true, 1, $mapper);
         $this->assertHydrated(true, true, $mapper);
-        $this->assertHydrated('1', true, $mapper);
-        $this->assertHydrated('true', true, $mapper);
+        $this->assertHydrated(true, '1', $mapper);
+        $this->assertHydrated(true, 'true', $mapper);
     }
 
     public function testExtract()
     {
         $mapper = new BoolMapper('value', 'value');
 
-        $this->assertExtracted('', false, $mapper);
-        $this->assertExtracted(0, false, $mapper);
-        $this->assertExtracted(null, false, $mapper);
+        $this->assertExtracted(false, '', $mapper);
+        $this->assertExtracted(false, 0, $mapper);
+        $this->assertExtracted(false, null, $mapper);
         $this->assertExtracted(false, false, $mapper);
-        $this->assertExtracted('false', false, $mapper);
+        $this->assertExtracted(false, 'false', $mapper);
 
-        $this->assertExtracted(1, true, $mapper);
+        $this->assertExtracted(true, 1, $mapper);
         $this->assertExtracted(true, true, $mapper);
-        $this->assertExtracted('1', true, $mapper);
-        $this->assertExtracted('true', true, $mapper);
+        $this->assertExtracted(true, '1', $mapper);
+        $this->assertExtracted(true, 'true', $mapper);
     }
 
 }

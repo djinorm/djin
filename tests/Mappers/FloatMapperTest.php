@@ -18,8 +18,8 @@ class FloatMapperTest extends MapperTestCase
     public function testHydrate()
     {
         $this->assertHydrated(null, null, $this->getMapperAllowNull());
-        $this->assertHydrated('0', 0, $this->getMapperAllowNull());
-        $this->assertHydrated('10.5', 10.5, $this->getMapperAllowNull());
+        $this->assertHydrated(0, '0', $this->getMapperAllowNull());
+        $this->assertHydrated(10.5, '10.5', $this->getMapperAllowNull());
 
         $this->expectException(HydratorException::class);
         $this->assertHydrated(null, null, $this->getMapperDisallowNull());
@@ -35,12 +35,12 @@ class FloatMapperTest extends MapperTestCase
         $this->assertExtracted(null, null, $this->getMapperDisallowNull());
     }
 
-    protected function getMapperAllowNull(): ScalarMapper
+    protected function getMapperAllowNull(): FloatMapper
     {
         return new FloatMapper('value', 'value', true);
     }
 
-    protected function getMapperDisallowNull(): ScalarMapper
+    protected function getMapperDisallowNull(): FloatMapper
     {
         return new FloatMapper('value', 'value', false);
     }
