@@ -29,8 +29,8 @@ class ModelManagerTest extends TestCase
     public function setUp()
     {
         $this->manager = new ModelManager(new MemoryIdGenerator());
-        $this->manager->setModelConfig(new TestModelRepository(), TestModel::class, new MemoryIdGenerator());
-        $this->manager->setModelConfig(new TestModelRepository(), TestSecondModel::class, new MemoryIdGenerator());
+        $this->manager->setModelConfig(new TestModelRepository());
+        $this->manager->setModelConfig(new TestModelSecondRepository());
         $this->repository = $this->manager->getModelConfig(TestModel::class)->getRepository();
     }
 
@@ -72,6 +72,7 @@ class ModelManagerTest extends TestCase
     public function testGetModelNotFoundConfig()
     {
         $this->expectException(UnknownModelException::class);
+        /** @noinspection PhpUndefinedClassInspection */
         $this->manager->getModelConfig(ErrorException::class);
     }
 
@@ -208,14 +209,18 @@ class ModelManagerTest extends TestCase
         $permanentModel->getId()->setPermanentId(1);
         $this->manager->delete($permanentModel);
 
-        $newModel = new TestModel();
-        $this->manager->persists($newModel);
-        $this->assertFalse($newModel->getId()->isPermanent());
+        $newModel_1 = new TestModel();
+        $newModel_2 = new TestSecondModel();
+        $this->manager->persists($newModel_1, $newModel_2);
+
+        $this->assertFalse($newModel_1->getId()->isPermanent());
+        $this->assertFalse($newModel_2->getId()->isPermanent());
 
         $this->manager->commit();
 
-        $this->assertTrue($newModel->getId()->isPermanent());
-        $this->assertEquals(2, $this->repository->getQueryCount());
+        $this->assertTrue($newModel_1->getId()->isPermanent());
+        $this->assertTrue($newModel_2->getId()->isPermanent());
+        $this->assertEquals(3, $this->manager->getTotalQueryCount());
         $this->assertEquals(0, $this->manager->persists());
 
         $model = new TestStubModel();

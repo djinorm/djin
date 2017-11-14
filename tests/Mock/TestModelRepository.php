@@ -91,7 +91,7 @@ class TestModelRepository extends MapperRepository
      */
     public function isTransactional(): bool
     {
-        return false;
+        return true;
     }
 
     public static function getModelClass(): string

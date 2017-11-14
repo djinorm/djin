@@ -203,12 +203,34 @@ class ModelManager
             $this->setPermanentId($model);
         }
 
+        //Сначала удаляем данные только из транзакционных репозиториев
+        foreach ($this->modelsToDelete as $key => $model) {
+            $repository = $this->getModelConfig($model)->getRepository();
+            if (!$repository->isTransactional()) {
+                continue;
+            }
+            $repository->delete($model);
+            unset($this->modelsToDelete[$key]);
+        }
+
+        //И коммитим только из транзакционных репозиториев
+        foreach ($this->models as $key => $model) {
+            $repository = $this->getModelConfig($model)->getRepository();
+            if (!$repository->isTransactional()) {
+                continue;
+            }
+            $repository->save($model);
+            unset($this->models[$key]);
+        }
+
+        //Потом удялем из не транзакционных репозитореив
         foreach ($this->modelsToDelete as $key => $model) {
             $repository = $this->getModelConfig($model)->getRepository();
             $repository->delete($model);
             unset($this->modelsToDelete[$key]);
         }
 
+        //И коммитим из не транзакционных репозиториев
         foreach ($this->models as $key => $model) {
             $repository = $this->getModelConfig($model)->getRepository();
             $repository->save($model);
