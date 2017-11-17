@@ -1,6 +1,7 @@
 <?php
 /**
  * @author Timur Kasumov (aka XAKEPEHOK)
+ * @author http://php.net/manual/en/function.uniqid.php#94959
  * Datetime: 15.03.2017 16:29
  */
 
@@ -11,11 +12,17 @@ use DjinORM\Djin\Model\ModelInterface;
 class UuidGenerator implements IdGeneratorInterface
 {
 
+    public function getNextId(ModelInterface $model)
+    {
+        return static::generate();
+    }
+
     /**
      * @author http://php.net/manual/en/function.uniqid.php#94959
      * @return string
      */
-    private function uuid() {
+    public static function generate(): string
+    {
         return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             // 32 bits for "time_low"
             mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
@@ -37,8 +44,4 @@ class UuidGenerator implements IdGeneratorInterface
         );
     }
 
-    public function getNextId(ModelInterface $model)
-    {
-        return $this->uuid();
-    }
 }
