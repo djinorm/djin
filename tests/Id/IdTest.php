@@ -107,4 +107,29 @@ class IdTest extends TestCase
         $this->assertEquals($this->temp->getTempId(), (string) $this->temp);
     }
 
+    public function testNonStrictCompare()
+    {
+        $id1 = new Id(10);
+        $id2 = new Id();
+        $id2->setPermanentId(10);
+        $this->assertTrue($id1 == $id2);
+
+        $id1 = new Id();
+        $id2 = new Id();
+        $this->assertTrue($id1 == $id2);
+
+        $id1 = new Id(1);
+        $id2 = new Id();
+        $this->assertFalse($id1 == $id2);
+
+        $id1 = new Id();
+        $id2 = new Id();
+        $id2->setPermanentId(2);
+        $this->assertFalse($id1 == $id2);
+
+        $id1 = new Id();
+        $id2 = null;
+        $this->assertFalse($id1 == $id2);
+    }
+
 }
