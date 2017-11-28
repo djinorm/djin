@@ -48,4 +48,17 @@ class DjinHelper
         return GetScalarIdHelper::get($modelOrId, $checkThatModelClassIs);
     }
 
+    /**
+     * @param ModelInterface[] $models
+     * @return ModelInterface[]
+     */
+    public static function indexModelsArrayById(array $models): array
+    {
+        $indexedModels = [];
+        foreach ($models as $model) {
+            $indexedModels[$model->getId()->toScalar()] = $model;
+        }
+        return $indexedModels;
+    }
+
 }
