@@ -32,4 +32,10 @@ trait ModelTrait
         return $this->{$property};
     }
 
+    public function __clone()
+    {
+        $property = static::getModelIdPropertyName();
+        $this->{$property} = new Id();
+    }
+
 }
