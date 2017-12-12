@@ -7,9 +7,9 @@
 namespace DjinORM\Djin\Manager;
 
 
+use DI\ContainerBuilder;
 use DjinORM\Djin\Exceptions\UnknownModelException;
 use DjinORM\Djin\Exceptions\NotModelInterfaceException;
-use DjinORM\Djin\Id\MemoryIdGenerator;
 use DjinORM\Djin\Mock\TestModel;
 use DjinORM\Djin\Mock\TestModelSecondRepository;
 use DjinORM\Djin\Mock\TestSecondModel;
@@ -26,54 +26,46 @@ class ModelManagerTest extends TestCase
     /** @var TestModelRepository */
     public $repository;
 
+    public $container;
+
     public function setUp()
     {
-        $this->manager = new ModelManager(new MemoryIdGenerator());
-        $this->manager->setModelConfig(new TestModelRepository());
-        $this->manager->setModelConfig(new TestModelSecondRepository());
-        $this->repository = $this->manager->getModelConfig(TestModel::class)->getRepository();
-    }
-
-    public function testSetModelConfigByRepoOnly()
-    {
-        $repo = new TestModelRepository();
-        $manager = new ModelManager(new MemoryIdGenerator());
-        $manager->setModelConfig($repo);
-
-        $config = $manager->getModelConfig(TestModel::class);
-        $this->assertSame($repo, $config->getRepository());
+        $this->container = $container = ContainerBuilder::buildDevContainer();
+        $this->manager = new ModelManager($this->container);
+        $this->manager->setModelRepository(TestModelRepository::class);
+        $this->manager->setModelRepository(TestModelSecondRepository::class);
+        $this->repository = $this->manager->getModelRepository(TestModel::class);
     }
 
     public function testSetModelConfigModelsArray()
     {
-        $repo = new TestModelRepository();
-        $manager = new ModelManager(new MemoryIdGenerator());
-        $manager->setModelConfig($repo, [TestModel::class, TestSecondModel::class]);
+        $manager = new ModelManager($this->container);
+        $manager->setModelRepository(TestModelRepository::class, [TestModel::class, TestSecondModel::class]);
 
-        $this->assertSame($repo, $manager->getModelConfig(TestModel::class)->getRepository());
-        $this->assertSame($repo, $manager->getModelConfig(TestSecondModel::class)->getRepository());
+        $this->assertInstanceOf(TestModelRepository::class, $manager->getModelRepository(TestModel::class));
+        $this->assertInstanceOf(TestModelRepository::class, $manager->getModelRepository(TestSecondModel::class));
     }
 
-    public function testGetModelConfigByClassName()
+    public function testGetModelRepositoryClassName()
     {
-        $config = $this->manager->getModelConfig(TestModel::class);
-        $this->assertInstanceOf(ModelConfig::class, $config);
-        return $config;
+        $repository = $this->manager->getModelRepository(TestModel::class);
+        $this->assertInstanceOf(TestModelRepository::class, $repository);
+        return $repository;
     }
 
     public function testGetModelConfigByObject()
     {
         $model = new TestModel();
-        $config = $this->manager->getModelConfig($model);
-        $this->assertInstanceOf(ModelConfig::class, $config);
-        return $config;
+        $repository = $this->manager->getModelRepository($model);
+        $this->assertInstanceOf(TestModelRepository::class, $repository);
+        return $repository;
     }
 
     public function testGetModelNotFoundConfig()
     {
         $this->expectException(UnknownModelException::class);
         /** @noinspection PhpUndefinedClassInspection */
-        $this->manager->getModelConfig(ErrorException::class);
+        $this->manager->getModelRepository(ErrorException::class);
     }
 
     public function testGetModelRepository()
@@ -230,7 +222,7 @@ class ModelManagerTest extends TestCase
     public function testGetTotalQueryCount()
     {
         $manager = $this->manager;
-        $manager->setModelConfig(new TestModelSecondRepository(), TestSecondModel::class);
+        $manager->setModelRepository(TestModelSecondRepository::class, TestSecondModel::class);
         $repo_1 = $manager->getModelRepository(TestModel::class);
         $repo_2 = $manager->getModelRepository(TestSecondModel::class);
         $repo_1->findById(1);
@@ -253,7 +245,7 @@ class ModelManagerTest extends TestCase
     public function testFreeUpMemory()
     {
         $manager = $this->manager;
-        $manager->setModelConfig(new TestModelSecondRepository(), TestSecondModel::class);
+        $manager->setModelRepository(TestModelSecondRepository::class, TestSecondModel::class);
         $repo_1 = $manager->getModelRepository(TestModel::class);
         $repo_2 = $manager->getModelRepository(TestSecondModel::class);
         $repo_1->findById(1);

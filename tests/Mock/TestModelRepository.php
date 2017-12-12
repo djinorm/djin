@@ -7,6 +7,8 @@
 namespace DjinORM\Djin\Mock;
 
 
+use DjinORM\Djin\Id\IdGeneratorInterface;
+use DjinORM\Djin\Id\MemoryIdGenerator;
 use DjinORM\Djin\Mappers\IdMapper;
 use DjinORM\Djin\Mappers\MapperInterface;
 use DjinORM\Djin\Model\ModelInterface;
@@ -14,6 +16,9 @@ use DjinORM\Djin\Repository\MapperRepository;
 
 class TestModelRepository extends MapperRepository
 {
+
+    /** @var MemoryIdGenerator */
+    private $idGenerator;
 
     private $repository = [
         1 => ['id' => 1, 'otherId' => null],
@@ -67,6 +72,8 @@ class TestModelRepository extends MapperRepository
 
     public function insert(ModelInterface $model)
     {
+        $nextId = $this->getIdGenerator()->getNextId($model);
+        $model->getId()->setPermanentId($nextId);
         $this->incQueryCount();
         $this->repository[$model->getId()->toScalar()] = $this->extract($model);
     }
@@ -97,5 +104,13 @@ class TestModelRepository extends MapperRepository
     public static function getModelClass(): string
     {
         return TestModel::class;
+    }
+
+    private function getIdGenerator(): IdGeneratorInterface
+    {
+        if ($this->idGenerator === null) {
+            $this->idGenerator = new MemoryIdGenerator();
+        }
+        return $this->idGenerator;
     }
 }

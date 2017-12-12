@@ -6,18 +6,10 @@
 
 namespace DjinORM\Djin\Repository;
 
-use DjinORM\Djin\Manager\ModelManager;
 use DjinORM\Djin\Model\ModelInterface;
 
 interface RepositoryInterface
 {
-
-    /**
-     * Сообщает, может ли репозиторий откатить изменения. Если да, то
-     * @see ModelManager сохранит эту модель одной из первых
-     * @return bool
-     */
-    public function isTransactional(): bool;
 
     /**
      * @param $id
@@ -45,6 +37,9 @@ interface RepositoryInterface
     public function delete(ModelInterface $model);
 
     public function getQueryCount():int;
+
+    public function onCommit();
+    public function onRollback();
 
     /**
      * Освобождает из памяти загруженные модели.

@@ -4,6 +4,16 @@ All notable changes to `DjinORM\Djin` will be documented in this file.
 
 Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
+## 3.0.0 - 2017-12-12
+
+### Changed
+- Присвоением ID для моделей теперь занимается репозиторий
+- ModelManager требует DI-контейнер в конструктор, и создает классы репозиториев только по мере необходимости
+
+### Removed
+- Удален класс ModelConfig
+- Удален метод RepositoryInterface::isTransactional()
+
 ## 2.0.0 - 2017-10-24
 
 ### Added

@@ -1,5 +1,6 @@
 {
   "name": "djinorm/djin",
+  "type": "library",
   "description": "Djin ORM library",
   "keywords": [
     "djin",
@@ -11,12 +12,15 @@
       "role": "Main developer"
     }
   ],
+  "license": "BSD-3-Clause",
   "require": {
-    "php": ">=7.1.0"
+    "php": ">=7.1.0",
+    "psr/container": "^1.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^6.0",
-    "sebastian/comparator": "^2.0"
+    "sebastian/comparator": "^2.0",
+    "php-di/php-di": "^5.4"
   },
   "autoload": {
     "psr-4": {"DjinORM\\Djin\\": "src/"}
@@ -24,6 +28,7 @@
   "autoload-dev": {
     "psr-4": {"DjinORM\\Djin\\": "tests/"}
   },
-  "type": "library",
-  "license": "BSD-3-Clause"
+  "suggest": {
+    "php-di/php-di": "Dependency injection container"
+  }
 }

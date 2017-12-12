@@ -11,10 +11,10 @@ use DjinORM\Djin\Id\Id;
 interface ModelInterface
 {
 
+    public function getId(): Id;
+
     public static function getModelName():string;
 
     public static function getModelIdPropertyName():string;
-
-    public function getId(): Id;
 
 }

@@ -17,6 +17,10 @@ abstract class Repository implements RepositoryInterface
     protected $models = [];
     protected $queryCount = 0;
 
+    /**
+     * @param ModelInterface $model
+     * @return mixed
+     */
     public function save(ModelInterface $model)
     {
         if ($this->isNew($model)) {
@@ -48,6 +52,16 @@ abstract class Repository implements RepositoryInterface
             }
         }
         return $model;
+    }
+
+    public function onCommit()
+    {
+        return;
+    }
+
+    public function onRollback()
+    {
+        return;
     }
 
     public function freeUpMemory()
