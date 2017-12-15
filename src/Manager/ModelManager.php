@@ -185,6 +185,10 @@ class ModelManager
      */
     public function commit()
     {
+        foreach ($this->models as $model) {
+            $this->getModelRepository($model)->setPermanentId($model);
+        }
+
         foreach ($this->modelsToDelete as $key => $model) {
             $this->getModelRepository($model)->delete($model);
             unset($this->modelsToDelete[$key]);

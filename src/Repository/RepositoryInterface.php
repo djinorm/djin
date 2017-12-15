@@ -6,6 +6,7 @@
 
 namespace DjinORM\Djin\Repository;
 
+use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Model\ModelInterface;
 
 interface RepositoryInterface
@@ -28,7 +29,7 @@ interface RepositoryInterface
      * @param array $ids
      * @return ModelInterface[]
      */
-    public function findByIds(array $ids):array;
+    public function findByIds(array $ids): array;
 
 
     public function save(ModelInterface $model);
@@ -36,7 +37,8 @@ interface RepositoryInterface
     public function update(ModelInterface $model);
     public function delete(ModelInterface $model);
 
-    public function getQueryCount():int;
+    public function setPermanentId(ModelInterface $model): Id;
+    public function getQueryCount(): int;
 
     public function onCommit();
     public function onRollback();
