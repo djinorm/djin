@@ -37,6 +37,14 @@ class ModelManagerTest extends TestCase
         $this->repository = $this->manager->getModelRepository(TestModel::class);
     }
 
+    public function testGetConfig()
+    {
+        $this->assertEquals([
+            TestModel::class => TestModelRepository::class,
+            TestSecondModel::class => TestModelSecondRepository::class,
+        ], $this->manager->getConfig());
+    }
+
     public function testSetModelConfigModelsArray()
     {
         $manager = new ModelManager($this->container);

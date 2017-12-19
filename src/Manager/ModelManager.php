@@ -32,6 +32,11 @@ class ModelManager
         $this->container = $container;
     }
 
+    public function getConfig(): array
+    {
+        return $this->modelRepositories;
+    }
+
     /**
      * @param $modelClassOrObject
      * @return RepositoryInterface
