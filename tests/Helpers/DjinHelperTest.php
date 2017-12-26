@@ -7,6 +7,7 @@
 
 namespace DjinORM\Djin\Helpers;
 
+use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Mock\TestModel;
 use PHPUnit\Framework\TestCase;
 
@@ -26,6 +27,15 @@ class DjinHelperTest extends TestCase
         ];
 
         $this->assertEquals([10 => $model_1, 20 => $model_2, 30 => $model_3], DjinHelper::indexModelsArrayById($models));
+    }
+
+    public function testGetScalarIdOrNull()
+    {
+        $id = null;
+        $this->assertNull(DjinHelper::getScalarIdOrNull($id));
+
+        $id = new Id(10);
+        $this->assertEquals(10, DjinHelper::getScalarIdOrNull($id));
     }
 
 }
