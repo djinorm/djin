@@ -9,6 +9,7 @@ namespace DjinORM\Djin\Helpers;
 
 use DjinORM\Djin\Exceptions\InvalidArgumentException;
 use DjinORM\Djin\Exceptions\LogicException;
+use DjinORM\Djin\Exceptions\NotFoundException;
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Model\ModelInterface;
 use DjinORM\Djin\Repository\RepositoryInterface;
@@ -19,15 +20,14 @@ class GetModelByAnyTypeIdHelper
     /**
      * @param $modelObjectOrAnyId ModelInterface|Id|int|string
      * @param RepositoryInterface|null $repo
-     * @param \Exception|null $exception
      * @return ModelInterface
      * @throws InvalidArgumentException
      * @throws LogicException
+     * @throws NotFoundException
      */
     public static function get(
         $modelObjectOrAnyId,
-        RepositoryInterface $repo = null,
-        \Exception $exception = null
+        RepositoryInterface $repo = null
     ): ModelInterface
     {
 
@@ -39,16 +39,34 @@ class GetModelByAnyTypeIdHelper
             throw new LogicException('Impossible to find model without repository');
         }
 
+
         if (is_scalar($modelObjectOrAnyId)) {
-            return $repo->findByIdOrException($modelObjectOrAnyId, $exception);
+            $model = $repo->findById($modelObjectOrAnyId);
+            if ($model === null) {
+                self::throwNotFoundException($modelObjectOrAnyId);
+            }
+            return $model;
         }
 
         if ($modelObjectOrAnyId instanceof Id) {
-            /** @var $modelObjectOrAnyId Id */
-            return $repo->findByIdOrException($modelObjectOrAnyId->toScalar(), $exception);
+            $id = $modelObjectOrAnyId->toScalar();
+            $model = $repo->findById($id);
+            if ($model === null) {
+                self::throwNotFoundException($id);
+            }
+            return $model;
         }
 
         throw new InvalidArgumentException('Incorrect ID type');
+    }
+
+    /**
+     * @param $modelId
+     * @throws NotFoundException
+     */
+    private static function throwNotFoundException($modelId)
+    {
+        throw new NotFoundException("Model with ID '{$modelId}' was not found");
     }
 
 }

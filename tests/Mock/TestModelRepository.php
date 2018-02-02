@@ -10,13 +10,14 @@ namespace DjinORM\Djin\Mock;
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Id\IdGeneratorInterface;
 use DjinORM\Djin\Id\MemoryIdGenerator;
-use DjinORM\Djin\Mappers\IdMapper;
-use DjinORM\Djin\Mappers\MapperInterface;
 use DjinORM\Djin\Model\ModelInterface;
-use DjinORM\Djin\Repository\MapperRepository;
+use DjinORM\Djin\Repository\RepositoryInterface;
 
-class TestModelRepository extends MapperRepository
+class TestModelRepository implements RepositoryInterface
 {
+
+    /** @var int */
+    private $clear = 0;
 
     /** @var MemoryIdGenerator */
     private $idGenerator;
@@ -27,83 +28,46 @@ class TestModelRepository extends MapperRepository
     ];
 
     /**
-     * @return MapperInterface[]
-     */
-    protected function map(): array
-    {
-        return [
-            new IdMapper('id'),
-            new IdMapper('otherId', null, true),
-        ];
-    }
-
-    /**
      * @param $id
      * @return ModelInterface|null
      */
     public function findById($id)
     {
-        if ($model = $this->loadedById($id)) {
-            return $model;
+        if (isset($this->repository[$id])) {
+            $data = $this->repository[$id];
+            return new TestModel($data['id'], $data['otherId']);
         }
-        $this->incQueryCount();
-        return $this->populate($this->repository[$id] ?? null);
+        return null;
     }
 
     /**
-     * @param array $ids
-     * @return ModelInterface[]
+     * @param TestModel|ModelInterface $model
+     * @return mixed|void
      */
-    public function findByIds(array $ids): array
-    {
-        $result = $this->loadedByIds($ids);
-        if (count($ids) == count($result)) {
-            return $result;
-        }
-
-        $result = [];
-        $this->incQueryCount();
-        foreach ($ids as $id) {
-            if (isset($this->repository[$id])) {
-                $result[$id] = $this->populate($this->repository[$id]);
-            }
-        }
-        return $result;
-    }
-
     public function insert(ModelInterface $model)
     {
         $this->setPermanentId($model);
-        $this->incQueryCount();
-        $this->repository[$model->getId()->toScalar()] = $this->extract($model);
+        $this->repository[$model->getId()->toScalar()] = [
+            'id' => $model->getId()->getPermanentOrNull(),
+            'otherId' => $model->getOtherId()->getPermanentOrNull(),
+        ];
     }
 
+    /**
+     * @param TestModel|ModelInterface $model
+     * @return mixed|void
+     */
     public function update(ModelInterface $model)
     {
-        $this->queryCount++;
-        $data = $this->getDiffDataForUpdate($model);
-        $this->repository[$model->getId()->toScalar()] = $data;
+        $this->repository[$model->getId()->toScalar()] = [
+            'id' => $model->getId()->getPermanentOrNull(),
+            'otherId' => $model->getOtherId()->getPermanentOrNull(),
+        ];
     }
 
     public function delete(ModelInterface $model)
     {
-        $this->incQueryCount();
         unset($this->repository[$model->getId()->toScalar()]);
-    }
-
-    /**
-     * Сообщает, может ли репозиторий откатить изменения. Если да, то
-     * @see ModelManager сохранит эту модель одной из первых
-     * @return bool
-     */
-    public function isTransactional(): bool
-    {
-        return true;
-    }
-
-    public static function getModelClass(): string
-    {
-        return TestModel::class;
     }
 
     private function getIdGenerator(): IdGeneratorInterface
@@ -121,5 +85,29 @@ class TestModelRepository extends MapperRepository
             $model->getId()->setPermanentId($nextId);
         }
         return $model->getId();
+    }
+
+    public function save(ModelInterface $model)
+    {
+        if (isset($this->repository[$model->getId()->toScalar()])) {
+            $this->update($model);
+        } else {
+            $this->insert($model);
+        }
+    }
+
+    /**
+     * Освобождает из памяти загруженные модели.
+     * ВНИМАНИЕ: после освобождения памяти в случае сохранения существующей модели через self::save()
+     * в БД будет вставлена новая запись вместо обновления существующей
+     */
+    public function clear()
+    {
+        return $this->clear++;
+    }
+
+    public static function getModelClass(): string
+    {
+        return TestModel::class;
     }
 }

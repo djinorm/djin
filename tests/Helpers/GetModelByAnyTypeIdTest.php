@@ -29,14 +29,11 @@ class GetModelByAnyTypeIdTest extends TestCase
         $this->model->method('getId')->willReturn(new Id(1));
 
         $this->repo = $this->createMock(RepositoryInterface::class);
-        $this->repo->method('findByIdOrException')->willReturnCallback(function ($id, $exception) {
+        $this->repo->method('findById')->willReturnCallback(function ($id) {
             if ($id == 1) {
                 return $this->model;
             }
-            if ($exception) {
-                throw $exception;
-            }
-            throw new NotFoundException("Model with ID '{$id}' was not found");
+            return null;
         });
     }
 
@@ -92,20 +89,6 @@ class GetModelByAnyTypeIdTest extends TestCase
     {
         $this->expectException(NotFoundException::class);
         GetModelByAnyTypeIdHelper::get(new Id(777), $this->repo);
-    }
-
-    public function testNotFoundByScalarIdWithCustomException()
-    {
-        $exception = new \Exception();
-        $this->expectException(\Exception::class);
-        GetModelByAnyTypeIdHelper::get(10, $this->repo, $exception);
-    }
-
-    public function testNotFoundByIdObjectWithCustomException()
-    {
-        $exception = new \Exception();
-        $this->expectException(\Exception::class);
-        GetModelByAnyTypeIdHelper::get(new Id(777), $this->repo, $exception);
     }
 
 }

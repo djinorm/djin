@@ -55,17 +55,11 @@ class ModelManager
 
     /**
      * @param string $repositoryClass
-     * @param string|array|null $modelClass имя класса модели, массив имен классов моделей или null, чтобы модель была взята из репозитория
+     * @param string|null $modelClass имя класса модели, массив имен классов моделей или null, чтобы модель была взята из репозитория
      */
-    public function setModelRepository(string $repositoryClass, $modelClass = null)
+    public function setModelRepository(string $repositoryClass, string $modelClass = null)
     {
-        if (is_array($modelClass)) {
-            foreach ($modelClass as $class) {
-                $this->modelRepositories[$class] = $repositoryClass;
-            }
-        } else {
-            $this->modelRepositories[$modelClass ?? call_user_func($repositoryClass . '::getModelClass')] = $repositoryClass;
-        }
+        $this->modelRepositories[$modelClass ?? call_user_func($repositoryClass . '::getModelClass')] = $repositoryClass;
     }
 
     /**
@@ -139,11 +133,8 @@ class ModelManager
             return count($this->modelsToDelete);
         }
 
-        if (self::isNewModel($modelToDelete)) {
-            unset($this->models[$modelToDelete->getId()->getTempId()]);
-        } else {
-            $this->modelsToDelete[$modelToDelete->getId()->getTempId()] = $modelToDelete;
-        }
+        unset($this->models[$modelToDelete->getId()->getTempId()]);
+        $this->modelsToDelete[$modelToDelete->getId()->getTempId()] = $modelToDelete;
 
         return count($this->modelsToDelete);
     }
@@ -206,21 +197,6 @@ class ModelManager
     }
 
     /**
-     * @return int
-     * @throws UnknownModelException
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     */
-    public function getTotalQueryCount()
-    {
-        $count = 0;
-        foreach (array_keys($this->modelRepositories) as $modelClass) {
-            $count += $this->getModelRepository($modelClass)->getQueryCount();
-        }
-        return $count;
-    }
-
-    /**
      * Освобождает из памяти всех репозиториев загруженные модели.
      * ВНИМАНИЕ: после освобождения памяти в случае сохранения существующей модели через self::save()
      * в БД будет вставлена новая запись вместо обновления существующей
@@ -229,10 +205,10 @@ class ModelManager
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function freeUpMemory()
+    public function clear()
     {
         foreach (array_keys($this->modelRepositories) as $modelClass) {
-            $this->getModelRepository($modelClass)->freeUpMemory();
+            $this->getModelRepository($modelClass)->clear();
         }
     }
 

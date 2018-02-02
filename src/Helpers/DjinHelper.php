@@ -21,18 +21,17 @@ class DjinHelper
     /**
      * @param $modelObjectOrAnyId ModelInterface|Id|int|string
      * @param RepositoryInterface|null $repo
-     * @param \Exception|null $exception
      * @return ModelInterface
      * @throws InvalidArgumentException
      * @throws LogicException
+     * @throws \DjinORM\Djin\Exceptions\NotFoundException
      */
     public static function getModelByAnyTypeIdArgument(
         $modelObjectOrAnyId,
-        RepositoryInterface $repo = null,
-        \Exception $exception = null
+        RepositoryInterface $repo = null
     ): ModelInterface
     {
-        return GetModelByAnyTypeIdHelper::get($modelObjectOrAnyId, $repo, $exception);
+        return GetModelByAnyTypeIdHelper::get($modelObjectOrAnyId, $repo);
     }
 
     /**

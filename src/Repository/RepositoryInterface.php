@@ -19,36 +19,45 @@ interface RepositoryInterface
     public function findById($id);
 
     /**
-     * @param $id
-     * @param \Exception|null $exception
-     * @return ModelInterface|null
+     * @param ModelInterface $model
+     * @return mixed|void
      */
-    public function findByIdOrException($id, \Exception $exception = null);
+    public function save(ModelInterface $model);
 
     /**
-     * @param array $ids
-     * @return ModelInterface[]
+     * @param ModelInterface $model
+     * @return mixed|void
      */
-    public function findByIds(array $ids): array;
-
-
-    public function save(ModelInterface $model);
     public function insert(ModelInterface $model);
+
+    /**
+     * @param ModelInterface $model
+     * @return mixed|void
+     */
     public function update(ModelInterface $model);
+
+    /**
+     * @param ModelInterface $model
+     * @return mixed|void
+     */
     public function delete(ModelInterface $model);
 
+    /**
+     * @param ModelInterface $model
+     * @return Id
+     */
     public function setPermanentId(ModelInterface $model): Id;
-    public function getQueryCount(): int;
-
-    public function onCommit();
-    public function onRollback();
 
     /**
      * Освобождает из памяти загруженные модели.
      * ВНИМАНИЕ: после освобождения памяти в случае сохранения существующей модели через self::save()
      * в БД будет вставлена новая запись вместо обновления существующей
+     * @return mixed|void
      */
-    public function freeUpMemory();
+    public function clear();
 
-    public static function getModelClass(): ?string;
+    /**
+     * @return string
+     */
+    public static function getModelClass(): string;
 }
