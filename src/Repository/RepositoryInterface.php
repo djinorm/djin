@@ -16,7 +16,7 @@ interface RepositoryInterface
      * @param $id
      * @return ModelInterface|null
      */
-    public function findById($id);
+    public function findById($id): ?ModelInterface;
 
     /**
      * @param ModelInterface $model
