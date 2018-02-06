@@ -54,7 +54,7 @@ interface RepositoryInterface
      * в БД будет вставлена новая запись вместо обновления существующей
      * @return mixed|void
      */
-    public function clear();
+    public function freeUpMemory();
 
     /**
      * @return string

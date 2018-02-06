@@ -235,11 +235,11 @@ class ModelManagerTest extends TestCase
         $repo_2 = $manager->getModelRepository(TestSecondModel::class);
         $repo_1->findById(1);
         $repo_2->findById(1);
-        $this->assertEquals(0, $repo_1->clear());
-        $this->assertEquals(0, $repo_2->clear());
+        $this->assertEquals(0, $repo_1->freeUpMemory());
+        $this->assertEquals(0, $repo_2->freeUpMemory());
         $manager->clear();
-        $this->assertEquals(2, $repo_1->clear());
-        $this->assertEquals(2, $repo_2->clear());
+        $this->assertEquals(2, $repo_1->freeUpMemory());
+        $this->assertEquals(2, $repo_2->freeUpMemory());
     }
 
 }

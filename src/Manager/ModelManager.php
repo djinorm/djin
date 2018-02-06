@@ -208,7 +208,7 @@ class ModelManager
     public function clear()
     {
         foreach (array_keys($this->modelRepositories) as $modelClass) {
-            $this->getModelRepository($modelClass)->clear();
+            $this->getModelRepository($modelClass)->freeUpMemory();
         }
     }
 

@@ -31,7 +31,7 @@ class TestModelRepository implements RepositoryInterface
      * @param $id
      * @return ModelInterface|null
      */
-    public function findById($id)
+    public function findById($id): ?ModelInterface
     {
         if (isset($this->repository[$id])) {
             $data = $this->repository[$id];
@@ -101,7 +101,7 @@ class TestModelRepository implements RepositoryInterface
      * ВНИМАНИЕ: после освобождения памяти в случае сохранения существующей модели через self::save()
      * в БД будет вставлена новая запись вместо обновления существующей
      */
-    public function clear()
+    public function freeUpMemory()
     {
         return $this->clear++;
     }
