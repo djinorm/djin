@@ -227,7 +227,7 @@ class ModelManagerTest extends TestCase
         $this->assertFalse($this->manager::isNewModel($notNew));
     }
 
-    public function testClear()
+    public function testFreeUpMemory()
     {
         $manager = $this->manager;
         $manager->setModelRepository(TestModelSecondRepository::class, TestSecondModel::class);
@@ -237,7 +237,7 @@ class ModelManagerTest extends TestCase
         $repo_2->findById(1);
         $this->assertEquals(0, $repo_1->freeUpMemory());
         $this->assertEquals(0, $repo_2->freeUpMemory());
-        $manager->clear();
+        $manager->freeUpMemory();
         $this->assertEquals(2, $repo_1->freeUpMemory());
         $this->assertEquals(2, $repo_2->freeUpMemory());
     }

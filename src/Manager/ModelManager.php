@@ -205,7 +205,7 @@ class ModelManager
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function clear()
+    public function freeUpMemory()
     {
         foreach (array_keys($this->modelRepositories) as $modelClass) {
             $this->getModelRepository($modelClass)->freeUpMemory();
