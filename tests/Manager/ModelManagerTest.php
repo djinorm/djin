@@ -45,6 +45,15 @@ class ModelManagerTest extends TestCase
         ], $this->manager->getConfig());
     }
 
+    public function testSetModelConfigModelsArray()
+    {
+        $manager = new ModelManager($this->container);
+        $manager->setModelRepository(TestModelRepository::class, [TestModel::class, TestSecondModel::class]);
+
+        $this->assertInstanceOf(TestModelRepository::class, $manager->getModelRepository(TestModel::class));
+        $this->assertInstanceOf(TestModelRepository::class, $manager->getModelRepository(TestSecondModel::class));
+    }
+
     public function testGetModelRepositoryClassName()
     {
         $repository = $this->manager->getModelRepository(TestModel::class);

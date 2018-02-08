@@ -55,11 +55,17 @@ class ModelManager
 
     /**
      * @param string $repositoryClass
-     * @param string|null $modelClass имя класса модели, массив имен классов моделей или null, чтобы модель была взята из репозитория
+     * @param string|array|null $modelClass имя класса модели, массив имен классов моделей или null, чтобы модель была взята из репозитория
      */
-    public function setModelRepository(string $repositoryClass, string $modelClass = null)
+    public function setModelRepository(string $repositoryClass, $modelClass = null)
     {
-        $this->modelRepositories[$modelClass ?? call_user_func($repositoryClass . '::getModelClass')] = $repositoryClass;
+        if (is_array($modelClass)) {
+            foreach ($modelClass as $class) {
+                $this->modelRepositories[$class] = $repositoryClass;
+            }
+        } else {
+            $this->modelRepositories[$modelClass ?? call_user_func($repositoryClass . '::getModelClass')] = $repositoryClass;
+        }
     }
 
     /**
