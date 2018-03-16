@@ -76,4 +76,19 @@ class DjinHelper
         return $indexedModels;
     }
 
+    /**
+     * @param ModelInterface[] $models
+     * @param callable $callable
+     * @return ModelInterface[]
+     */
+    public static function indexModelsArrayCallback(array $models, callable $callable): array
+    {
+        $indexedModels = [];
+        foreach ($models as $model) {
+            $key = $callable($model);
+            $indexedModels[$key] = $model;
+        }
+        return $indexedModels;
+    }
+
 }
