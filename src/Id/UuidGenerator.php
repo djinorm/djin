@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Timur Kasumov (aka XAKEPEHOK)
- * @author http://php.net/manual/en/function.uniqid.php#94959
+ * @author https://stackoverflow.com/questions/31451405/cryptographically-secure-unique-id#answer-31460273
  * Datetime: 15.03.2017 16:29
  */
 
@@ -12,36 +12,45 @@ use DjinORM\Djin\Model\ModelInterface;
 class UuidGenerator implements IdGeneratorInterface
 {
 
+    /**
+     * @param ModelInterface $model
+     * @return string
+     * @throws \Exception
+     */
     public function getNextId(ModelInterface $model)
     {
         return static::generate();
     }
 
     /**
-     * @author http://php.net/manual/en/function.uniqid.php#94959
+     * Return a UUID (version 4) using random bytes
+     * Note that version 4 follows the format:
+     *     xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+     * where y is one of: [8, 9, A, B]
+     *
+     * We use (random_bytes(1) & 0x0F) | 0x40 to force
+     * the first character of hex value to always be 4
+     * in the appropriate position.
+     *
+     * For 4: http://3v4l.org/q2JN9
+     * For Y: http://3v4l.org/EsGSU
+     * For the whole shebang: https://3v4l.org/LNgJb
+     *
+     * @ref https://stackoverflow.com/a/31460273/2224584
+     * @ref https://paragonie.com/b/JvICXzh_jhLyt4y3
+     *
      * @return string
+     * @throws \Exception
      */
     public static function generate(): string
     {
-        return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            // 32 bits for "time_low"
-            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
-
-            // 16 bits for "time_mid"
-            mt_rand( 0, 0xffff ),
-
-            // 16 bits for "time_hi_and_version",
-            // four most significant bits holds version number 4
-            mt_rand( 0, 0x0fff ) | 0x4000,
-
-            // 16 bits, 8 bits for "clk_seq_hi_res",
-            // 8 bits for "clk_seq_low",
-            // two most significant bits holds zero and one for variant DCE1.1
-            mt_rand( 0, 0x3fff ) | 0x8000,
-
-            // 48 bits for "node"
-            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
-        );
+        return implode('-', [
+            bin2hex(random_bytes(4)),
+            bin2hex(random_bytes(2)),
+            bin2hex(chr((ord(random_bytes(1)) & 0x0F) | 0x40)) . bin2hex(random_bytes(1)),
+            bin2hex(chr((ord(random_bytes(1)) & 0x3F) | 0x80)) . bin2hex(random_bytes(1)),
+            bin2hex(random_bytes(6))
+        ]);
     }
 
 }
