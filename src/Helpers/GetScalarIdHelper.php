@@ -30,9 +30,7 @@ class GetScalarIdHelper
         if ($modelOrId instanceof ModelInterface) {
 
             if ($checkThatModelClassIs && get_class($modelOrId) != $checkThatModelClassIs) {
-                throw new MismatchModelException(
-                    'Mismatch model class'
-                );
+                throw new MismatchModelException($checkThatModelClassIs, get_class($modelOrId));
             }
 
             if (!$modelOrId->getId()->isPermanent()) {

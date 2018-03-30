@@ -73,7 +73,7 @@ class Mapper implements MapperInterface
     private function guardInvalidModel($object)
     {
         if (!is_a($object, $this->classname)) {
-            throw new MismatchModelException("{$this->classname}  not equals to " . get_class($object));
+            throw new MismatchModelException($this->classname, get_class($object));
         }
     }
 }
