@@ -48,6 +48,23 @@ class DjinHelper
     }
 
     /**
+     * @param array $modelsOrIds
+     * @param string|null $checkThatModelClassIs
+     * @return array
+     * @throws InvalidArgumentException
+     * @throws MismatchModelException
+     * @throws NotPermanentIdException
+     */
+    public static function getScalarIds(array $modelsOrIds, string $checkThatModelClassIs = null): array
+    {
+        $ids = [];
+        foreach ($modelsOrIds as $modelsOrId) {
+            $ids[] = self::getScalarId($modelsOrId, $checkThatModelClassIs);
+        }
+        return $ids;
+    }
+
+    /**
      * @param $modelOrId
      * @param string|null $checkThatModelClassIs
      * @return int|null|string

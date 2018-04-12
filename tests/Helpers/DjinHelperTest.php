@@ -7,13 +7,43 @@
 
 namespace DjinORM\Djin\Helpers;
 
+use DjinORM\Djin\Exceptions\MismatchModelException;
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Mock\TestModel;
+use DjinORM\Djin\Mock\TestSecondModel;
 use DjinORM\Djin\Model\ModelInterface;
 use PHPUnit\Framework\TestCase;
 
 class DjinHelperTest extends TestCase
 {
+
+    public function testGetScalarIds()
+    {
+        $array = [
+            new TestModel(10),
+            new TestModel(20),
+            new TestModel(30),
+            new Id(4),
+            new Id(5),
+        ];
+
+        $scalarIds = DjinHelper::getScalarIds($array, TestModel::class);
+        $this->assertEquals([10, 20, 30, 4, 5], $scalarIds);
+    }
+
+
+    public function testGetScalarIdsWithInvalidCheckModelClass()
+    {
+        $this->expectException(MismatchModelException::class);
+        $array = [
+            new TestModel(10),
+            new TestModel(20),
+            new TestSecondModel(30),
+            new Id(4),
+            new Id(5),
+        ];
+        DjinHelper::getScalarIds($array, TestModel::class);
+    }
 
     public function testIndexModelsArrayById()
     {
