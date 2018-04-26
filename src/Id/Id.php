@@ -11,12 +11,18 @@ use DjinORM\Djin\Exceptions\InvalidArgumentException;
 use DjinORM\Djin\Exceptions\LogicException;
 use DjinORM\Djin\Model\ModelInterface;
 
-class Id
+final class Id
 {
 
     private $tempId;
     private $permanentId;
 
+    /**
+     * Id constructor.
+     * @param null $permanentId
+     * @throws InvalidArgumentException
+     * @throws LogicException
+     */
     public function __construct($permanentId = null)
     {
         if (is_null($permanentId) === false) {
