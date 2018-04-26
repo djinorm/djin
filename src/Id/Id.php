@@ -11,7 +11,7 @@ use DjinORM\Djin\Exceptions\InvalidArgumentException;
 use DjinORM\Djin\Exceptions\LogicException;
 use DjinORM\Djin\Model\ModelInterface;
 
-final class Id
+class Id
 {
 
     private $tempId;
