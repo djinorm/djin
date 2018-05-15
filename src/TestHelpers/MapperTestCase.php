@@ -17,7 +17,7 @@ abstract class MapperTestCase extends TestCase
     protected $testClass;
 
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->testClass = new class() {
             protected $value;
