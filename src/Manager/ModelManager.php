@@ -15,10 +15,10 @@ use Psr\Container\ContainerInterface;
 
 class ModelManager
 {
-    /** @var ModelInterface[] */
+    /** @var ModelInterface[][] */
     protected $models = [];
 
-    /** @var ModelInterface[] */
+    /** @var ModelInterface[][] */
     protected $modelsToDelete = [];
 
     /** @var array */
@@ -87,10 +87,14 @@ class ModelManager
             }
 
             $this->guardNotModelInterface($model);
-            $this->models[$model->getId()->getTempId()] = $model;
+
+            $class = get_class($model);
+            $tempId = $model->getId()->getTempId();
+
+            $this->models[$class][$tempId] = $model;
         }
 
-        return count($this->models);
+        return $this->getModelsCount($this->models);
     }
 
     /**
@@ -110,16 +114,14 @@ class ModelManager
      */
     public function getPersistedModels(): array
     {
-        $result = [];
-        foreach ($this->models as $model) {
-            $result[get_class($model)][] = $model;
-        }
-        return $result;
+        return array_filter(
+            array_map('array_values', $this->models)
+        );
     }
 
     public function isPersistedModel(ModelInterface $model): bool
     {
-        foreach ($this->models as $persistedModel) {
+        foreach ($this->models[get_class($model)] as $persistedModel) {
             if ($persistedModel === $model) {
                 return true;
             }
@@ -136,13 +138,16 @@ class ModelManager
     public function delete(ModelInterface $modelToDelete): int
     {
         if ($modelToDelete instanceof StubModelInterface) {
-            return count($this->modelsToDelete);
+            return $this->getModelsCount($this->modelsToDelete);
         }
 
-        unset($this->models[$modelToDelete->getId()->getTempId()]);
-        $this->modelsToDelete[$modelToDelete->getId()->getTempId()] = $modelToDelete;
+        $class = get_class($modelToDelete);
+        $tempId = $modelToDelete->getId()->getTempId();
 
-        return count($this->modelsToDelete);
+        unset($this->models[$class][$tempId]);
+        $this->modelsToDelete[$class][$tempId] = $modelToDelete;
+
+        return $this->getModelsCount($this->modelsToDelete);
     }
 
     /**
@@ -162,16 +167,15 @@ class ModelManager
      */
     public function getPreparedToDeleteModels(): array
     {
-        $result = [];
-        foreach ($this->modelsToDelete as $model) {
-            $result[get_class($model)][] = $model;
-        }
-        return $result;
+        return array_filter(
+            array_map('array_values', $this->modelsToDelete)
+        );
     }
 
     public function isPreparedToDeleteModel(ModelInterface $model): bool
     {
-        foreach ($this->modelsToDelete as $modelToDelete) {
+        $models = $this->modelsToDelete[get_class($model)];
+        foreach ($models as $modelToDelete) {
             if ($modelToDelete === $model) {
                 return true;
             }
@@ -187,18 +191,24 @@ class ModelManager
      */
     public function commit()
     {
-        foreach ($this->models as $model) {
-            $this->getModelRepository($model)->setPermanentId($model);
+        foreach ($this->models as $modelClass => $models) {
+            foreach ($models as $model) {
+                $this->getModelRepository($model)->setPermanentId($model);
+            }
         }
 
-        foreach ($this->modelsToDelete as $key => $model) {
-            $this->getModelRepository($model)->delete($model);
-            unset($this->modelsToDelete[$key]);
+        foreach ($this->modelsToDelete as $modelClass => $models) {
+            foreach ($models as $id => $model) {
+                $this->getModelRepository($model)->delete($model);
+                unset($this->modelsToDelete[$modelClass][$id]);
+            }
         }
 
-        foreach ($this->models as $key => $model) {
-            $this->getModelRepository($model)->save($model);
-            unset($this->models[$key]);
+        foreach ($this->models as $modelClass => $models) {
+            foreach ($models as $id => $model) {
+                $this->getModelRepository($model)->save($model);
+                unset($this->models[$modelClass][$id]);
+            }
         }
     }
 
@@ -216,6 +226,13 @@ class ModelManager
         foreach (array_keys($this->modelRepositories) as $modelClass) {
             $this->getModelRepository($modelClass)->freeUpMemory();
         }
+    }
+
+    private function getModelsCount(array $classToModelArray): int
+    {
+        return array_sum(
+            array_map('count', $classToModelArray)
+        );
     }
 
     /**
