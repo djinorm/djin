@@ -54,6 +54,21 @@ class ModelManager
     }
 
     /**
+     * @param string $modelName
+     * @return RepositoryInterface
+     * @throws UnknownModelException
+     */
+    public function getRepositoryByModelName($modelName): RepositoryInterface
+    {
+        foreach ($this->modelRepositories as $modelClass => $modelRepoClass) {
+            if (call_user_func([$modelClass, 'getModelName']) == $modelName) {
+                return $this->container->get($modelRepoClass);
+            }
+        }
+        throw new UnknownModelException('No repository for model with name ' . $modelName);
+    }
+
+    /**
      * @param string $repositoryClass
      * @param string|array|null $modelClass имя класса модели, массив имен классов моделей или null, чтобы модель была взята из репозитория
      */

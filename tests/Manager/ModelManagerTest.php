@@ -54,14 +54,14 @@ class ModelManagerTest extends TestCase
         $this->assertInstanceOf(TestModelRepository::class, $manager->getModelRepository(TestSecondModel::class));
     }
 
-    public function testGetModelRepositoryClassName()
+    public function testGetModelRepositoryByClassName()
     {
         $repository = $this->manager->getModelRepository(TestModel::class);
         $this->assertInstanceOf(TestModelRepository::class, $repository);
         return $repository;
     }
 
-    public function testGetModelConfigByObject()
+    public function testGetModelRepositoryByObject()
     {
         $model = new TestModel();
         $repository = $this->manager->getModelRepository($model);
@@ -69,7 +69,7 @@ class ModelManagerTest extends TestCase
         return $repository;
     }
 
-    public function testGetModelNotFoundConfig()
+    public function testGetModelRepositoryNotFound()
     {
         $this->expectException(UnknownModelException::class);
         /** @noinspection PhpUndefinedClassInspection */
@@ -79,6 +79,17 @@ class ModelManagerTest extends TestCase
     public function testGetModelRepository()
     {
         $this->assertEquals($this->repository, $this->manager->getModelRepository(TestModel::class));
+    }
+
+    public function testGetRepositoryByModelName()
+    {
+        $this->assertEquals($this->repository, $this->manager->getRepositoryByModelName(TestModel::getModelName()));
+    }
+
+    public function testGetRepositoryByModelNameNotFound()
+    {
+        $this->expectException(UnknownModelException::class);
+        $this->assertEquals($this->repository, $this->manager->getRepositoryByModelName('qwerty'));
     }
 
     public function testPersistsAsArray()

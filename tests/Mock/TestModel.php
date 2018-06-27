@@ -39,4 +39,9 @@ class TestModel implements ModelInterface
     {
         return $this->custom;
     }
+
+    public static function getModelName(): string
+    {
+        return 'test-model';
+    }
 }
