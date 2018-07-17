@@ -20,15 +20,21 @@ class MappersHandlerTest extends TestCase
 {
 
     /** @var array */
-    private $mappers = [];
+    private $arrayMappers = [];
+
+    /** @var array */
+    private $jsonMappers = [];
 
     /** @var MappersHandler */
-    private $mappersHandler;
+    private $mappersHandlerArray;
+
+    /** @var MappersHandler */
+    private $mappersHandlerJson;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->mappers = [
+        $this->arrayMappers = [
             new IdMapper('id'),
             new StringMapper('string'),
             new ArrayMapper('indexedArrayOfString', 'indexedArrayOfString', true, false),
@@ -77,17 +83,69 @@ class MappersHandlerTest extends TestCase
                 ),
             ]))
         ];
-        $this->mappersHandler = new MappersHandler(TestModelMappersHandler::class, $this->mappers);
+
+        $this->jsonMappers = [
+            new IdMapper('id'),
+            new StringMapper('string'),
+            new ArrayMapper('indexedArrayOfString', 'indexedArrayOfString', true, true),
+            new ArrayMapper('associativeArrayOfString', 'associativeArrayOfString', true, true),
+            new ArrayMapper(
+                'indexedArrayOfModel',
+                'db_indexedArrayOfModel',
+                true,
+                true,
+                new MappersHandler(TestModel::class, [
+                    new IdMapper('id'),
+                    new IdMapper('otherId'),
+                ])
+            ),
+            new ArrayMapper(
+                'associativeArrayOfModel',
+                'db_associativeArrayOfModel',
+                true,
+                true,
+                new MappersHandler(TestModel::class, [
+                    new IdMapper('id'),
+                    new IdMapper('otherId'),
+                ])
+            ),
+            new SubclassMapper('sub', 'db_sub', new MappersHandler(TestSubmodelMapper::class, [
+                new StringMapper('string'),
+                new ArrayMapper(
+                    'indexedArrayOfModel',
+                    'db_indexedArrayOfModel',
+                    true,
+                    true,
+                    new MappersHandler(TestModel::class, [
+                        new IdMapper('id'),
+                        new IdMapper('otherId'),
+                    ])
+                ),
+                new ArrayMapper(
+                    'associativeArrayOfModel',
+                    'db_associativeArrayOfModel',
+                    true,
+                    true,
+                    new MappersHandler(TestModel::class, [
+                        new IdMapper('id'),
+                        new IdMapper('otherId'),
+                    ])
+                ),
+            ]))
+        ];
+
+        $this->mappersHandlerArray = new MappersHandler(TestModelMappersHandler::class, $this->arrayMappers);
+        $this->mappersHandlerJson = new MappersHandler(TestModelMappersHandler::class, $this->jsonMappers);
     }
 
     public function testGetModelClassName()
     {
-        $this->assertEquals(TestModelMappersHandler::class, $this->mappersHandler->getModelClassName());
+        $this->assertEquals(TestModelMappersHandler::class, $this->mappersHandlerArray->getModelClassName());
     }
 
     public function testGetMappers()
     {
-        $this->assertEquals($this->mappers, $this->mappersHandler->getMappers());
+        $this->assertEquals($this->arrayMappers, $this->mappersHandlerArray->getMappers());
     }
 
     public function testModelPropertiesToDbAliases()
@@ -113,18 +171,25 @@ class MappersHandlerTest extends TestCase
             'sub.associativeArrayOfModel.id' => 'db_sub.db_associativeArrayOfModel.id',
             'sub.associativeArrayOfModel.otherId' => 'db_sub.db_associativeArrayOfModel.otherId',
         ];
-        $this->assertEquals($expected, $this->mappersHandler->modelPropertiesToDbAliases());
+
+        $this->assertEquals($expected, $this->mappersHandlerArray->modelPropertiesToDbAliases());
+        $this->assertEquals($expected, $this->mappersHandlerJson->modelPropertiesToDbAliases());
     }
 
     public function testModelPropertyToDbAlias()
     {
         $this->assertEquals(
             'db_sub.db_indexedArrayOfModel.id',
-            $this->mappersHandler->modelPropertyToDbAlias('sub.indexedArrayOfModel.id')
+            $this->mappersHandlerArray->modelPropertyToDbAlias('sub.indexedArrayOfModel.id')
+        );
+
+        $this->assertEquals(
+            'db_sub.db_indexedArrayOfModel.id',
+            $this->mappersHandlerJson->modelPropertyToDbAlias('sub.indexedArrayOfModel.id')
         );
     }
 
-    public function testHydrate()
+    public function testHydrateArray()
     {
         $expected = new TestModelMappersHandler();
         $data = [
@@ -184,10 +249,73 @@ class MappersHandlerTest extends TestCase
                 ],
             ],
         ];
-        $this->assertEquals($expected, $this->mappersHandler->hydrate($data));
+        $this->assertEquals($expected, $this->mappersHandlerArray->hydrate($data));
     }
 
-    public function testExtract()
+    public function testHydrateJson()
+    {
+        $expected = new TestModelMappersHandler();
+        $data = [
+            'id' => 1,
+            'string' => '_string',
+            'indexedArrayOfString' => json_encode([
+                '_string_1',
+                '_string_2',
+                '_string_3',
+            ]),
+            'associativeArrayOfString' => json_encode([
+                'first' => '_string_1',
+                'second' => '_string_2',
+                'third' => '_string_3',
+            ]),
+            'db_indexedArrayOfModel' => json_encode([
+                [
+                    'id' => 1,
+                    'otherId' => 11
+                ],
+                [
+                    'id' => 2,
+                    'otherId' => 22
+                ],
+            ]),
+            'db_associativeArrayOfModel' => json_encode([
+                'first' => [
+                    'id' => 1,
+                    'otherId' => 111
+                ],
+                'second' => [
+                    'id' => 2,
+                    'otherId' => 222
+                ],
+            ]),
+            'db_sub' => [
+                'string' => '__string',
+                'db_indexedArrayOfModel' => json_encode([
+                    [
+                        'id' => 1,
+                        'otherId' => 1111
+                    ],
+                    [
+                        'id' => 2,
+                        'otherId' => 2222
+                    ],
+                ]),
+                'db_associativeArrayOfModel' => json_encode([
+                    '_first' => [
+                        'id' => 1,
+                        'otherId' => 11111
+                    ],
+                    '_second' => [
+                        'id' => 2,
+                        'otherId' => 22222
+                    ],
+                ]),
+            ],
+        ];
+        $this->assertEquals($expected, $this->mappersHandlerJson->hydrate($data));
+    }
+
+    public function testExtractArray()
     {
         $expected = [
             'id' => 1,
@@ -247,7 +375,70 @@ class MappersHandlerTest extends TestCase
             ],
         ];
         $model = new TestModelMappersHandler();
-        $this->assertEquals($expected, $this->mappersHandler->extract($model));
+        $this->assertEquals($expected, $this->mappersHandlerArray->extract($model));
+    }
+
+    public function testExtractJson()
+    {
+        $expected = [
+            'id' => 1,
+            'string' => '_string',
+            'indexedArrayOfString' => json_encode([
+                '_string_1',
+                '_string_2',
+                '_string_3',
+            ]),
+            'associativeArrayOfString' => json_encode([
+                'first' => '_string_1',
+                'second' => '_string_2',
+                'third' => '_string_3',
+            ]),
+            'db_indexedArrayOfModel' => json_encode([
+                [
+                    'id' => 1,
+                    'otherId' => 11
+                ],
+                [
+                    'id' => 2,
+                    'otherId' => 22
+                ],
+            ]),
+            'db_associativeArrayOfModel' => json_encode([
+                'first' => [
+                    'id' => 1,
+                    'otherId' => 111
+                ],
+                'second' => [
+                    'id' => 2,
+                    'otherId' => 222
+                ],
+            ]),
+            'db_sub' => [
+                'string' => '__string',
+                'db_indexedArrayOfModel' => json_encode([
+                    [
+                        'id' => 1,
+                        'otherId' => 1111
+                    ],
+                    [
+                        'id' => 2,
+                        'otherId' => 2222
+                    ],
+                ]),
+                'db_associativeArrayOfModel' => json_encode([
+                    '_first' => [
+                        'id' => 1,
+                        'otherId' => 11111
+                    ],
+                    '_second' => [
+                        'id' => 2,
+                        'otherId' => 22222
+                    ],
+                ]),
+            ],
+        ];
+        $model = new TestModelMappersHandler();
+        $this->assertEquals($expected, $this->mappersHandlerJson->extract($model));
     }
 
 }
