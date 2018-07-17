@@ -25,7 +25,7 @@ class IntMapper extends ScalarMapper
      */
     public function hydrate(array $data, $object): ?int
     {
-        $column = $this->getDbColumn();
+        $column = $this->getDbAlias();
         if (!isset($data[$column])) {
             if ($this->isAllowNull()) {
                 RepoHelper::setProperty($object, $this->getModelProperty(), null);
@@ -55,7 +55,7 @@ class IntMapper extends ScalarMapper
         }
 
         return [
-            $this->getDbColumn() => (int) $value
+            $this->getDbAlias() => (int) $value
         ];
     }
 

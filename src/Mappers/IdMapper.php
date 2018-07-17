@@ -21,11 +21,13 @@ class IdMapper extends ScalarMapper
      * @param object $object
      * @return Id|null
      * @throws HydratorException
+     * @throws \DjinORM\Djin\Exceptions\InvalidArgumentException
+     * @throws \DjinORM\Djin\Exceptions\LogicException
      * @throws \ReflectionException
      */
     public function hydrate(array $data, $object): ?Id
     {
-        $column = $this->getDbColumn();
+        $column = $this->getDbAlias();
         if (!isset($data[$column])) {
             if ($this->isAllowNull()) {
                 RepoHelper::setProperty($object, $this->getModelProperty(), null);
@@ -55,12 +57,12 @@ class IdMapper extends ScalarMapper
                 throw $this->nullExtractorException('Id', $object);
             }
             return [
-                $this->getDbColumn() => null
+                $this->getDbAlias() => null
             ];
         }
 
         return [
-            $this->getDbColumn() => $id->toScalar()
+            $this->getDbAlias() => $id->toScalar()
         ];
     }
 }

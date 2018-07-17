@@ -28,10 +28,17 @@ class ModelManagerTest extends TestCase
 
     public $container;
 
+    private $callbacks = [];
+
     public function setUp()
     {
         $this->container = $container = ContainerBuilder::buildDevContainer();
-        $this->manager = new ModelManager($this->container);
+        $this->manager = new ModelManager(
+            $this->container,
+            function () {$this->callbacks['beforeCommit'] = true;},
+            function () {$this->callbacks['afterCommit'] = true;},
+            function () {$this->callbacks['errorCommit'] = true;}
+        );
         $this->manager->setModelRepository(TestModelRepository::class);
         $this->manager->setModelRepository(TestModelSecondRepository::class);
         $this->repository = $this->manager->getModelRepository(TestModel::class);
@@ -227,7 +234,15 @@ class ModelManagerTest extends TestCase
         $this->assertFalse($newModel_1->getId()->isPermanent());
         $this->assertFalse($newModel_2->getId()->isPermanent());
 
+        $this->assertArrayNotHasKey('beforeCommit', $this->callbacks);
+        $this->assertArrayNotHasKey('afterCommit', $this->callbacks);
+        $this->assertArrayNotHasKey('errorCommit', $this->callbacks);
+
         $this->manager->commit();
+
+        $this->assertArrayHasKey('beforeCommit', $this->callbacks);
+        $this->assertArrayHasKey('afterCommit', $this->callbacks);
+        $this->assertArrayNotHasKey('errorCommit', $this->callbacks);
 
         $this->assertTrue($newModel_1->getId()->isPermanent());
         $this->assertTrue($newModel_2->getId()->isPermanent());
@@ -235,6 +250,28 @@ class ModelManagerTest extends TestCase
 
         $model = new TestStubModel();
         $this->assertEquals(0, $this->manager->delete($model));
+    }
+
+    public function testCommitErrorException()
+    {
+        $model = new TestSecondModel();
+        $this->manager->persists($model);
+
+        /** @var TestModelSecondRepository $repo */
+        $repo = $this->manager->getModelRepository($model);
+        $repo->throwExceptionOnSave(true);
+
+        $this->assertArrayNotHasKey('beforeCommit', $this->callbacks);
+        $this->assertArrayNotHasKey('afterCommit', $this->callbacks);
+        $this->assertArrayNotHasKey('errorCommit', $this->callbacks);
+
+        try {
+            $this->manager->commit();
+        } catch (\Exception $exception) {
+            $this->assertArrayHasKey('beforeCommit', $this->callbacks);
+            $this->assertArrayNotHasKey('afterCommit', $this->callbacks);
+            $this->assertArrayHasKey('errorCommit', $this->callbacks);
+        }
     }
 
     public function testIsNewModel()

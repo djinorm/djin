@@ -21,7 +21,7 @@ class TestModel implements ModelInterface
 
     public function __construct($id = null, $otherId = null)
     {
-        $this->id = $id;
+        $this->id = new Id($id);
         $this->otherId = new Id($otherId);
     }
 

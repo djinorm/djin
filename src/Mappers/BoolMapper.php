@@ -13,9 +13,9 @@ use DjinORM\Djin\Helpers\RepoHelper;
 class BoolMapper extends ScalarMapper
 {
 
-    public function __construct($modelProperty, $dbColumn = null)
+    public function __construct($modelProperty, $dbAlias = null)
     {
-        parent::__construct($modelProperty, $dbColumn, true);
+        parent::__construct($modelProperty, $dbAlias, true);
     }
 
     /**
@@ -26,7 +26,7 @@ class BoolMapper extends ScalarMapper
      */
     public function hydrate(array $data, $object): bool
     {
-        $column = $this->getDbColumn();
+        $column = $this->getDbAlias();
         $value = $data[$column] ?? false;
 
         if (mb_strtolower($value) === 'false') {
@@ -56,7 +56,7 @@ class BoolMapper extends ScalarMapper
         }
 
         return [
-            $this->getDbColumn() => (int) $value
+            $this->getDbAlias() => (int) $value
         ];
     }
 

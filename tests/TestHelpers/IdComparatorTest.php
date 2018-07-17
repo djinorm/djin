@@ -31,11 +31,11 @@ class IdComparatorTest extends TestCase
     {
         $this->registerComparator(new IdComparator());
 
-        $model_1 = new TestModel();
+        $model_1 = new TestModel(1);
         $model_1->getOtherId()->getTempId();
         $model_1->getOtherId()->setPermanentId(1);
 
-        $model_2 = new TestModel();
+        $model_2 = new TestModel(1);
         $model_2->getOtherId()->getTempId();
         $model_2->getOtherId()->setPermanentId(1);
 
@@ -46,11 +46,11 @@ class IdComparatorTest extends TestCase
     {
         $this->registerComparator(new IdComparator());
 
-        $model_1 = new TestModel();
+        $model_1 = new TestModel(1);
         $model_1->getOtherId()->getTempId();
         $model_1->getOtherId()->setPermanentId(1);
 
-        $model_2 = new TestModel();
+        $model_2 = new TestModel(1);
         $model_2->getOtherId()->getTempId();
         $model_2->getOtherId()->setPermanentId(2);
 

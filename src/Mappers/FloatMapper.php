@@ -25,7 +25,7 @@ class FloatMapper extends ScalarMapper
      */
     public function hydrate(array $data, $object): ?float
     {
-        $column = $this->getDbColumn();
+        $column = $this->getDbAlias();
 
         if (!isset($data[$column])) {
             if ($this->isAllowNull()) {
@@ -56,7 +56,7 @@ class FloatMapper extends ScalarMapper
         }
 
         return [
-            $this->getDbColumn() => (float) $value
+            $this->getDbAlias() => (float) $value
         ];
     }
 }

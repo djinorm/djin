@@ -14,11 +14,25 @@ interface MapperInterface
 
     /**
      * @param array $data
-     * @param object $object*
+     * @param object $object
      * @return mixed
      */
     public function hydrate(array $data, $object);
 
+    /**
+     * @param $object
+     * @return array
+     */
     public function extract($object): array;
+
+    /**
+     * @return string
+     */
+    public function getModelProperty(): string;
+
+    /**
+     * @return string
+     */
+    public function getDbAlias(): string;
 
 }

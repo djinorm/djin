@@ -7,12 +7,29 @@
 namespace DjinORM\Djin\Mock;
 
 
+use DjinORM\Djin\Model\ModelInterface;
+
 class TestModelSecondRepository extends TestModelRepository
 {
+
+    protected $throwException = false;
 
     public static function getModelClass(): string
     {
         return TestSecondModel::class;
+    }
+
+    public function throwExceptionOnSave(bool $throw)
+    {
+        $this->throwException = $throw;
+    }
+
+    public function save(ModelInterface $model)
+    {
+        parent::save($model);
+        if ($this->throwException) {
+            throw new \Exception('Testing exception');
+        }
     }
 
 }

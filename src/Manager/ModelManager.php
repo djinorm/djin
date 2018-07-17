@@ -27,9 +27,26 @@ class ModelManager
     /** @var ContainerInterface */
     private $container;
 
-    public function __construct(ContainerInterface $container)
+    /** @var callable */
+    protected $onBeforeCommit;
+
+    /** @var callable */
+    protected $onAfterCommit;
+
+    /** @var callable */
+    private $onCommitException;
+
+    public function __construct(
+        ContainerInterface $container,
+        callable $onBeforeCommit = null,
+        callable $onAfterCommit = null,
+        callable $onCommitException = null
+    )
     {
         $this->container = $container;
+        $this->onBeforeCommit = $onBeforeCommit;
+        $this->onAfterCommit = $onAfterCommit;
+        $this->onCommitException = $onCommitException;
     }
 
     public function getConfig(): array
@@ -200,31 +217,49 @@ class ModelManager
 
 
     /**
-     * @throws UnknownModelException
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Exception
      */
     public function commit()
     {
-        foreach ($this->models as $modelClass => $models) {
-            foreach ($models as $model) {
-                $this->getModelRepository($model)->setPermanentId($model);
-            }
+        if ($this->onBeforeCommit) {
+            $beforeCommitCallback = $this->onBeforeCommit;
+            $beforeCommitCallback();
         }
 
-        foreach ($this->modelsToDelete as $modelClass => $models) {
-            foreach ($models as $id => $model) {
-                $this->getModelRepository($model)->delete($model);
-                unset($this->modelsToDelete[$modelClass][$id]);
+        try {
+            foreach ($this->models as $modelClass => $models) {
+                foreach ($models as $model) {
+                    $this->getModelRepository($model)->setPermanentId($model);
+                }
             }
+
+            foreach ($this->modelsToDelete as $modelClass => $models) {
+                foreach ($models as $id => $model) {
+                    $this->getModelRepository($model)->delete($model);
+                    unset($this->modelsToDelete[$modelClass][$id]);
+                }
+            }
+
+            foreach ($this->models as $modelClass => $models) {
+                foreach ($models as $id => $model) {
+                    $this->getModelRepository($model)->save($model);
+                    unset($this->models[$modelClass][$id]);
+                }
+            }
+
+            if ($this->onAfterCommit) {
+                $afterCommitCallback = $this->onAfterCommit;
+                $afterCommitCallback();
+            }
+
+        } catch (\Exception $exception) {
+            if ($this->onCommitException) {
+                $commitExceptionCallback = $this->onCommitException;
+                $commitExceptionCallback();
+            }
+            throw $exception;
         }
 
-        foreach ($this->models as $modelClass => $models) {
-            foreach ($models as $id => $model) {
-                $this->getModelRepository($model)->save($model);
-                unset($this->models[$modelClass][$id]);
-            }
-        }
     }
 
     /**
