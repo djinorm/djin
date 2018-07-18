@@ -11,6 +11,8 @@ namespace DjinORM\Djin\Mappers\Notations;
 interface NotationInterface
 {
 
+    public function isDecodeFirst(): bool;
+
     /**
      * @param $array
      * @return mixed

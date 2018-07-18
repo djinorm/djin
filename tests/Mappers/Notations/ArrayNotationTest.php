@@ -49,4 +49,9 @@ class ArrayNotationTest extends TestCase
         $this->assertEquals($this->decoded, $this->notation->decode($this->encoded));
     }
 
+    public function testIsDecodeFirst()
+    {
+        $this->assertFalse($this->notation->isDecodeFirst());
+    }
+
 }

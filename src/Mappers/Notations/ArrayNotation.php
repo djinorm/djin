@@ -28,4 +28,9 @@ class ArrayNotation implements NotationInterface
     {
         return $encodedValue;
     }
+
+    public function isDecodeFirst(): bool
+    {
+        return false;
+    }
 }

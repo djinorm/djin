@@ -62,6 +62,10 @@ class ArrayMapper extends AbstractMapper
     {
         $column = $this->getDbAlias();
 
+        if ($this->notation->isDecodeFirst()) {
+            $data = $this->notation->decode($data);
+        }
+
         if (!isset($data[$column]) || $data[$column] === '') {
             if ($this->isAllowNull()) {
                 RepoHelper::setProperty($object, $this->getModelProperty(), null);
@@ -70,7 +74,10 @@ class ArrayMapper extends AbstractMapper
             throw $this->nullHydratorException('array', $object);
         }
 
-        $array = $this->notation->decode($data[$column]);
+        $array = $data[$column];
+        if ($this->notation->isDecodeFirst() === false) {
+            $array = $this->notation->decode($array);
+        }
 
         if ($this->nestedMapper) {
             $array = array_map(function ($data) use ($object){

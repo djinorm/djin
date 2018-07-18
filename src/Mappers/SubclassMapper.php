@@ -40,8 +40,16 @@ class SubclassMapper extends AbstractMapper
      */
     public function hydrate(array $data, $object)
     {
+        if ($this->notation->isDecodeFirst()) {
+            $data = $this->notation->decode($data);
+        }
+
         $data = $data[$this->getDbAlias()];
-        $data = $this->notation->decode($data);
+
+        if ($this->notation->isDecodeFirst() === false) {
+            $data = $this->notation->decode($data);
+        }
+
         $subObject = $this->nestedMapper->hydrate($data);
         RepoHelper::setProperty($object, $this->modelProperty, $subObject);
         return $subObject;

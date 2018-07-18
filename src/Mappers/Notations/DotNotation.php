@@ -49,4 +49,9 @@ class DotNotation implements NotationInterface
         }
         return $decoded->all();
     }
+
+    public function isDecodeFirst(): bool
+    {
+        return true;
+    }
 }

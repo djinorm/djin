@@ -10,6 +10,7 @@ namespace DjinORM\Djin\Mappers\Handler;
 use DjinORM\Djin\Mappers\ArrayMapper;
 use DjinORM\Djin\Mappers\IdMapper;
 use DjinORM\Djin\Mappers\Notations\ArrayNotation;
+use DjinORM\Djin\Mappers\Notations\DotNotation;
 use DjinORM\Djin\Mappers\Notations\JsonNotation;
 use DjinORM\Djin\Mappers\StringMapper;
 use DjinORM\Djin\Mappers\SubclassMapper;
@@ -27,11 +28,17 @@ class MappersHandlerTest extends TestCase
     /** @var array */
     private $jsonMappers = [];
 
+    /** @var array */
+    private $dotMappers = [];
+
     /** @var MappersHandler */
     private $mappersHandlerArray;
 
     /** @var MappersHandler */
     private $mappersHandlerJson;
+
+    /** @var MappersHandler */
+    private $mappersHandlerDot;
 
     protected function setUp(): void
     {
@@ -136,18 +143,73 @@ class MappersHandlerTest extends TestCase
             ]))
         ];
 
+        $this->dotMappers = [
+            new IdMapper('id'),
+            new StringMapper('string'),
+            new ArrayMapper('indexedArrayOfString', 'indexedArrayOfString', new DotNotation(), true),
+            new ArrayMapper('associativeArrayOfString', 'associativeArrayOfString', new DotNotation(), true),
+            new ArrayMapper(
+                'indexedArrayOfModel',
+                'db_indexedArrayOfModel',
+                new DotNotation(),
+                true,
+                new MappersHandler(TestModel::class, [
+                    new IdMapper('id'),
+                    new IdMapper('otherId'),
+                ])
+            ),
+            new ArrayMapper(
+                'associativeArrayOfModel',
+                'db_associativeArrayOfModel',
+                new DotNotation(),
+                true,
+                new MappersHandler(TestModel::class, [
+                    new IdMapper('id'),
+                    new IdMapper('otherId'),
+                ])
+            ),
+            new SubclassMapper('sub', 'db_sub', new DotNotation(), new MappersHandler(TestSubmodelMapper::class, [
+                new StringMapper('string'),
+                new ArrayMapper(
+                    'indexedArrayOfModel',
+                    'db_indexedArrayOfModel',
+                    new DotNotation(),
+                    true,
+                    new MappersHandler(TestModel::class, [
+                        new IdMapper('id'),
+                        new IdMapper('otherId'),
+                    ])
+                ),
+                new ArrayMapper(
+                    'associativeArrayOfModel',
+                    'db_associativeArrayOfModel',
+                    new DotNotation(),
+                    true,
+                    new MappersHandler(TestModel::class, [
+                        new IdMapper('id'),
+                        new IdMapper('otherId'),
+                    ])
+                ),
+            ]))
+        ];
+
         $this->mappersHandlerArray = new MappersHandler(TestModelMappersHandler::class, $this->arrayMappers);
         $this->mappersHandlerJson = new MappersHandler(TestModelMappersHandler::class, $this->jsonMappers);
+        $this->mappersHandlerDot = new MappersHandler(TestModelMappersHandler::class, $this->dotMappers);
     }
 
     public function testGetModelClassName()
     {
         $this->assertEquals(TestModelMappersHandler::class, $this->mappersHandlerArray->getModelClassName());
+        $this->assertEquals(TestModelMappersHandler::class, $this->mappersHandlerJson->getModelClassName());
+        $this->assertEquals(TestModelMappersHandler::class, $this->mappersHandlerDot->getModelClassName());
     }
 
     public function testGetMappers()
     {
         $this->assertEquals($this->arrayMappers, $this->mappersHandlerArray->getMappers());
+        $this->assertEquals($this->jsonMappers, $this->mappersHandlerJson->getMappers());
+        $this->assertEquals($this->dotMappers, $this->mappersHandlerDot->getMappers());
     }
 
     public function testModelPropertiesToDbAliases()
@@ -176,6 +238,7 @@ class MappersHandlerTest extends TestCase
 
         $this->assertEquals($expected, $this->mappersHandlerArray->modelPropertiesToDbAliases());
         $this->assertEquals($expected, $this->mappersHandlerJson->modelPropertiesToDbAliases());
+        $this->assertEquals($expected, $this->mappersHandlerDot->modelPropertiesToDbAliases());
     }
 
     public function testModelPropertyToDbAlias()
@@ -188,6 +251,11 @@ class MappersHandlerTest extends TestCase
         $this->assertEquals(
             'db_sub.db_indexedArrayOfModel.id',
             $this->mappersHandlerJson->modelPropertyToDbAlias('sub.indexedArrayOfModel.id')
+        );
+
+        $this->assertEquals(
+            'db_sub.db_indexedArrayOfModel.id',
+            $this->mappersHandlerDot->modelPropertyToDbAlias('sub.indexedArrayOfModel.id')
         );
     }
 
@@ -315,6 +383,70 @@ class MappersHandlerTest extends TestCase
             ]),
         ];
         $this->assertEquals($expected, $this->mappersHandlerJson->hydrate($data));
+    }
+
+    public function testHydrateDot()
+    {
+        $expected = new TestModelMappersHandler();
+        $data = [
+            'id' => 1,
+            'string' => '_string',
+            'indexedArrayOfString' => [
+                '_string_1',
+                '_string_2',
+                '_string_3',
+            ],
+            'associativeArrayOfString' => [
+                'first' => '_string_1',
+                'second' => '_string_2',
+                'third' => '_string_3',
+            ],
+            'db_indexedArrayOfModel' => [
+                [
+                    'id' => 1,
+                    'otherId' => 11
+                ],
+                [
+                    'id' => 2,
+                    'otherId' => 22
+                ],
+            ],
+            'db_associativeArrayOfModel' => [
+                'first' => [
+                    'id' => 1,
+                    'otherId' => 111
+                ],
+                'second' => [
+                    'id' => 2,
+                    'otherId' => 222
+                ],
+            ],
+            'db_sub' => [
+                'string' => '__string',
+                'db_indexedArrayOfModel' => [
+                    [
+                        'id' => 1,
+                        'otherId' => 1111
+                    ],
+                    [
+                        'id' => 2,
+                        'otherId' => 2222
+                    ],
+                ],
+                'db_associativeArrayOfModel' => [
+                    '_first' => [
+                        'id' => 1,
+                        'otherId' => 11111
+                    ],
+                    '_second' => [
+                        'id' => 2,
+                        'otherId' => 22222
+                    ],
+                ],
+            ],
+        ];
+        $data = (new DotNotation())->encode($data);
+        $this->assertEquals($expected, $this->mappersHandlerDot->hydrate($data));
     }
 
     public function testExtractArray()

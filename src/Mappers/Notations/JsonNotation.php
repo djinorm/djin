@@ -28,4 +28,10 @@ class JsonNotation implements NotationInterface
     {
         return json_decode($encodedValue, true);
     }
+
+
+    public function isDecodeFirst(): bool
+    {
+        return false;
+    }
 }
