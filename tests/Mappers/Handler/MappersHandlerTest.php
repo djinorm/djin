@@ -9,6 +9,8 @@ namespace DjinORM\Djin\Mappers\Handler;
 
 use DjinORM\Djin\Mappers\ArrayMapper;
 use DjinORM\Djin\Mappers\IdMapper;
+use DjinORM\Djin\Mappers\Notations\ArrayNotation;
+use DjinORM\Djin\Mappers\Notations\JsonNotation;
 use DjinORM\Djin\Mappers\StringMapper;
 use DjinORM\Djin\Mappers\SubclassMapper;
 use DjinORM\Djin\Mock\MappersHandler\TestModelMappersHandler;
@@ -37,13 +39,13 @@ class MappersHandlerTest extends TestCase
         $this->arrayMappers = [
             new IdMapper('id'),
             new StringMapper('string'),
-            new ArrayMapper('indexedArrayOfString', 'indexedArrayOfString', true, false),
-            new ArrayMapper('associativeArrayOfString', 'associativeArrayOfString', true, false),
+            new ArrayMapper('indexedArrayOfString', 'indexedArrayOfString', new ArrayNotation(), true),
+            new ArrayMapper('associativeArrayOfString', 'associativeArrayOfString', new ArrayNotation(), true),
             new ArrayMapper(
                 'indexedArrayOfModel',
                 'db_indexedArrayOfModel',
+                new ArrayNotation(),
                 true,
-                false,
                 new MappersHandler(TestModel::class, [
                     new IdMapper('id'),
                     new IdMapper('otherId'),
@@ -52,20 +54,20 @@ class MappersHandlerTest extends TestCase
             new ArrayMapper(
                 'associativeArrayOfModel',
                 'db_associativeArrayOfModel',
+                new ArrayNotation(),
                 true,
-                false,
                 new MappersHandler(TestModel::class, [
                     new IdMapper('id'),
                     new IdMapper('otherId'),
                 ])
             ),
-            new SubclassMapper('sub', 'db_sub', false, new MappersHandler(TestSubmodelMapper::class, [
+            new SubclassMapper('sub', 'db_sub', new ArrayNotation(), new MappersHandler(TestSubmodelMapper::class, [
                 new StringMapper('string'),
                 new ArrayMapper(
                     'indexedArrayOfModel',
                     'db_indexedArrayOfModel',
+                    new ArrayNotation(),
                     true,
-                    false,
                     new MappersHandler(TestModel::class, [
                         new IdMapper('id'),
                         new IdMapper('otherId'),
@@ -74,8 +76,8 @@ class MappersHandlerTest extends TestCase
                 new ArrayMapper(
                     'associativeArrayOfModel',
                     'db_associativeArrayOfModel',
+                    new ArrayNotation(),
                     true,
-                    false,
                     new MappersHandler(TestModel::class, [
                         new IdMapper('id'),
                         new IdMapper('otherId'),
@@ -87,12 +89,12 @@ class MappersHandlerTest extends TestCase
         $this->jsonMappers = [
             new IdMapper('id'),
             new StringMapper('string'),
-            new ArrayMapper('indexedArrayOfString', 'indexedArrayOfString', true, true),
-            new ArrayMapper('associativeArrayOfString', 'associativeArrayOfString', true, true),
+            new ArrayMapper('indexedArrayOfString', 'indexedArrayOfString', new JsonNotation(), true),
+            new ArrayMapper('associativeArrayOfString', 'associativeArrayOfString', new JsonNotation(), true),
             new ArrayMapper(
                 'indexedArrayOfModel',
                 'db_indexedArrayOfModel',
-                true,
+                new JsonNotation(),
                 true,
                 new MappersHandler(TestModel::class, [
                     new IdMapper('id'),
@@ -102,19 +104,19 @@ class MappersHandlerTest extends TestCase
             new ArrayMapper(
                 'associativeArrayOfModel',
                 'db_associativeArrayOfModel',
-                true,
+                new JsonNotation(),
                 true,
                 new MappersHandler(TestModel::class, [
                     new IdMapper('id'),
                     new IdMapper('otherId'),
                 ])
             ),
-            new SubclassMapper('sub', 'db_sub', true, new MappersHandler(TestSubmodelMapper::class, [
+            new SubclassMapper('sub', 'db_sub', new JsonNotation(), new MappersHandler(TestSubmodelMapper::class, [
                 new StringMapper('string'),
                 new ArrayMapper(
                     'indexedArrayOfModel',
                     'db_indexedArrayOfModel',
-                    true,
+                    new JsonNotation(),
                     true,
                     new MappersHandler(TestModel::class, [
                         new IdMapper('id'),
@@ -124,7 +126,7 @@ class MappersHandlerTest extends TestCase
                 new ArrayMapper(
                     'associativeArrayOfModel',
                     'db_associativeArrayOfModel',
-                    true,
+                    new JsonNotation(),
                     true,
                     new MappersHandler(TestModel::class, [
                         new IdMapper('id'),

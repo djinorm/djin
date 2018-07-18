@@ -10,6 +10,7 @@ namespace DjinORM\Djin\Mappers;
 
 use DjinORM\Djin\Helpers\RepoHelper;
 use DjinORM\Djin\Mappers\Handler\MappersHandlerInterface;
+use DjinORM\Djin\Mappers\Notations\NotationInterface;
 
 class SubclassMapper extends AbstractMapper
 {
@@ -19,16 +20,16 @@ class SubclassMapper extends AbstractMapper
      */
     protected $nestedMapper;
     /**
-     * @var bool
+     * @var NotationInterface
      */
-    private $asJsonString;
+    private $notation;
 
-    public function __construct(string $modelProperty, string $dbAlias, bool $asJsonString = false, MappersHandlerInterface $nestedMapper)
+    public function __construct(string $modelProperty, string $dbAlias, NotationInterface $notation, MappersHandlerInterface $nestedMapper)
     {
         $this->modelProperty = $modelProperty;
         $this->dbAlias = $dbAlias;
         $this->nestedMapper = $nestedMapper;
-        $this->asJsonString = $asJsonString;
+        $this->notation = $notation;
     }
 
     /**
@@ -40,9 +41,7 @@ class SubclassMapper extends AbstractMapper
     public function hydrate(array $data, $object)
     {
         $data = $data[$this->getDbAlias()];
-        if ($this->asJsonString) {
-            $data = json_decode($data, true);
-        }
+        $data = $this->notation->decode($data);
         $subObject = $this->nestedMapper->hydrate($data);
         RepoHelper::setProperty($object, $this->modelProperty, $subObject);
         return $subObject;
@@ -57,9 +56,7 @@ class SubclassMapper extends AbstractMapper
     {
         $subObject = RepoHelper::getProperty($object, $this->modelProperty);
         $data = $this->nestedMapper->extract($subObject);
-        if ($this->asJsonString) {
-            $data = json_encode($data);
-        }
+        $data = $this->notation->encode($data);
         return [
             $this->getDbAlias() => $data,
         ];

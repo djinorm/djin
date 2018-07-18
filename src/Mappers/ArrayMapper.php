@@ -12,6 +12,7 @@ use DjinORM\Djin\Exceptions\ExtractorException;
 use DjinORM\Djin\Exceptions\HydratorException;
 use DjinORM\Djin\Helpers\RepoHelper;
 use DjinORM\Djin\Mappers\Handler\MappersHandlerInterface;
+use DjinORM\Djin\Mappers\Notations\NotationInterface;
 
 class ArrayMapper extends AbstractMapper
 {
@@ -28,12 +29,16 @@ class ArrayMapper extends AbstractMapper
      * @var bool
      */
     protected $asJsonString;
+    /**
+     * @var NotationInterface
+     */
+    private $notation;
 
     public function __construct(
         string $modelProperty,
         string $dbAlias,
+        NotationInterface $notation,
         bool $allowNull = false,
-        bool $asJsonString = false,
         MappersHandlerInterface $nestedMapper = null,
         bool $allowNullNested = true
     )
@@ -43,7 +48,7 @@ class ArrayMapper extends AbstractMapper
         $this->allowNull = $allowNull;
         $this->nestedMapper = $nestedMapper;
         $this->allowNullNested = $allowNullNested;
-        $this->asJsonString = $asJsonString;
+        $this->notation = $notation;
     }
 
     /**
@@ -65,14 +70,7 @@ class ArrayMapper extends AbstractMapper
             throw $this->nullHydratorException('array', $object);
         }
 
-        if (is_array($data[$column])) {
-            $array = $data[$column];
-        } elseif (is_string($data[$column])) {
-            $array = \json_decode($data[$column], true);
-            if ($array === null && json_last_error() !== JSON_ERROR_NONE) {
-                throw new HydratorException('Json parse error: ' . json_last_error_msg(), 1);
-            }
-        }
+        $array = $this->notation->decode($data[$column]);
 
         if ($this->nestedMapper) {
             $array = array_map(function ($data) use ($object){
@@ -121,12 +119,7 @@ class ArrayMapper extends AbstractMapper
             }, $array);
         }
 
-        if ($this->asJsonString) {
-            $array = \json_encode($array);
-            if ($array === false && json_last_error() !== JSON_ERROR_NONE) {
-                throw new ExtractorException('Json encode error: ' . json_last_error_msg(), 1);
-            }
-        }
+        $array = $this->notation->encode($array);
 
         return [
             $this->getDbAlias() => $array
