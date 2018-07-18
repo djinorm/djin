@@ -18,12 +18,17 @@ class SubclassMapper extends AbstractMapper
      * @var MappersHandlerInterface
      */
     protected $nestedMapper;
+    /**
+     * @var bool
+     */
+    private $asJsonString;
 
-    public function __construct(string $modelProperty, string $dbAlias, MappersHandlerInterface $nestedMapper)
+    public function __construct(string $modelProperty, string $dbAlias, bool $asJsonString = false, MappersHandlerInterface $nestedMapper)
     {
         $this->modelProperty = $modelProperty;
         $this->dbAlias = $dbAlias;
         $this->nestedMapper = $nestedMapper;
+        $this->asJsonString = $asJsonString;
     }
 
     /**
@@ -34,7 +39,11 @@ class SubclassMapper extends AbstractMapper
      */
     public function hydrate(array $data, $object)
     {
-        $subObject = $this->nestedMapper->hydrate($data[$this->getDbAlias()]);
+        $data = $data[$this->getDbAlias()];
+        if ($this->asJsonString) {
+            $data = json_decode($data, true);
+        }
+        $subObject = $this->nestedMapper->hydrate($data);
         RepoHelper::setProperty($object, $this->modelProperty, $subObject);
         return $subObject;
     }
@@ -47,8 +56,12 @@ class SubclassMapper extends AbstractMapper
     public function extract($object): array
     {
         $subObject = RepoHelper::getProperty($object, $this->modelProperty);
+        $data = $this->nestedMapper->extract($subObject);
+        if ($this->asJsonString) {
+            $data = json_encode($data);
+        }
         return [
-            $this->getDbAlias() => $this->nestedMapper->extract($subObject)
+            $this->getDbAlias() => $data,
         ];
     }
 

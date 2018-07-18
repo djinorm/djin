@@ -59,7 +59,7 @@ class MappersHandlerTest extends TestCase
                     new IdMapper('otherId'),
                 ])
             ),
-            new SubclassMapper('sub', 'db_sub', new MappersHandler(TestSubmodelMapper::class, [
+            new SubclassMapper('sub', 'db_sub', false, new MappersHandler(TestSubmodelMapper::class, [
                 new StringMapper('string'),
                 new ArrayMapper(
                     'indexedArrayOfModel',
@@ -109,7 +109,7 @@ class MappersHandlerTest extends TestCase
                     new IdMapper('otherId'),
                 ])
             ),
-            new SubclassMapper('sub', 'db_sub', new MappersHandler(TestSubmodelMapper::class, [
+            new SubclassMapper('sub', 'db_sub', true, new MappersHandler(TestSubmodelMapper::class, [
                 new StringMapper('string'),
                 new ArrayMapper(
                     'indexedArrayOfModel',
@@ -288,7 +288,7 @@ class MappersHandlerTest extends TestCase
                     'otherId' => 222
                 ],
             ]),
-            'db_sub' => [
+            'db_sub' => json_encode([
                 'string' => '__string',
                 'db_indexedArrayOfModel' => json_encode([
                     [
@@ -310,7 +310,7 @@ class MappersHandlerTest extends TestCase
                         'otherId' => 22222
                     ],
                 ]),
-            ],
+            ]),
         ];
         $this->assertEquals($expected, $this->mappersHandlerJson->hydrate($data));
     }
@@ -413,7 +413,7 @@ class MappersHandlerTest extends TestCase
                     'otherId' => 222
                 ],
             ]),
-            'db_sub' => [
+            'db_sub' => json_encode([
                 'string' => '__string',
                 'db_indexedArrayOfModel' => json_encode([
                     [
@@ -435,7 +435,7 @@ class MappersHandlerTest extends TestCase
                         'otherId' => 22222
                     ],
                 ]),
-            ],
+            ]),
         ];
         $model = new TestModelMappersHandler();
         $this->assertEquals($expected, $this->mappersHandlerJson->extract($model));

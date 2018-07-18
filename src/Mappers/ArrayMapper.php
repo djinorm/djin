@@ -67,7 +67,7 @@ class ArrayMapper extends AbstractMapper
 
         if (is_array($data[$column])) {
             $array = $data[$column];
-        } else {
+        } elseif (is_string($data[$column])) {
             $array = \json_decode($data[$column], true);
             if ($array === null && json_last_error() !== JSON_ERROR_NONE) {
                 throw new HydratorException('Json parse error: ' . json_last_error_msg(), 1);
