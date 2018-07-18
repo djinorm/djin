@@ -29,37 +29,37 @@ class MappersHandlerTest extends TestCase
     {
         parent::setUp();
         $this->mappers = [
-            new IdMapper('id'),
-            new StringMapper('string'),
-            new ArrayMapper('indexedArrayOfString', 'indexedArrayOfString', true),
-            new ArrayMapper('associativeArrayOfString', 'associativeArrayOfString', true),
-            new ArrayMapper(
+            'id' => new IdMapper('id'),
+            'string' => new StringMapper('string'),
+            'indexedArrayOfString' => new ArrayMapper('indexedArrayOfString', 'indexedArrayOfString', true),
+            'associativeArrayOfString' => new ArrayMapper('associativeArrayOfString', 'associativeArrayOfString', true),
+            'indexedArrayOfModel' => new ArrayMapper(
                 'indexedArrayOfModel',
                 'db_indexedArrayOfModel',
                 true,
                 new MappersHandler(TestModel::class, [
-                    new IdMapper('id'),
-                    new IdMapper('otherId'),
+                    'id' => new IdMapper('id'),
+                    'otherId' => new IdMapper('otherId'),
                 ])
             ),
-            new ArrayMapper(
+            'associativeArrayOfModel' => new ArrayMapper(
                 'associativeArrayOfModel',
                 'db_associativeArrayOfModel',
                 true,
                 new MappersHandler(TestModel::class, [
-                    new IdMapper('id'),
-                    new IdMapper('otherId'),
+                    'id' => new IdMapper('id'),
+                    'otherId' => new IdMapper('otherId'),
                 ])
             ),
-            new SubclassMapper('sub', 'db_sub', new MappersHandler(TestSubmodelMapper::class, [
-                new StringMapper('string'),
+            'sub' => new SubclassMapper('sub', 'db_sub', new MappersHandler(TestSubmodelMapper::class, [
+                'string' => new StringMapper('string'),
                 new ArrayMapper(
                     'indexedArrayOfModel',
                     'db_indexedArrayOfModel',
                     true,
                     new MappersHandler(TestModel::class, [
-                        new IdMapper('id'),
-                        new IdMapper('otherId'),
+                        'id' => new IdMapper('id'),
+                        'otherId' => new IdMapper('otherId'),
                     ])
                 ),
                 new ArrayMapper(
@@ -67,8 +67,8 @@ class MappersHandlerTest extends TestCase
                     'db_associativeArrayOfModel',
                     true,
                     new MappersHandler(TestModel::class, [
-                        new IdMapper('id'),
-                        new IdMapper('otherId'),
+                        'id' => new IdMapper('id'),
+                        'otherId' => new IdMapper('otherId'),
                     ])
                 ),
             ]))

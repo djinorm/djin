@@ -11,7 +11,7 @@ namespace DjinORM\Djin\Mappers;
 use DjinORM\Djin\Helpers\RepoHelper;
 use DjinORM\Djin\Mappers\Handler\MappersHandlerInterface;
 
-class SubclassMapper extends AbstractMapper
+class SubclassMapper extends AbstractMapper implements NestedMapperInterface
 {
 
     /**

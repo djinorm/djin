@@ -30,12 +30,14 @@ class MappersHandler implements MappersHandlerInterface
     /**
      * Mapper constructor.
      * @param string $classname
-     * @param array $mappers
+     * @param MapperInterface[] $mappers
      */
     public function __construct(string $classname, array $mappers)
     {
         $this->classname = $classname;
-        $this->mappers = $mappers;
+        foreach ($mappers as $mapper) {
+            $this->mappers[$mapper->getModelProperty()] = $mapper;
+        }
     }
 
     /**
