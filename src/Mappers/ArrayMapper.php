@@ -12,7 +12,6 @@ use DjinORM\Djin\Exceptions\ExtractorException;
 use DjinORM\Djin\Exceptions\HydratorException;
 use DjinORM\Djin\Helpers\RepoHelper;
 use DjinORM\Djin\Mappers\Handler\MappersHandlerInterface;
-use DjinORM\Djin\Mappers\Notations\NotationInterface;
 
 class ArrayMapper extends AbstractMapper
 {
@@ -25,19 +24,10 @@ class ArrayMapper extends AbstractMapper
      * @var bool
      */
     protected $allowNullNested;
-    /**
-     * @var bool
-     */
-    protected $asJsonString;
-    /**
-     * @var NotationInterface
-     */
-    private $notation;
 
     public function __construct(
         string $modelProperty,
         string $dbAlias,
-        NotationInterface $notation,
         bool $allowNull = false,
         MappersHandlerInterface $nestedMapper = null,
         bool $allowNullNested = true
@@ -48,7 +38,6 @@ class ArrayMapper extends AbstractMapper
         $this->allowNull = $allowNull;
         $this->nestedMapper = $nestedMapper;
         $this->allowNullNested = $allowNullNested;
-        $this->notation = $notation;
     }
 
     /**
@@ -62,10 +51,6 @@ class ArrayMapper extends AbstractMapper
     {
         $column = $this->getDbAlias();
 
-        if ($this->notation->isDecodeFirst()) {
-            $data = $this->notation->decode($data);
-        }
-
         if (!isset($data[$column]) || $data[$column] === '') {
             if ($this->isAllowNull()) {
                 RepoHelper::setProperty($object, $this->getModelProperty(), null);
@@ -75,9 +60,6 @@ class ArrayMapper extends AbstractMapper
         }
 
         $array = $data[$column];
-        if ($this->notation->isDecodeFirst() === false) {
-            $array = $this->notation->decode($array);
-        }
 
         if ($this->nestedMapper) {
             $array = array_map(function ($data) use ($object){
@@ -125,8 +107,6 @@ class ArrayMapper extends AbstractMapper
                 return $this->nestedMapper->extract($nestedObject);
             }, $array);
         }
-
-        $array = $this->notation->encode($array);
 
         return [
             $this->getDbAlias() => $array

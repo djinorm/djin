@@ -11,7 +11,6 @@ namespace DjinORM\Djin\Mappers;
 use DjinORM\Djin\Exceptions\ExtractorException;
 use DjinORM\Djin\Exceptions\HydratorException;
 use DjinORM\Djin\Mappers\Handler\MappersHandler;
-use DjinORM\Djin\Mappers\Notations\ArrayNotation;
 use DjinORM\Djin\Mock\TestModel;
 use DjinORM\Djin\TestHelpers\MapperTestCase;
 
@@ -93,7 +92,7 @@ class ArrayMapperTest extends MapperTestCase
 
     protected function getNestedMapper(): ArrayMapper
     {
-        return new ArrayMapper('value', 'value', new ArrayNotation(), true, new MappersHandler(TestModel::class, [
+        return new ArrayMapper('value', 'value', true, new MappersHandler(TestModel::class, [
             new IdMapper('id'),
             new IdMapper('otherId'),
         ]), true);
@@ -101,11 +100,11 @@ class ArrayMapperTest extends MapperTestCase
 
     protected function getMapperAllowNull(): ArrayMapper
     {
-        return new ArrayMapper('value', 'value', new ArrayNotation(), true);
+        return new ArrayMapper('value', 'value', true);
     }
 
     protected function getMapperDisallowNull(): ArrayMapper
     {
-        return new ArrayMapper('value', 'value', new ArrayNotation(), false);
+        return new ArrayMapper('value', 'value', false);
     }
 }
