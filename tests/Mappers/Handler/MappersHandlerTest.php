@@ -86,7 +86,7 @@ class MappersHandlerTest extends TestCase
         $this->assertEquals($this->mappers, $this->mappersHandler->getMappers());
     }
 
-    public function testModelPropertiesToDbAliases()
+    public function testGetModelPropertiesToDbAliases()
     {
         $expected = [
             'id' => 'id',
@@ -110,14 +110,14 @@ class MappersHandlerTest extends TestCase
             'sub.associativeArrayOfModel.otherId' => 'db_sub.db_associativeArrayOfModel.otherId',
         ];
 
-        $this->assertEquals($expected, $this->mappersHandler->modelPropertiesToDbAliases());
+        $this->assertEquals($expected, $this->mappersHandler->getModelPropertiesToDbAliases());
     }
 
-    public function testModelPropertyToDbAlias()
+    public function testGetModelPropertyToDbAlias()
     {
         $this->assertEquals(
             'db_sub.db_indexedArrayOfModel.id',
-            $this->mappersHandler->modelPropertyToDbAlias('sub.indexedArrayOfModel.id')
+            $this->mappersHandler->getModelPropertyToDbAlias('sub.indexedArrayOfModel.id')
         );
     }
 

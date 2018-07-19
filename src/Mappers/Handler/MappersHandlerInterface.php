@@ -45,18 +45,18 @@ interface MappersHandlerInterface
      * [
      *      'id' => 'user_id',
      *      'email' => 'email',
-     *      'profile.firstName' => 'profile.first_name',
-     *      'profile.lastName' => 'profile.last_name',
+     *      'profile.firstName' => 'profile_first_name',
+     *      'profile.lastName' => 'profile_last_name',
      * ]
      */
-    public function modelPropertiesToDbAliases(): array;
+    public function getModelPropertiesToDbAliases(): array;
 
 
     /**
-     * @see modelPropertiesToDbAliases()
+     * @see getModelPropertiesToDbAliases()
      * @param string $property
      * @return string
      */
-    public function modelPropertyToDbAlias(string $property): string;
+    public function getModelPropertyToDbAlias(string $property): string;
 
 }

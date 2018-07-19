@@ -89,7 +89,7 @@ class MappersHandler implements MappersHandlerInterface
      *      'profile.lastName' => 'profile.last_name',
      * ]
      */
-    public function modelPropertiesToDbAliases(): array
+    public function getModelPropertiesToDbAliases(): array
     {
         if (null === $this->map) {
             $this->map = $this->recursiveModelPropertiesToDbAliases($this);
@@ -98,13 +98,13 @@ class MappersHandler implements MappersHandlerInterface
     }
 
     /**
-     * @see modelPropertiesToDbAliases()
+     * @see getModelPropertiesToDbAliases()
      * @param string $property
      * @return string
      */
-    public function modelPropertyToDbAlias(string $property): string
+    public function getModelPropertyToDbAlias(string $property): string
     {
-        return $this->modelPropertiesToDbAliases()[$property];
+        return $this->getModelPropertiesToDbAliases()[$property];
     }
 
     protected function recursiveModelPropertiesToDbAliases(MappersHandlerInterface $mappersHandler)
@@ -141,5 +141,4 @@ class MappersHandler implements MappersHandlerInterface
         }
         return $map;
     }
-
 }
