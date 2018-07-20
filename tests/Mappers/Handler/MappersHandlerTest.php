@@ -125,6 +125,45 @@ class MappersHandlerTest extends TestCase
         );
     }
 
+    public function testGetDbAliasesToModelProperties()
+    {
+        $expected = [
+            'id' => 'id',
+            'string' => 'string',
+
+            'indexedArrayOfString' => 'indexedArrayOfString',
+            'associativeArrayOfString' => 'associativeArrayOfString',
+
+            'indexedArrayOfModel' => 'db_indexedArrayOfModel',
+            'indexedArrayOfModel.id' => 'db_indexedArrayOfModel.id',
+            'indexedArrayOfModel.otherId' => 'db_indexedArrayOfModel.otherId',
+
+            'associativeArrayOfModel' => 'db_associativeArrayOfModel',
+            'associativeArrayOfModel.id' => 'db_associativeArrayOfModel.id',
+            'associativeArrayOfModel.otherId' => 'db_associativeArrayOfModel.otherId',
+
+            'sub.string' => 'db_sub.string',
+
+            'sub.indexedArrayOfModel' => 'db_sub.db_indexedArrayOfModel',
+            'sub.indexedArrayOfModel.id' => 'db_sub.db_indexedArrayOfModel.id',
+            'sub.indexedArrayOfModel.otherId' => 'db_sub.db_indexedArrayOfModel.otherId',
+
+            'sub.associativeArrayOfModel' => 'db_sub.db_associativeArrayOfModel',
+            'sub.associativeArrayOfModel.id' => 'db_sub.db_associativeArrayOfModel.id',
+            'sub.associativeArrayOfModel.otherId' => 'db_sub.db_associativeArrayOfModel.otherId',
+        ];
+        $expected = array_flip($expected);
+        $this->assertEquals($expected, $this->mappersHandler->getDbAliasesToModelProperties());
+    }
+
+    public function testGetDbAliasToModelProperty()
+    {
+        $this->assertEquals(
+            'sub.indexedArrayOfModel.id',
+            $this->mappersHandler->getDbAliasToModelProperty('db_sub.db_indexedArrayOfModel.id')
+        );
+    }
+
     public function testHydrateArray()
     {
         $expected = new TestModelMappersHandler();

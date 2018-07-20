@@ -59,4 +59,25 @@ interface MappersHandlerInterface
      */
     public function getModelPropertyToDbAlias(string $property): string;
 
+
+    /**
+     * @return string[] representation mappers as dot-notation. For example, we have UserModel with id and email, and
+     * nested Profile witch contain firstName and lastName values. It can be represented like
+     * [
+     *      'id' => 'user_id',
+     *      'email' => 'email',
+     *      'profile_first_name' => 'profile.firstName',
+     *      'profile_last_name' => 'profile.lastName',
+     * ]
+     */
+    public function getDbAliasesToModelProperties(): array;
+
+
+    /**
+     * @see getModelPropertiesToDbAliases()
+     * @param string $property
+     * @return string
+     */
+    public function getDbAliasToModelProperty(string $property): string;
+
 }
