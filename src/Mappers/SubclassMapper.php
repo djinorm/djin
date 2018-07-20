@@ -60,11 +60,14 @@ class SubclassMapper extends AbstractMapper implements NestedMapperInterface
     {
         $subObject = RepoHelper::getProperty($object, $this->modelProperty);
 
-        $data = $this->nestedMapper->extract($subObject);
-        if ($data === null && $this->isAllowNull() == false) {
+        if ($subObject === null) {
+            if ($this->isAllowNull() == true) {
+                return [$this->getDbAlias() => null];
+            }
             throw $this->nullExtractorException($this->nestedMapper->getModelClassName(), $object);
         }
 
+        $data = $this->nestedMapper->extract($subObject);
         return [
             $this->getDbAlias() => $data,
         ];
