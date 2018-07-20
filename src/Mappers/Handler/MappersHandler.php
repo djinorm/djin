@@ -112,28 +112,15 @@ class MappersHandler implements MappersHandlerInterface
         $map = [];
         foreach ($mappersHandler->getMappers() as $mapper) {
 
-            if ($mapper instanceof ArrayMapperInterface && $mapper->getNestedMappersHandler()) {
+            $isArrayMapper = $mapper instanceof ArrayMapperInterface && $mapper->getNestedMappersHandler();
+            $isNestedMapper = $mapper instanceof NestedMapperInterface;
+            if ($isArrayMapper || $isNestedMapper) {
                 $property = $mapper->getModelProperty();
                 $dbAlias = $mapper->getDbAlias();
                 $subMap = $this->recursiveModelPropertiesToDbAliases($mapper->getNestedMappersHandler());
                 $map["{$property}"] = "{$dbAlias}";
                 foreach ($subMap as $subProperty => $subDbAlias) {
                     $map["{$property}.{$subProperty}"] = "{$dbAlias}.{$subDbAlias}";
-                }
-                continue;
-            }
-
-            if ($mapper instanceof NestedMapperInterface) {
-                $property = $mapper->getModelProperty();
-
-                $dbAlias = $mapper->getDbAlias();
-                if (mb_strlen($dbAlias) > 0) {
-                    $dbAlias.= '.';
-                }
-
-                $subMap = $this->recursiveModelPropertiesToDbAliases($mapper->getNestedMappersHandler());
-                foreach ($subMap as $subProperty => $subDbAlias) {
-                    $map["{$property}.{$subProperty}"] = $dbAlias.$subDbAlias;
                 }
                 continue;
             }

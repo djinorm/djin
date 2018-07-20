@@ -103,6 +103,7 @@ class MappersHandlerTest extends TestCase
             'associativeArrayOfModel.id' => 'db_associativeArrayOfModel.id',
             'associativeArrayOfModel.otherId' => 'db_associativeArrayOfModel.otherId',
 
+            'sub' => 'db_sub',
             'sub.string' => 'db_sub.string',
 
             'sub.indexedArrayOfModel' => 'db_sub.db_indexedArrayOfModel',
@@ -142,6 +143,7 @@ class MappersHandlerTest extends TestCase
             'associativeArrayOfModel.id' => 'db_associativeArrayOfModel.id',
             'associativeArrayOfModel.otherId' => 'db_associativeArrayOfModel.otherId',
 
+            'sub' => 'db_sub',
             'sub.string' => 'db_sub.string',
 
             'sub.indexedArrayOfModel' => 'db_sub.db_indexedArrayOfModel',
