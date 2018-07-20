@@ -1,7 +1,7 @@
 <?php
 /**
  * Created for DjinORM.
- * Datetime: 18.07.2018 18:03
+ * Datetime: 20.07.2018 12:36
  * @author Timur Kasumov aka XAKEPEHOK
  */
 
@@ -10,9 +10,9 @@ namespace DjinORM\Djin\Mappers;
 
 use DjinORM\Djin\Mappers\Handler\MappersHandlerInterface;
 
-interface NestedMapperInterface extends MapperInterface
+interface ArrayMapperInterface extends MapperInterface
 {
 
-    public function getNestedMappersHandler(): MappersHandlerInterface;
+    public function getNestedMappersHandler(): ?MappersHandlerInterface;
 
 }

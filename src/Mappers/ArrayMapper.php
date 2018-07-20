@@ -13,7 +13,7 @@ use DjinORM\Djin\Exceptions\HydratorException;
 use DjinORM\Djin\Helpers\RepoHelper;
 use DjinORM\Djin\Mappers\Handler\MappersHandlerInterface;
 
-class ArrayMapper extends AbstractMapper implements NestedMapperInterface
+class ArrayMapper extends AbstractMapper implements ArrayMapperInterface
 {
 
     /**

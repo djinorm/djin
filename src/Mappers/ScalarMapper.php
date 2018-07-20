@@ -9,7 +9,7 @@ namespace DjinORM\Djin\Mappers;
 
 
 
-abstract class ScalarMapper extends AbstractMapper
+abstract class ScalarMapper extends AbstractMapper implements ScalarMapperInterface
 {
 
     /**
