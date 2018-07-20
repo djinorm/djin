@@ -95,17 +95,21 @@ class MappersHandlerTest extends TestCase
             'indexedArrayOfString' => 'indexedArrayOfString',
             'associativeArrayOfString' => 'associativeArrayOfString',
 
+            'indexedArrayOfModel' => 'db_indexedArrayOfModel',
             'indexedArrayOfModel.id' => 'db_indexedArrayOfModel.id',
             'indexedArrayOfModel.otherId' => 'db_indexedArrayOfModel.otherId',
 
+            'associativeArrayOfModel' => 'db_associativeArrayOfModel',
             'associativeArrayOfModel.id' => 'db_associativeArrayOfModel.id',
             'associativeArrayOfModel.otherId' => 'db_associativeArrayOfModel.otherId',
 
             'sub.string' => 'db_sub.string',
 
+            'sub.indexedArrayOfModel' => 'db_sub.db_indexedArrayOfModel',
             'sub.indexedArrayOfModel.id' => 'db_sub.db_indexedArrayOfModel.id',
             'sub.indexedArrayOfModel.otherId' => 'db_sub.db_indexedArrayOfModel.otherId',
 
+            'sub.associativeArrayOfModel' => 'db_sub.db_associativeArrayOfModel',
             'sub.associativeArrayOfModel.id' => 'db_sub.db_associativeArrayOfModel.id',
             'sub.associativeArrayOfModel.otherId' => 'db_sub.db_associativeArrayOfModel.otherId',
         ];

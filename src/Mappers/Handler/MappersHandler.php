@@ -9,9 +9,9 @@ namespace DjinORM\Djin\Mappers\Handler;
 
 
 use DjinORM\Djin\Helpers\RepoHelper;
-use DjinORM\Djin\Mappers\ArrayMapper;
+use DjinORM\Djin\Mappers\ArrayMapperInterface;
 use DjinORM\Djin\Mappers\MapperInterface;
-use DjinORM\Djin\Mappers\SubclassMapper;
+use DjinORM\Djin\Mappers\NestedMapperInterface;
 
 class MappersHandler implements MappersHandlerInterface
 {
@@ -112,17 +112,18 @@ class MappersHandler implements MappersHandlerInterface
         $map = [];
         foreach ($mappersHandler->getMappers() as $mapper) {
 
-            if ($mapper instanceof ArrayMapper && $mapper->getNestedMappersHandler()) {
+            if ($mapper instanceof ArrayMapperInterface && $mapper->getNestedMappersHandler()) {
                 $property = $mapper->getModelProperty();
                 $dbAlias = $mapper->getDbAlias();
                 $subMap = $this->recursiveModelPropertiesToDbAliases($mapper->getNestedMappersHandler());
+                $map["{$property}"] = "{$dbAlias}";
                 foreach ($subMap as $subProperty => $subDbAlias) {
                     $map["{$property}.{$subProperty}"] = "{$dbAlias}.{$subDbAlias}";
                 }
                 continue;
             }
 
-            if ($mapper instanceof SubclassMapper) {
+            if ($mapper instanceof NestedMapperInterface) {
                 $property = $mapper->getModelProperty();
 
                 $dbAlias = $mapper->getDbAlias();
