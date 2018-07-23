@@ -292,4 +292,42 @@ class MappersHandlerTest extends TestCase
         $this->assertEquals($expected, $this->mappersHandler->extract($model));
     }
 
+    public function testGetMapperByModelProperty()
+    {
+        $this->assertInstanceOf(
+            SubclassMapper::class,
+            $this->mappersHandler->getMapperByModelProperty('sub')
+        );
+
+        $this->assertInstanceOf(
+            ArrayMapper::class,
+            $this->mappersHandler->getMapperByModelProperty('sub.associativeArrayOfModel')
+        );
+
+        $this->assertInstanceOf(
+            IdMapper::class,
+            $this->mappersHandler->getMapperByModelProperty('sub.associativeArrayOfModel.otherId')
+        );
+
+    }
+
+    public function testGetMapperByDbAlias()
+    {
+        $this->assertInstanceOf(
+            SubclassMapper::class,
+            $this->mappersHandler->getMapperByDbAlias('db_sub')
+        );
+
+        $this->assertInstanceOf(
+            ArrayMapper::class,
+            $this->mappersHandler->getMapperByDbAlias('db_sub.db_associativeArrayOfModel')
+        );
+
+        $this->assertInstanceOf(
+            IdMapper::class,
+            $this->mappersHandler->getMapperByDbAlias('db_sub.db_associativeArrayOfModel.otherId')
+        );
+
+    }
+
 }

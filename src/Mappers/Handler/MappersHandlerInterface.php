@@ -81,4 +81,8 @@ interface MappersHandlerInterface
      */
     public function getDbAliasToModelProperty(string $property): string;
 
+    public function getMapperByModelProperty(string $property): MapperInterface;
+
+    public function getMapperByDbAlias(string $property): MapperInterface;
+
 }

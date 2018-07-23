@@ -155,4 +155,45 @@ class MappersHandler implements MappersHandlerInterface
     {
         return $this->getDbAliasesToModelProperties()[$property];
     }
+
+    public function getMapperByModelProperty(string $property): MapperInterface
+    {
+        return $this->getMapperRecursive($property, $this);
+    }
+
+    protected function getMapperRecursive(string $property, MappersHandlerInterface $mappersHandler): MapperInterface
+    {
+        $path = explode('.', $property);
+        $property = $path[0];
+        unset($path[0]);
+
+        $mapper = $mappersHandler->getMappers()[$property];
+
+        if (empty($path)) {
+            return $mapper;
+        }
+
+        if ($mapper instanceof ArrayMapperInterface) {
+            return $this->getMapperRecursive(
+                implode('.', $path),
+                $mapper->getNestedMappersHandler()
+            );
+        }
+
+        if ($mapper instanceof NestedMapperInterface) {
+            return $this->getMapperRecursive(
+                implode('.', $path),
+                $mapper->getNestedMappersHandler()
+            );
+        }
+
+        return $mapper;
+    }
+
+    public function getMapperByDbAlias(string $property): MapperInterface
+    {
+        return $this->getMapperByModelProperty(
+            $this->getDbAliasToModelProperty($property)
+        );
+    }
 }
