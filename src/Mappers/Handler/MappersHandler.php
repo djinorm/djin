@@ -58,12 +58,13 @@ class MappersHandler implements MappersHandlerInterface
 
     /**
      * @param array $data
+     * @param null $object
      * @return mixed
      * @throws \ReflectionException
      */
-    public function hydrate(array $data)
+    public function hydrate(array $data, $object = null)
     {
-        $model = RepoHelper::newWithoutConstructor($this->classname);
+        $model = $object ? $object : RepoHelper::newWithoutConstructor($this->classname);
         foreach ($this->mappers as $mapper) {
             $mapper->hydrate($data, $model);
         }

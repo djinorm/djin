@@ -19,10 +19,10 @@ class SubclassMapper extends AbstractMapper implements NestedMapperInterface
      */
     protected $nestedMapper;
 
-    public function __construct(string $modelProperty, string $dbAlias, MappersHandlerInterface $nestedMapper, bool $allowNull = false)
+    public function __construct(string $modelProperty, string $dbAlias = null, MappersHandlerInterface $nestedMapper, bool $allowNull = false)
     {
         $this->modelProperty = $modelProperty;
-        $this->dbAlias = $dbAlias;
+        $this->dbAlias = $dbAlias ?? $modelProperty;
         $this->nestedMapper = $nestedMapper;
         $this->allowNull = $allowNull;
     }

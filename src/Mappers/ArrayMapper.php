@@ -27,14 +27,14 @@ class ArrayMapper extends AbstractMapper implements ArrayMapperInterface
 
     public function __construct(
         string $modelProperty,
-        string $dbAlias,
+        string $dbAlias = null,
         bool $allowNull = false,
         MappersHandlerInterface $nestedMapper = null,
         bool $allowNullNested = true
     )
     {
         $this->modelProperty = $modelProperty;
-        $this->dbAlias = $dbAlias;
+        $this->dbAlias = $dbAlias ?? $modelProperty;
         $this->allowNull = $allowNull;
         $this->nestedMapper = $nestedMapper;
         $this->allowNullNested = $allowNullNested;

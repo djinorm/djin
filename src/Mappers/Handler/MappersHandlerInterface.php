@@ -27,9 +27,10 @@ interface MappersHandlerInterface
 
     /**
      * @param array $data
+     * @param object|null $object
      * @return mixed
      */
-    public function hydrate(array $data);
+    public function hydrate(array $data, $object = null);
 
 
     /**

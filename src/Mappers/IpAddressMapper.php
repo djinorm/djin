@@ -23,7 +23,7 @@ class IpAddressMapper extends AbstractMapper
     public function __construct($modelProperty, $dbAlias = null, $allowNull = false, $storeAsBinary = true)
     {
         $this->modelProperty = $modelProperty;
-        $this->dbAlias = $dbAlias;
+        $this->dbAlias = $dbAlias ?? $modelProperty;
         $this->allowNull = $allowNull;
         $this->isBinary = $storeAsBinary;
     }
