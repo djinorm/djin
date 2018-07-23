@@ -58,7 +58,7 @@ interface MappersHandlerInterface
      * @param string $property
      * @return string
      */
-    public function getModelPropertyToDbAlias(string $property): string;
+    public function getModelPropertyToDbAlias(string $property): ?string;
 
 
     /**
@@ -79,7 +79,7 @@ interface MappersHandlerInterface
      * @param string $property
      * @return string
      */
-    public function getDbAliasToModelProperty(string $property): string;
+    public function getDbAliasToModelProperty(string $property): ?string;
 
     /**
      * This method allow you to get mapper by model property name

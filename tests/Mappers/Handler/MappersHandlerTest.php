@@ -124,6 +124,10 @@ class MappersHandlerTest extends TestCase
             'db_sub.db_indexedArrayOfModel.id',
             $this->mappersHandler->getModelPropertyToDbAlias('sub.indexedArrayOfModel.id')
         );
+
+        $this->assertNull(
+            $this->mappersHandler->getModelPropertyToDbAlias('sub.indexedArrayOfModel.id.0')
+        );
     }
 
     public function testGetDbAliasesToModelProperties()
@@ -163,6 +167,10 @@ class MappersHandlerTest extends TestCase
         $this->assertEquals(
             'sub.indexedArrayOfModel.id',
             $this->mappersHandler->getDbAliasToModelProperty('db_sub.db_indexedArrayOfModel.id')
+        );
+
+        $this->assertNull(
+            $this->mappersHandler->getDbAliasToModelProperty('db_sub.db_indexedArrayOfModel.id.0')
         );
     }
 
@@ -309,6 +317,14 @@ class MappersHandlerTest extends TestCase
             $this->mappersHandler->getMapperByModelProperty('sub.associativeArrayOfModel.otherId')
         );
 
+        $this->assertNull(
+            $this->mappersHandler->getMapperByModelProperty('indexedArrayOfString.0')
+        );
+
+        $this->assertNull(
+            $this->mappersHandler->getMapperByModelProperty('qwerty')
+        );
+
     }
 
     public function testGetMapperByDbAlias()
@@ -326,6 +342,14 @@ class MappersHandlerTest extends TestCase
         $this->assertInstanceOf(
             IdMapper::class,
             $this->mappersHandler->getMapperByDbAlias('db_sub.db_associativeArrayOfModel.otherId')
+        );
+
+        $this->assertNull(
+            $this->mappersHandler->getMapperByDbAlias('indexedArrayOfString.0')
+        );
+
+        $this->assertNull(
+            $this->mappersHandler->getMapperByDbAlias('qwerty')
         );
 
     }
