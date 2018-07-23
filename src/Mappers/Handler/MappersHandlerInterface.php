@@ -46,8 +46,8 @@ interface MappersHandlerInterface
      * [
      *      'id' => 'user_id',
      *      'email' => 'email',
-     *      'profile.firstName' => 'profile_first_name',
-     *      'profile.lastName' => 'profile_last_name',
+     *      'profile.firstName' => 'profile.first_name',
+     *      'profile.lastName' => 'profile.last_name',
      * ]
      */
     public function getModelPropertiesToDbAliases(): array;
@@ -67,8 +67,8 @@ interface MappersHandlerInterface
      * [
      *      'id' => 'user_id',
      *      'email' => 'email',
-     *      'profile_first_name' => 'profile.firstName',
-     *      'profile_last_name' => 'profile.lastName',
+     *      'profile.first_name' => 'profile.firstName',
+     *      'profile.last_name' => 'profile.lastName',
      * ]
      */
     public function getDbAliasesToModelProperties(): array;
@@ -81,8 +81,18 @@ interface MappersHandlerInterface
      */
     public function getDbAliasToModelProperty(string $property): string;
 
-    public function getMapperByModelProperty(string $property): MapperInterface;
+    /**
+     * This method allow you to get mapper by model property name
+     * @param string $property - model property. Can be nested, for example: profile.firstName
+     * @return MapperInterface|null
+     */
+    public function getMapperByModelProperty(string $property): ?MapperInterface;
 
-    public function getMapperByDbAlias(string $property): MapperInterface;
+    /**
+     * This method allow you to get mapper by db alias name
+     * @param string $dbAlias - can be nested, for example: profile.first_name
+     * @return MapperInterface|null
+     */
+    public function getMapperByDbAlias(string $dbAlias): ?MapperInterface;
 
 }

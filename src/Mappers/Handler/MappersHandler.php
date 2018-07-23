@@ -156,11 +156,21 @@ class MappersHandler implements MappersHandlerInterface
         return $this->getDbAliasesToModelProperties()[$property];
     }
 
+    /**
+     * This method allow you to get mapper by model property name
+     * @param string $property - model property. Can be nested, for example: profile.firstName
+     * @return MapperInterface|null
+     */
     public function getMapperByModelProperty(string $property): MapperInterface
     {
         return $this->getMapperRecursive($property, $this);
     }
 
+    /**
+     * @param string $property
+     * @param MappersHandlerInterface $mappersHandler
+     * @return MapperInterface
+     */
     protected function getMapperRecursive(string $property, MappersHandlerInterface $mappersHandler): MapperInterface
     {
         $path = explode('.', $property);
@@ -190,10 +200,15 @@ class MappersHandler implements MappersHandlerInterface
         return $mapper;
     }
 
-    public function getMapperByDbAlias(string $property): MapperInterface
+    /**
+     * This method allow you to get mapper by db alias name
+     * @param string $dbAlias - can be nested, for example: profile.first_name
+     * @return MapperInterface|null
+     */
+    public function getMapperByDbAlias(string $dbAlias): MapperInterface
     {
         return $this->getMapperByModelProperty(
-            $this->getDbAliasToModelProperty($property)
+            $this->getDbAliasToModelProperty($dbAlias)
         );
     }
 }
