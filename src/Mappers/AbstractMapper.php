@@ -48,7 +48,7 @@ abstract class AbstractMapper implements MapperInterface
     /**
      * @return bool
      */
-    public function isAllowNull(): bool
+    public function isNullAllowed(): bool
     {
         return $this->allowNull;
     }

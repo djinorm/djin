@@ -40,7 +40,7 @@ class IpAddressMapper extends AbstractMapper
         $column = $this->getDbAlias();
 
         if (!isset($data[$column]) || $data[$column] === '') {
-            if ($this->isAllowNull()) {
+            if ($this->isNullAllowed()) {
                 RepoHelper::setProperty($object, $this->getModelProperty(), null);
                 return null;
             }
@@ -71,7 +71,7 @@ class IpAddressMapper extends AbstractMapper
         $ip = RepoHelper::getProperty($object, $this->getModelProperty());
 
         if ($ip === null || $ip === '') {
-            if ($this->isAllowNull() == false) {
+            if ($this->isNullAllowed() == false) {
                 throw $this->nullExtractorException('IP address', $object);
             }
             return [

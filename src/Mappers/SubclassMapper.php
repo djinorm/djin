@@ -37,7 +37,7 @@ class SubclassMapper extends AbstractMapper implements NestedMapperInterface
     public function hydrate(array $data, $object)
     {
         if (!isset($data[$this->getDbAlias()])) {
-            if ($this->isAllowNull()) {
+            if ($this->isNullAllowed()) {
                 RepoHelper::setProperty($object, $this->getModelProperty(), null);
                 return null;
             }
@@ -61,7 +61,7 @@ class SubclassMapper extends AbstractMapper implements NestedMapperInterface
         $subObject = RepoHelper::getProperty($object, $this->modelProperty);
 
         if ($subObject === null) {
-            if ($this->isAllowNull() == true) {
+            if ($this->isNullAllowed() == true) {
                 return [$this->getDbAlias() => null];
             }
             throw $this->nullExtractorException($this->nestedMapper->getModelClassName(), $object);

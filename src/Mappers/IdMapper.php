@@ -29,7 +29,7 @@ class IdMapper extends ScalarMapper
     {
         $column = $this->getDbAlias();
         if (!isset($data[$column])) {
-            if ($this->isAllowNull()) {
+            if ($this->isNullAllowed()) {
                 RepoHelper::setProperty($object, $this->getModelProperty(), null);
                 return null;
             }
@@ -53,7 +53,7 @@ class IdMapper extends ScalarMapper
         $id = RepoHelper::getProperty($object, $this->getModelProperty());
 
         if ($id === null) {
-            if ($this->isAllowNull() == false) {
+            if ($this->isNullAllowed() == false) {
                 throw $this->nullExtractorException('Id', $object);
             }
             return [

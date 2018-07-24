@@ -27,7 +27,7 @@ class IntMapper extends ScalarMapper
     {
         $column = $this->getDbAlias();
         if (!isset($data[$column])) {
-            if ($this->isAllowNull()) {
+            if ($this->isNullAllowed()) {
                 RepoHelper::setProperty($object, $this->getModelProperty(), null);
                 return null;
             }
@@ -50,7 +50,7 @@ class IntMapper extends ScalarMapper
         /** @var int $value */
         $value = RepoHelper::getProperty($object, $this->getModelProperty());
 
-        if ($value === null && $this->isAllowNull() == false) {
+        if ($value === null && $this->isNullAllowed() == false) {
             throw $this->nullExtractorException('integer', $object);
         }
 

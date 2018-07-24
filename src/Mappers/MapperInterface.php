@@ -35,4 +35,9 @@ interface MapperInterface
      */
     public function getDbAlias(): string;
 
+    /**
+     * @return bool
+     */
+    public function isNullAllowed(): bool;
+
 }

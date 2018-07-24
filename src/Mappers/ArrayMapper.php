@@ -52,7 +52,7 @@ class ArrayMapper extends AbstractMapper implements ArrayMapperInterface
         $column = $this->getDbAlias();
 
         if (!isset($data[$column]) || $data[$column] === '') {
-            if ($this->isAllowNull()) {
+            if ($this->isNullAllowed()) {
                 RepoHelper::setProperty($object, $this->getModelProperty(), null);
                 return null;
             }
@@ -88,7 +88,7 @@ class ArrayMapper extends AbstractMapper implements ArrayMapperInterface
         $array = RepoHelper::getProperty($object, $this->getModelProperty());
 
         if (!is_array($array) && !is_a($array, \JsonSerializable::class)) {
-            if ($this->isAllowNull() == false) {
+            if ($this->isNullAllowed() == false) {
                 throw $this->nullExtractorException('array', $object);
             }
             return [

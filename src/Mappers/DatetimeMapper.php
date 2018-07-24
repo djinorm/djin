@@ -44,7 +44,7 @@ class DatetimeMapper extends AbstractMapper
         $column = $this->getDbAlias();
 
         if (!isset($data[$column]) || $data[$column] === '') {
-            if ($this->isAllowNull()) {
+            if ($this->isNullAllowed()) {
                 RepoHelper::setProperty($object, $this->getModelProperty(), null);
                 return null;
             }
@@ -69,7 +69,7 @@ class DatetimeMapper extends AbstractMapper
         $datetime = RepoHelper::getProperty($object, $this->getModelProperty());
 
         if ($datetime === null || $datetime === '') {
-            if ($this->isAllowNull() == false) {
+            if ($this->isNullAllowed() == false) {
                 throw $this->nullExtractorException($this->getClassName(), $object);
             }
             return [
