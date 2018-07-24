@@ -10,7 +10,7 @@ namespace DjinORM\Djin\Mappers\Handler;
 use DjinORM\Djin\Mappers\ArrayMapper;
 use DjinORM\Djin\Mappers\IdMapper;
 use DjinORM\Djin\Mappers\StringMapper;
-use DjinORM\Djin\Mappers\SubclassMapper;
+use DjinORM\Djin\Mappers\NestedMapper;
 use DjinORM\Djin\Mock\MappersHandler\TestModelMappersHandler;
 use DjinORM\Djin\Mock\MappersHandler\TestSubmodelMapper;
 use DjinORM\Djin\Mock\TestModel;
@@ -51,7 +51,7 @@ class MappersHandlerTest extends TestCase
                     'otherId' => new IdMapper('otherId'),
                 ])
             ),
-            'sub' => new SubclassMapper('sub', 'db_sub', new MappersHandler(TestSubmodelMapper::class, [
+            'sub' => new NestedMapper('sub', 'db_sub', new MappersHandler(TestSubmodelMapper::class, [
                 'string' => new StringMapper('string'),
                 new ArrayMapper(
                     'indexedArrayOfModel',
@@ -303,7 +303,7 @@ class MappersHandlerTest extends TestCase
     public function testGetMapperByModelProperty()
     {
         $this->assertInstanceOf(
-            SubclassMapper::class,
+            NestedMapper::class,
             $this->mappersHandler->getMapperByModelProperty('sub')
         );
 
@@ -330,7 +330,7 @@ class MappersHandlerTest extends TestCase
     public function testGetMapperByDbAlias()
     {
         $this->assertInstanceOf(
-            SubclassMapper::class,
+            NestedMapper::class,
             $this->mappersHandler->getMapperByDbAlias('db_sub')
         );
 
