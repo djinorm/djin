@@ -10,7 +10,7 @@ namespace DjinORM\Djin\Repository;
 
 use DjinORM\Djin\Mappers\Handler\MappersHandlerInterface;
 
-interface MapperRepositoryInterface extends RepositoryInterface
+interface MappedRepositoryInterface extends RepositoryInterface
 {
 
     public function getMappersHandler(): MappersHandlerInterface;
