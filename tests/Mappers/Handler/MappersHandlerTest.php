@@ -9,6 +9,7 @@ namespace DjinORM\Djin\Mappers\Handler;
 
 use DjinORM\Djin\Mappers\ArrayMapper;
 use DjinORM\Djin\Mappers\IdMapper;
+use DjinORM\Djin\Mappers\NestedArrayMapper;
 use DjinORM\Djin\Mappers\StringMapper;
 use DjinORM\Djin\Mappers\NestedMapper;
 use DjinORM\Djin\Mock\MappersHandler\TestModelMappersHandler;
@@ -33,45 +34,49 @@ class MappersHandlerTest extends TestCase
             'string' => new StringMapper('string'),
             'indexedArrayOfString' => new ArrayMapper('indexedArrayOfString', 'indexedArrayOfString', true),
             'associativeArrayOfString' => new ArrayMapper('associativeArrayOfString', 'associativeArrayOfString', true),
-            'indexedArrayOfModel' => new ArrayMapper(
+            'indexedArrayOfModel' => new NestedArrayMapper(
                 'indexedArrayOfModel',
                 'db_indexedArrayOfModel',
-                true,
-                new MappersHandler(TestModel::class, [
+                TestModel::class,
+                [
                     'id' => new IdMapper('id'),
                     'otherId' => new IdMapper('otherId'),
-                ])
+                ],
+                true
             ),
-            'associativeArrayOfModel' => new ArrayMapper(
+            'associativeArrayOfModel' => new NestedArrayMapper(
                 'associativeArrayOfModel',
                 'db_associativeArrayOfModel',
-                true,
-                new MappersHandler(TestModel::class, [
+                TestModel::class,
+                [
                     'id' => new IdMapper('id'),
                     'otherId' => new IdMapper('otherId'),
-                ])
+                ],
+                true
             ),
-            'sub' => new NestedMapper('sub', 'db_sub', new MappersHandler(TestSubmodelMapper::class, [
+            'sub' => new NestedMapper('sub', 'db_sub', TestSubmodelMapper::class, [
                 'string' => new StringMapper('string'),
-                new ArrayMapper(
+                new NestedArrayMapper(
                     'indexedArrayOfModel',
                     'db_indexedArrayOfModel',
-                    true,
-                    new MappersHandler(TestModel::class, [
+                    TestModel::class,
+                    [
                         'id' => new IdMapper('id'),
                         'otherId' => new IdMapper('otherId'),
-                    ])
+                    ],
+                    true
                 ),
-                new ArrayMapper(
+                new NestedArrayMapper(
                     'associativeArrayOfModel',
                     'db_associativeArrayOfModel',
-                    true,
-                    new MappersHandler(TestModel::class, [
+                    TestModel::class,
+                    [
                         'id' => new IdMapper('id'),
                         'otherId' => new IdMapper('otherId'),
-                    ])
+                    ],
+                    true
                 ),
-            ]))
+            ])
         ];
         $this->mappersHandler = new MappersHandler(TestModelMappersHandler::class, $this->mappers);
     }
@@ -308,7 +313,7 @@ class MappersHandlerTest extends TestCase
         );
 
         $this->assertInstanceOf(
-            ArrayMapper::class,
+            NestedArrayMapper::class,
             $this->mappersHandler->getMapperByModelProperty('sub.associativeArrayOfModel')
         );
 
@@ -335,7 +340,7 @@ class MappersHandlerTest extends TestCase
         );
 
         $this->assertInstanceOf(
-            ArrayMapper::class,
+            NestedArrayMapper::class,
             $this->mappersHandler->getMapperByDbAlias('db_sub.db_associativeArrayOfModel')
         );
 

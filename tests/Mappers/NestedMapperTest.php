@@ -8,7 +8,6 @@
 namespace DjinORM\Djin\Mappers;
 
 use DjinORM\Djin\Id\Id;
-use DjinORM\Djin\Mappers\Handler\MappersHandler;
 use DjinORM\Djin\TestHelpers\MapperTestCase;
 
 class NestedMapperTest extends MapperTestCase
@@ -64,11 +63,11 @@ class NestedMapperTest extends MapperTestCase
 
     protected function getMapper(): NestedMapper
     {
-        return new NestedMapper('value', 'dbValue', new MappersHandler(get_class($this->testSubClass), [
+        return new NestedMapper('value', 'dbValue', get_class($this->testSubClass), [
             new IdMapper('id'),
             new StringMapper('name'),
             new DatetimeMapper('datetime', null, true)
-        ]));
+        ]);
     }
 
 }

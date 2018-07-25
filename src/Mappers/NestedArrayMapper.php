@@ -11,10 +11,16 @@ namespace DjinORM\Djin\Mappers;
 use DjinORM\Djin\Exceptions\ExtractorException;
 use DjinORM\Djin\Exceptions\HydratorException;
 use DjinORM\Djin\Helpers\RepoHelper;
+use DjinORM\Djin\Mappers\Handler\MappersHandler;
+use DjinORM\Djin\Mappers\Handler\MappersHandlerInterface;
 
-class ArrayMapper extends AbstractMapper implements ArrayMapperInterface
+class NestedArrayMapper extends AbstractMapper implements ArrayMapperInterface, NestedMapperInterface
 {
 
+    /**
+     * @var MappersHandlerInterface
+     */
+    protected $nestedMapper;
     /**
      * @var bool
      */
@@ -23,12 +29,15 @@ class ArrayMapper extends AbstractMapper implements ArrayMapperInterface
     public function __construct(
         string $modelProperty,
         string $dbAlias = null,
+        string $classname,
+        array $mappers,
         bool $allowNull = false
     )
     {
         $this->modelProperty = $modelProperty;
         $this->dbAlias = $dbAlias ?? $modelProperty;
         $this->allowNull = $allowNull;
+        $this->nestedMapper = new MappersHandler($classname, $mappers);
     }
 
     /**
@@ -50,7 +59,15 @@ class ArrayMapper extends AbstractMapper implements ArrayMapperInterface
             throw $this->nullHydratorException('array', $object);
         }
 
-        $array = $data[$column];
+        $array = array_map(function ($data) use ($object) {
+            if (null === $data) {
+                if ($this->isNullAllowed()) {
+                    return null;
+                }
+                return new HydratorException("Null instead of nested object is not allowed in " . $this->getDescription($object));
+            }
+            return $this->nestedMapper->hydrate($data);
+        }, $data[$column]);
 
         RepoHelper::setProperty($object, $this->getModelProperty(), $array);
         return $array;
@@ -75,8 +92,27 @@ class ArrayMapper extends AbstractMapper implements ArrayMapperInterface
             ];
         }
 
+        $array = array_map(function ($nestedObject) use ($object) {
+            if (null === $nestedObject) {
+                if ($this->isNullAllowed()) {
+                    return null;
+                }
+                new ExtractorException("Impossible to save null instead of nested object from " . $this->getDescription($object));
+            }
+            return $this->nestedMapper->extract($nestedObject);
+        }, $array);
+
         return [
             $this->getDbAlias() => $array
         ];
     }
+
+    /**
+     * @return MappersHandlerInterface
+     */
+    public function getNestedMappersHandler(): MappersHandlerInterface
+    {
+        return $this->nestedMapper;
+    }
+
 }

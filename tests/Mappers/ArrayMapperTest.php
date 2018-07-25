@@ -10,8 +10,6 @@ namespace DjinORM\Djin\Mappers;
 
 use DjinORM\Djin\Exceptions\ExtractorException;
 use DjinORM\Djin\Exceptions\HydratorException;
-use DjinORM\Djin\Mappers\Handler\MappersHandler;
-use DjinORM\Djin\Mock\TestModel;
 use DjinORM\Djin\TestHelpers\MapperTestCase;
 
 class ArrayMapperTest extends MapperTestCase
@@ -30,29 +28,6 @@ class ArrayMapperTest extends MapperTestCase
         $this->assertHydrated(null, null, $this->getMapperDisallowNull());
     }
 
-    public function testHydrateNested()
-    {
-        $expected = [
-            '__1__' => new TestModel(1, 'first'),
-            '__2__' => new TestModel(2, 'second'),
-            '__3__' => null
-        ];
-        $input = [
-            '__1__' => [
-                'id' => 1,
-                'otherId' => 'first',
-            ],
-            '__2__' => [
-                'id' => 2,
-                'otherId' => 'second',
-            ],
-            '__3__' => null
-        ];
-
-        $this->assertHydrated($expected, $input, $this->getNestedMapper());
-        $this->assertHydrated($expected, $input, $this->getNestedMapper());
-    }
-
     public function testExtract()
     {
          $this->assertExtracted(null, null, $this->getMapperAllowNull());
@@ -64,38 +39,6 @@ class ArrayMapperTest extends MapperTestCase
 
         $this->expectException(ExtractorException::class);
         $this->assertExtracted(null, null, $this->getMapperDisallowNull());
-    }
-
-    public function testExtractNested()
-    {
-        $input = [
-            '__1__' => new TestModel(1, 'first'),
-            '__2__' => new TestModel(2, 'second'),
-            '__3__' => null,
-        ];
-
-        $expected = [
-            '__1__' => [
-                'id' => 1,
-                'otherId' => 'first',
-            ],
-            '__2__' => [
-                'id' => 2,
-                'otherId' => 'second',
-            ],
-            '__3__' => null
-        ];
-
-        $this->assertExtracted($expected, $input, $this->getNestedMapper());
-        $this->assertExtracted($expected, $input, $this->getNestedMapper());
-    }
-
-    protected function getNestedMapper(): ArrayMapper
-    {
-        return new ArrayMapper('value', 'value', true, new MappersHandler(TestModel::class, [
-            new IdMapper('id'),
-            new IdMapper('otherId'),
-        ]), true);
     }
 
     protected function getMapperAllowNull(): ArrayMapper

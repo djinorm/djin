@@ -9,6 +9,7 @@ namespace DjinORM\Djin\Mappers;
 
 
 use DjinORM\Djin\Helpers\RepoHelper;
+use DjinORM\Djin\Mappers\Handler\MappersHandler;
 use DjinORM\Djin\Mappers\Handler\MappersHandlerInterface;
 
 class NestedMapper extends AbstractMapper implements NestedMapperInterface
@@ -19,11 +20,17 @@ class NestedMapper extends AbstractMapper implements NestedMapperInterface
      */
     protected $nestedMapper;
 
-    public function __construct(string $modelProperty, string $dbAlias = null, MappersHandlerInterface $nestedMapper, bool $allowNull = false)
+    public function __construct(
+        string $modelProperty,
+        string $dbAlias = null,
+        string $classname,
+        array $mappers,
+        bool $allowNull = false
+    )
     {
         $this->modelProperty = $modelProperty;
         $this->dbAlias = $dbAlias ?? $modelProperty;
-        $this->nestedMapper = $nestedMapper;
+        $this->nestedMapper = new MappersHandler($classname, $mappers);
         $this->allowNull = $allowNull;
     }
 

@@ -8,11 +8,7 @@
 namespace DjinORM\Djin\Mappers;
 
 
-use DjinORM\Djin\Mappers\Handler\MappersHandlerInterface;
-
 interface ArrayMapperInterface extends MapperInterface
 {
-
-    public function getNestedMappersHandler(): ?MappersHandlerInterface;
 
 }
