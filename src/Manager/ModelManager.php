@@ -8,6 +8,7 @@ namespace DjinORM\Djin\Manager;
 
 use DjinORM\Djin\Exceptions\UnknownModelException;
 use DjinORM\Djin\Model\ModelInterface;
+use DjinORM\Djin\Model\Shadow;
 use DjinORM\Djin\Model\StubModelInterface;
 use DjinORM\Djin\Exceptions\NotModelInterfaceException;
 use DjinORM\Djin\Repository\RepositoryInterface;
@@ -98,6 +99,17 @@ class ModelManager
         } else {
             $this->modelRepositories[$modelClass ?? call_user_func($repositoryClass . '::getModelClass')] = $repositoryClass;
         }
+    }
+
+    /**
+     * @param Shadow $shadow
+     * @return ModelInterface|null
+     * @throws UnknownModelException
+     */
+    public function findModelByShadow(Shadow $shadow): ?ModelInterface
+    {
+        $repo = $this->getRepositoryByModelName($shadow->getModelName());
+        return $repo->findById($shadow->getId());
     }
 
     /**

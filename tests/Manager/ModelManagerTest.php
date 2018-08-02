@@ -10,11 +10,13 @@ namespace DjinORM\Djin\Manager;
 use DI\ContainerBuilder;
 use DjinORM\Djin\Exceptions\UnknownModelException;
 use DjinORM\Djin\Exceptions\NotModelInterfaceException;
+use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Mock\TestModel;
 use DjinORM\Djin\Mock\TestModelSecondRepository;
 use DjinORM\Djin\Mock\TestSecondModel;
 use DjinORM\Djin\Mock\TestStubModel;
 use DjinORM\Djin\Mock\TestModelRepository;
+use DjinORM\Djin\Model\Shadow;
 use PHPUnit\Framework\TestCase;
 
 class ModelManagerTest extends TestCase
@@ -97,6 +99,13 @@ class ModelManagerTest extends TestCase
     {
         $this->expectException(UnknownModelException::class);
         $this->assertEquals($this->repository, $this->manager->getRepositoryByModelName('qwerty'));
+    }
+
+    public function testFindModelByShadow()
+    {
+        $shadow = new Shadow(new Id(2), TestModel::getModelName());
+        $model = $this->manager->findModelByShadow($shadow);
+        $this->assertEquals($shadow, Shadow::createFromModel($model));
     }
 
     public function testPersistsAsArray()

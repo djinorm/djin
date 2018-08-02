@@ -9,34 +9,19 @@ namespace DjinORM\Djin\TestHelpers;
 
 
 use DjinORM\Djin\Mappers\MapperInterface;
+use DjinORM\Djin\Mock\TestClass;
 use PHPUnit\Framework\TestCase;
 
 abstract class MapperTestCase extends TestCase
 {
 
+    /** @var TestClass */
     protected $testClass;
 
 
     protected function setUp(): void
     {
-        $this->testClass = new class() {
-            protected $value;
-
-            public function __construct($value = null)
-            {
-                $this->value = $value;
-            }
-
-            public function getValue()
-            {
-                return $this->value;
-            }
-
-            public function setValue($value)
-            {
-                $this->value = $value;
-            }
-        };
+        $this->testClass = new TestClass();
     }
 
     /**

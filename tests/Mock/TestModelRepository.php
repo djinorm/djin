@@ -7,6 +7,7 @@
 namespace DjinORM\Djin\Mock;
 
 
+use DjinORM\Djin\Helpers\DjinHelper;
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Id\IdGeneratorInterface;
 use DjinORM\Djin\Id\MemoryIdGenerator;
@@ -30,11 +31,15 @@ class TestModelRepository implements RepositoryInterface
     /**
      * @param $id
      * @return ModelInterface|null
+     * @throws \DjinORM\Djin\Exceptions\InvalidArgumentException
+     * @throws \DjinORM\Djin\Exceptions\MismatchModelException
+     * @throws \DjinORM\Djin\Exceptions\NotPermanentIdException
      */
     public function findById($id): ?ModelInterface
     {
-        if (isset($this->repository[$id])) {
-            $data = $this->repository[$id];
+        $scalarId = DjinHelper::getScalarId($id);
+        if (isset($this->repository[$scalarId])) {
+            $data = $this->repository[$scalarId];
             return new TestModel($data['id'], $data['otherId']);
         }
         return null;
