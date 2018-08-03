@@ -9,7 +9,6 @@ namespace DjinORM\Djin\TestHelpers;
 
 
 use DjinORM\Djin\Mappers\MapperInterface;
-use DjinORM\Djin\Mock\TestClass;
 use PHPUnit\Framework\TestCase;
 
 abstract class MapperTestCase extends TestCase
