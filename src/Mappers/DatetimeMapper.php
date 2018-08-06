@@ -23,13 +23,13 @@ class DatetimeMapper extends AbstractMapper
      */
     private $format;
 
-    public function __construct($modelProperty, $dbAlias = null, $allowNull = false, $isImmutable = true, $format = 'Y-m-d H:i:s')
+    public function __construct($modelProperty, $allowNull = false, $isImmutable = true, $format = 'Y-m-d H:i:s', $dbAlias = null)
     {
         $this->modelProperty = $modelProperty;
-        $this->dbAlias = $dbAlias ?? $modelProperty;
         $this->allowNull = $allowNull;
         $this->isImmutable = $isImmutable;
         $this->format = $format;
+        $this->dbAlias = $dbAlias ?? $modelProperty;
     }
 
     /**
@@ -39,7 +39,7 @@ class DatetimeMapper extends AbstractMapper
      * @throws \DjinORM\Djin\Exceptions\HydratorException
      * @throws \ReflectionException
      */
-    public function hydrate(array $data, $object): ?DateTimeInterface
+    public function hydrate(array $data, object $object): ?DateTimeInterface
     {
         $column = $this->getDbAlias();
 
@@ -58,12 +58,12 @@ class DatetimeMapper extends AbstractMapper
     }
 
     /**
-     * @param $object
+     * @param object $object
      * @return array
      * @throws \DjinORM\Djin\Exceptions\ExtractorException
      * @throws \ReflectionException
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         /** @var DateTimeInterface $datetime */
         $datetime = RepoHelper::getProperty($object, $this->getModelProperty());

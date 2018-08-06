@@ -41,11 +41,11 @@ class DatetimeMapperTest extends MapperTestCase
 
     protected function getMapperAllowNull(): DatetimeMapper
     {
-        return new DatetimeMapper('value', 'value', true);
+        return new DatetimeMapper('value', true);
     }
 
     protected function getMapperDisallowNull(): DatetimeMapper
     {
-        return new DatetimeMapper('value', 'value', false);
+        return new DatetimeMapper('value', false);
     }
 }

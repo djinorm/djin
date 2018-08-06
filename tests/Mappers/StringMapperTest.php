@@ -44,12 +44,12 @@ class StringMapperTest extends MapperTestCase
 
     protected function getMapperAllowNull(): StringMapper
     {
-        return new StringMapper('value', 'value', true, 10);
+        return new StringMapper('value', 10, true);
     }
 
     protected function getMapperDisallowNull(): StringMapper
     {
-        return new StringMapper('value', 'value', false, 10);
+        return new StringMapper('value', 10, false);
     }
 
 }

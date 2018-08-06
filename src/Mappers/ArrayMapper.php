@@ -22,8 +22,8 @@ class ArrayMapper extends AbstractMapper implements ArrayMapperInterface
 
     public function __construct(
         string $modelProperty,
-        string $dbAlias = null,
-        bool $allowNull = false
+        bool $allowNull = false,
+        string $dbAlias = null
     )
     {
         $this->modelProperty = $modelProperty;
@@ -38,7 +38,7 @@ class ArrayMapper extends AbstractMapper implements ArrayMapperInterface
      * @throws HydratorException
      * @throws \ReflectionException
      */
-    public function hydrate(array $data, $object): ?array
+    public function hydrate(array $data, object $object): ?array
     {
         $column = $this->getDbAlias();
 
@@ -57,16 +57,16 @@ class ArrayMapper extends AbstractMapper implements ArrayMapperInterface
     }
 
     /**
-     * @param $object
+     * @param object $object
      * @return array
      * @throws ExtractorException
      * @throws \ReflectionException
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         $array = RepoHelper::getProperty($object, $this->getModelProperty());
 
-        if (!is_array($array) && !is_a($array, \JsonSerializable::class)) {
+        if (!is_array($array)) {
             if ($this->isNullAllowed() == false) {
                 throw $this->nullExtractorException('array', $object);
             }

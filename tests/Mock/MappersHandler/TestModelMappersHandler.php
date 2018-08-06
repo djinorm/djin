@@ -68,4 +68,9 @@ class TestModelMappersHandler implements ModelInterface
 
         $this->sub = new TestSubmodelMapper();
     }
+
+    public static function getModelName(): string
+    {
+        return 'test-model-mappers-handler';
+    }
 }

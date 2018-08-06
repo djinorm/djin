@@ -23,7 +23,7 @@ class FloatMapper extends ScalarMapper
      * @throws HydratorException
      * @throws \ReflectionException
      */
-    public function hydrate(array $data, $object): ?float
+    public function hydrate(array $data, object $object): ?float
     {
         $column = $this->getDbAlias();
 
@@ -41,12 +41,12 @@ class FloatMapper extends ScalarMapper
     }
 
     /**
-     * @param $object
+     * @param object $object
      * @return array
      * @throws ExtractorException
      * @throws \ReflectionException
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         /** @var int $value */
         $value = RepoHelper::getProperty($object, $this->getModelProperty());

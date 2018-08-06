@@ -25,7 +25,7 @@ class IdMapper extends ScalarMapper
      * @throws \DjinORM\Djin\Exceptions\LogicException
      * @throws \ReflectionException
      */
-    public function hydrate(array $data, $object): ?Id
+    public function hydrate(array $data, object $object): ?Id
     {
         $column = $this->getDbAlias();
         if (!isset($data[$column])) {
@@ -42,12 +42,12 @@ class IdMapper extends ScalarMapper
     }
 
     /**
-     * @param $object
+     * @param object $object
      * @return array
      * @throws ExtractorException
      * @throws \ReflectionException
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         /** @var Id $id */
         $id = RepoHelper::getProperty($object, $this->getModelProperty());

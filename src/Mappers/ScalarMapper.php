@@ -13,16 +13,16 @@ abstract class ScalarMapper extends AbstractMapper implements ScalarMapperInterf
 {
 
     /**
-     * Mapper constructor.
+     * ScalarMapper constructor.
      * @param string $modelProperty
-     * @param string $dbAlias
      * @param bool $allowNull
+     * @param string|null $dbAlias
      */
-    public function __construct(string $modelProperty, string $dbAlias = null, bool $allowNull = false)
+    public function __construct(string $modelProperty, bool $allowNull = false, string $dbAlias = null)
     {
         $this->modelProperty = $modelProperty;
-        $this->dbAlias = $dbAlias ?? $modelProperty;
         $this->allowNull = $allowNull;
+        $this->dbAlias = $dbAlias ?? $modelProperty;
     }
 
 }

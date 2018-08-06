@@ -15,7 +15,7 @@ class BoolMapper extends ScalarMapper
 
     public function __construct($modelProperty, $dbAlias = null)
     {
-        parent::__construct($modelProperty, $dbAlias, true);
+        parent::__construct($modelProperty,true, $dbAlias);
     }
 
     /**
@@ -24,7 +24,7 @@ class BoolMapper extends ScalarMapper
      * @return bool
      * @throws \ReflectionException
      */
-    public function hydrate(array $data, $object): bool
+    public function hydrate(array $data, object $object): bool
     {
         $column = $this->getDbAlias();
         $value = $data[$column] ?? false;
@@ -40,11 +40,11 @@ class BoolMapper extends ScalarMapper
     }
 
     /**
-     * @param $object
+     * @param object $object
      * @return array
      * @throws \ReflectionException
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         /** @var bool $value */
         $value = RepoHelper::getProperty($object, $this->getModelProperty());

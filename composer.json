@@ -14,7 +14,8 @@
   ],
   "license": "BSD-3-Clause",
   "require": {
-    "php": ">=7.1.0",
+    "php": ">=7.2.0",
+    "ext-mbstring": "*",
     "psr/container": "^1.0",
     "adbario/php-dot-notation": "^2.0"
   },

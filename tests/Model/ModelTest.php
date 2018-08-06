@@ -37,7 +37,9 @@ class ModelTest extends TestCase
 
     /**
      * @depends testEmptyModelConstruct
-     * @param $model
+     * @param TestModel $model
+     * @throws \DjinORM\Djin\Exceptions\InvalidArgumentException
+     * @throws \DjinORM\Djin\Exceptions\LogicException
      */
     public function testSetOther(TestModel $model)
     {

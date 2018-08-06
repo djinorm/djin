@@ -43,11 +43,11 @@ class ArrayMapperTest extends MapperTestCase
 
     protected function getMapperAllowNull(): ArrayMapper
     {
-        return new ArrayMapper('value', 'value', true);
+        return new ArrayMapper('value', true);
     }
 
     protected function getMapperDisallowNull(): ArrayMapper
     {
-        return new ArrayMapper('value', 'value', false);
+        return new ArrayMapper('value', false);
     }
 }

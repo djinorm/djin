@@ -17,13 +17,13 @@ interface MapperInterface
      * @param object $object
      * @return mixed
      */
-    public function hydrate(array $data, $object);
+    public function hydrate(array $data, object $object);
 
     /**
      * @param $object
      * @return array
      */
-    public function extract($object): array;
+    public function extract(object $object): array;
 
     /**
      * @return string

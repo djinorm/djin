@@ -63,11 +63,11 @@ class NestedMapperTest extends MapperTestCase
 
     protected function getMapper(): NestedMapper
     {
-        return new NestedMapper('value', 'dbValue', get_class($this->testSubClass), [
+        return new NestedMapper('value', get_class($this->testSubClass), [
             new IdMapper('id'),
             new StringMapper('name'),
-            new DatetimeMapper('datetime', null, true)
-        ]);
+            new DatetimeMapper('datetime', true)
+        ], false, 'dbValue');
     }
 
 }

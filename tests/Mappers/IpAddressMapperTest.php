@@ -63,11 +63,11 @@ class IpAddressMapperTest extends MapperTestCase
 
     protected function getMapperAllowNull($asBinary): IpAddressMapper
     {
-        return new IpAddressMapper('value', 'value', true, $asBinary);
+        return new IpAddressMapper('value', $asBinary, true);
     }
 
     protected function getMapperDisallowNull($asBinary): IpAddressMapper
     {
-        return new IpAddressMapper('value', 'value', false, $asBinary);
+        return new IpAddressMapper('value', $asBinary, false);
     }
 }

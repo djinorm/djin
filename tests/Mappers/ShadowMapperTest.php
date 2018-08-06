@@ -49,7 +49,7 @@ class ShadowMapperTest extends MapperTestCase
 
     protected function getMapper(): ShadowMapper
     {
-        return new ShadowMapper('value', 'dbValue', false);
+        return new ShadowMapper('value', false, 'dbValue');
     }
 
 }

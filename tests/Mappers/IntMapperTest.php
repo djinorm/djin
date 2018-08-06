@@ -37,11 +37,11 @@ class IntMapperTest extends MapperTestCase
 
     protected function getMapperAllowNull(): IntMapper
     {
-        return new IntMapper('value', 'value', true);
+        return new IntMapper('value', true);
     }
 
     protected function getMapperDisallowNull(): IntMapper
     {
-        return new IntMapper('value', 'value', false);
+        return new IntMapper('value', false);
     }
 }

@@ -12,16 +12,16 @@ use DjinORM\Djin\Id\Id;
 trait ModelTrait
 {
 
-    public static function getModelName():string
-    {
-        return get_called_class();
-    }
-
     public static function getModelIdPropertyName():string
     {
         return 'id';
     }
 
+    /**
+     * @return Id
+     * @throws \DjinORM\Djin\Exceptions\InvalidArgumentException
+     * @throws \DjinORM\Djin\Exceptions\LogicException
+     */
     public function getId(): Id
     {
         $property = static::getModelIdPropertyName();
@@ -32,6 +32,10 @@ trait ModelTrait
         return $this->{$property};
     }
 
+    /**
+     * @throws \DjinORM\Djin\Exceptions\InvalidArgumentException
+     * @throws \DjinORM\Djin\Exceptions\LogicException
+     */
     public function __clone()
     {
         $property = static::getModelIdPropertyName();

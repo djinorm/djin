@@ -14,7 +14,7 @@ class BoolMapperTest extends MapperTestCase
 
     public function testHydrate()
     {
-        $mapper = new BoolMapper('value', 'value');
+        $mapper = new BoolMapper('value');
 
         $this->assertHydrated(false, '', $mapper);
         $this->assertHydrated(false, 0, $mapper);

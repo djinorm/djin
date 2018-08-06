@@ -37,11 +37,11 @@ class IdMapperTest extends MapperTestCase
 
     protected function getMapperAllowNull(): IdMapper
     {
-        return new IdMapper('value', 'value', true);
+        return new IdMapper('value', true);
     }
 
     protected function getMapperDisallowNull(): IdMapper
     {
-        return new IdMapper('value', 'value', false);
+        return new IdMapper('value', false);
     }
 }

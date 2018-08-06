@@ -16,4 +16,8 @@ class TestStubModel implements StubModelInterface, ModelInterface
 
     use ModelTrait;
 
+    public static function getModelName(): string
+    {
+        return 'stub';
+    }
 }

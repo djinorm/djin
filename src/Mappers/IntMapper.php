@@ -23,7 +23,7 @@ class IntMapper extends ScalarMapper
      * @throws HydratorException
      * @throws \ReflectionException
      */
-    public function hydrate(array $data, $object): ?int
+    public function hydrate(array $data, object $object): ?int
     {
         $column = $this->getDbAlias();
         if (!isset($data[$column])) {
@@ -40,12 +40,12 @@ class IntMapper extends ScalarMapper
     }
 
     /**
-     * @param $object
+     * @param object $object
      * @return array
      * @throws ExtractorException
      * @throws \ReflectionException
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         /** @var int $value */
         $value = RepoHelper::getProperty($object, $this->getModelProperty());

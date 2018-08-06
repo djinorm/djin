@@ -70,7 +70,7 @@ class NestedArrayMapperTest extends MapperTestCase
 
     protected function getMapperAllowNull(): NestedArrayMapper
     {
-        return new NestedArrayMapper('value', 'value', TestModel::class, [
+        return new NestedArrayMapper('value', TestModel::class, [
             new IdMapper('id'),
             new IdMapper('otherId'),
         ], true);
@@ -78,7 +78,7 @@ class NestedArrayMapperTest extends MapperTestCase
 
     protected function getMapperDisallowNull(): NestedArrayMapper
     {
-        return new NestedArrayMapper('value', 'value', TestModel::class, [
+        return new NestedArrayMapper('value', TestModel::class, [
             new IdMapper('id'),
             new IdMapper('otherId'),
         ], false);

@@ -37,11 +37,11 @@ class FloatMapperTest extends MapperTestCase
 
     protected function getMapperAllowNull(): FloatMapper
     {
-        return new FloatMapper('value', 'value', true);
+        return new FloatMapper('value',  true);
     }
 
     protected function getMapperDisallowNull(): FloatMapper
     {
-        return new FloatMapper('value', 'value', false);
+        return new FloatMapper('value', false);
     }
 }

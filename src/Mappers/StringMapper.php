@@ -20,9 +20,9 @@ class StringMapper extends ScalarMapper
      */
     private $maxLength;
 
-    public function __construct($modelProperty, $dbAlias = null, $allowNull = false, $maxLength = null)
+    public function __construct($modelProperty, $maxLength = null, $allowNull = false, $dbAlias = null)
     {
-        parent::__construct($modelProperty, $dbAlias, $allowNull);
+        parent::__construct($modelProperty, $allowNull, $dbAlias);
         $this->maxLength = $maxLength;
     }
 
@@ -33,7 +33,7 @@ class StringMapper extends ScalarMapper
      * @throws HydratorException
      * @throws \ReflectionException
      */
-    public function hydrate(array $data, $object): ?string
+    public function hydrate(array $data, object $object): ?string
     {
         $column = $this->getDbAlias();
         if (!isset($data[$column])) {
@@ -50,12 +50,12 @@ class StringMapper extends ScalarMapper
     }
 
     /**
-     * @param $object
+     * @param object $object
      * @return array
      * @throws ExtractorException
      * @throws \ReflectionException
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         /** @var int $value */
         $value = RepoHelper::getProperty($object, $this->getModelProperty());

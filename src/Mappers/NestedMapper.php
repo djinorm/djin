@@ -22,16 +22,16 @@ class NestedMapper extends AbstractMapper implements NestedMapperInterface
 
     public function __construct(
         string $modelProperty,
-        string $dbAlias = null,
         string $classname,
         array $mappers,
-        bool $allowNull = false
+        bool $allowNull = false,
+        string $dbAlias = null
     )
     {
         $this->modelProperty = $modelProperty;
-        $this->dbAlias = $dbAlias ?? $modelProperty;
         $this->nestedMapper = new MappersHandler($classname, $mappers);
         $this->allowNull = $allowNull;
+        $this->dbAlias = $dbAlias ?? $modelProperty;
     }
 
     /**
@@ -41,7 +41,7 @@ class NestedMapper extends AbstractMapper implements NestedMapperInterface
      * @throws \DjinORM\Djin\Exceptions\HydratorException
      * @throws \ReflectionException
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object)
     {
         if (!isset($data[$this->getDbAlias()])) {
             if ($this->isNullAllowed()) {
@@ -58,12 +58,12 @@ class NestedMapper extends AbstractMapper implements NestedMapperInterface
     }
 
     /**
-     * @param $object
+     * @param object $object
      * @return array
      * @throws \DjinORM\Djin\Exceptions\ExtractorException
      * @throws \ReflectionException
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         $subObject = RepoHelper::getProperty($object, $this->modelProperty);
 

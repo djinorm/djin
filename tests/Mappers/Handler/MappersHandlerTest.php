@@ -32,51 +32,51 @@ class MappersHandlerTest extends TestCase
         $this->mappers = [
             'id' => new IdMapper('id'),
             'string' => new StringMapper('string'),
-            'indexedArrayOfString' => new ArrayMapper('indexedArrayOfString', 'indexedArrayOfString', true),
-            'associativeArrayOfString' => new ArrayMapper('associativeArrayOfString', 'associativeArrayOfString', true),
+            'indexedArrayOfString' => new ArrayMapper('indexedArrayOfString', true),
+            'associativeArrayOfString' => new ArrayMapper('associativeArrayOfString', true),
             'indexedArrayOfModel' => new NestedArrayMapper(
                 'indexedArrayOfModel',
-                'db_indexedArrayOfModel',
                 TestModel::class,
                 [
                     'id' => new IdMapper('id'),
                     'otherId' => new IdMapper('otherId'),
                 ],
-                true
+                true,
+                'db_indexedArrayOfModel'
             ),
             'associativeArrayOfModel' => new NestedArrayMapper(
                 'associativeArrayOfModel',
-                'db_associativeArrayOfModel',
                 TestModel::class,
                 [
                     'id' => new IdMapper('id'),
                     'otherId' => new IdMapper('otherId'),
                 ],
-                true
+                true,
+                'db_associativeArrayOfModel'
             ),
-            'sub' => new NestedMapper('sub', 'db_sub', TestSubmodelMapper::class, [
+            'sub' => new NestedMapper('sub', TestSubmodelMapper::class, [
                 'string' => new StringMapper('string'),
                 new NestedArrayMapper(
                     'indexedArrayOfModel',
-                    'db_indexedArrayOfModel',
                     TestModel::class,
                     [
                         'id' => new IdMapper('id'),
                         'otherId' => new IdMapper('otherId'),
                     ],
-                    true
+                    true,
+                    'db_indexedArrayOfModel'
                 ),
                 new NestedArrayMapper(
                     'associativeArrayOfModel',
-                    'db_associativeArrayOfModel',
                     TestModel::class,
                     [
                         'id' => new IdMapper('id'),
                         'otherId' => new IdMapper('otherId'),
                     ],
-                    true
+                    true,
+                    'db_associativeArrayOfModel'
                 ),
-            ])
+            ], false, 'db_sub')
         ];
         $this->mappersHandler = new MappersHandler(TestModelMappersHandler::class, $this->mappers);
     }
