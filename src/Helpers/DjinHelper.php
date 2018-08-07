@@ -69,13 +69,12 @@ class DjinHelper
      * @param string|null $checkThatModelClassIs
      * @return int|null|string
      * @throws MismatchModelException
-     * @throws NotPermanentIdException
      */
     public static function getScalarIdOrNull($modelOrId, string $checkThatModelClassIs = null)
     {
         try {
             return self::getScalarId($modelOrId, $checkThatModelClassIs);
-        } catch (InvalidArgumentException $exception) {
+        } catch (InvalidArgumentException | NotPermanentIdException $exception) {
             return null;
         }
     }

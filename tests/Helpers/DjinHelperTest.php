@@ -82,6 +82,9 @@ class DjinHelperTest extends TestCase
         $id = null;
         $this->assertNull(DjinHelper::getScalarIdOrNull($id));
 
+        $id = new Id();
+        $this->assertNull(DjinHelper::getScalarIdOrNull($id));
+
         $id = new Id(10);
         $this->assertEquals(10, DjinHelper::getScalarIdOrNull($id));
     }
