@@ -53,7 +53,7 @@ abstract class AbstractMapper implements MapperInterface
         return $this->allowNull;
     }
 
-    protected function getDescription($object): string
+    protected function getDescription(object $object): string
     {
         return get_class($object) . '::' . $this->getModelProperty();
     }
@@ -63,7 +63,7 @@ abstract class AbstractMapper implements MapperInterface
      * @param $object
      * @return HydratorException
      */
-    protected function nullHydratorException(string $expectedType, $object): HydratorException
+    protected function nullHydratorException(string $expectedType, object $object): HydratorException
     {
         return new HydratorException("Null instead of {$expectedType} is not allowed in " . $this->getDescription($object));
     }
@@ -73,7 +73,7 @@ abstract class AbstractMapper implements MapperInterface
      * @param $object
      * @return ExtractorException
      */
-    protected function nullExtractorException(string $expectedType, $object): ExtractorException
+    protected function nullExtractorException(string $expectedType, object $object): ExtractorException
     {
         return new ExtractorException("Impossible to save null instead of {$expectedType} from " . $this->getDescription($object));
     }
