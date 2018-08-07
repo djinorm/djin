@@ -8,10 +8,10 @@
 namespace DjinORM\Djin\Mappers;
 
 use DjinORM\Djin\Id\Id;
-use DjinORM\Djin\Model\Shadow;
+use DjinORM\Djin\Model\ModelPointer;
 use DjinORM\Djin\TestHelpers\MapperTestCase;
 
-class ShadowMapperTest extends MapperTestCase
+class ModelPointerMapperTest extends MapperTestCase
 {
 
     protected $testSubClass;
@@ -19,7 +19,7 @@ class ShadowMapperTest extends MapperTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->testSubClass = new Shadow(new Id(100), 'MyModelName');
+        $this->testSubClass = new ModelPointer('MyModelName', new Id(100));
     }
 
     public function testHydrate()
@@ -47,9 +47,9 @@ class ShadowMapperTest extends MapperTestCase
         $this->assertEquals($expected, $this->getMapper()->extract($this->testClass));
     }
 
-    protected function getMapper(): ShadowMapper
+    protected function getMapper(): ModelPointerMapper
     {
-        return new ShadowMapper('value', false, 'dbValue');
+        return new ModelPointerMapper('value', false, 'dbValue');
     }
 
 }

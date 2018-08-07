@@ -16,7 +16,7 @@ use DjinORM\Djin\Mock\TestModelSecondRepository;
 use DjinORM\Djin\Mock\TestSecondModel;
 use DjinORM\Djin\Mock\TestStubModel;
 use DjinORM\Djin\Mock\TestModelRepository;
-use DjinORM\Djin\Model\Shadow;
+use DjinORM\Djin\Model\ModelPointer;
 use PHPUnit\Framework\TestCase;
 
 class ModelManagerTest extends TestCase
@@ -101,11 +101,11 @@ class ModelManagerTest extends TestCase
         $this->assertEquals($this->repository, $this->manager->getRepositoryByModelName('qwerty'));
     }
 
-    public function testFindModelByShadow()
+    public function testFindModelByPointer()
     {
-        $shadow = new Shadow(new Id(2), TestModel::getModelName());
-        $model = $this->manager->findModelByShadow($shadow);
-        $this->assertEquals($shadow, Shadow::createFromModel($model));
+        $shadow = new ModelPointer(TestModel::getModelName(), new Id(2));
+        $model = $this->manager->findModelByPointer($shadow);
+        $this->assertEquals($shadow, new ModelPointer($model));
     }
 
     public function testPersistsAsArray()

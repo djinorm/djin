@@ -8,20 +8,20 @@
 namespace DjinORM\Djin\Mappers;
 
 
-use DjinORM\Djin\Model\Shadow;
+use DjinORM\Djin\Model\ModelPointer;
 
-class ShadowMapper extends NestedMapper
+class ModelPointerMapper extends NestedMapper
 {
 
     /**
-     * ShadowMapper constructor.
+     * ModelPointerMapper constructor.
      * @param string $modelProperty
      * @param bool $allowNull
      * @param string|null $dbAlias
      */
     public function __construct(string $modelProperty, bool $allowNull = false, string $dbAlias = null)
     {
-        parent::__construct($modelProperty,  Shadow::class, [
+        parent::__construct($modelProperty,  ModelPointer::class, [
             new IdMapper('id'),
             new StringMapper('model')
         ], $allowNull, $dbAlias);
