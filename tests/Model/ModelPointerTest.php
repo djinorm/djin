@@ -51,4 +51,13 @@ class ModelPointerTest extends TestCase
         $this->assertEquals($this->model::getModelName(), $this->pointer->getModelName());
     }
 
+    public function testToJson()
+    {
+        $expected = json_encode([
+            'name' => $this->model::getModelName(),
+            'id' => $this->model->getId()->toScalar(),
+        ]);
+        $this->assertEquals($expected, json_encode($this->pointer));
+    }
+
 }
