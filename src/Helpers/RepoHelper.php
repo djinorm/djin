@@ -42,8 +42,18 @@ class RepoHelper
     public static function getProperty($object, string $property)
     {
         $className = get_class($object);
-        $refProperty = self::getReflectionProperty($className, $property);
-        return $refProperty->getValue($object);
+
+        try {
+            $refProperty = self::getReflectionProperty($className, $property);
+            return $refProperty->getValue($object);
+        } catch (\ReflectionException $reflectionException) {
+
+            if ($object instanceof \ArrayAccess) {
+                return $object[$property];
+            } else {
+                throw $reflectionException;
+            }
+        }
     }
 
     /**
@@ -55,14 +65,24 @@ class RepoHelper
     public static function setProperty($object, string $property, $value)
     {
         $className = get_class($object);
-        $refProperty = self::getReflectionProperty($className, $property);
-        $refProperty->setValue($object, $value);
+        try {
+            $refProperty = self::getReflectionProperty($className, $property);
+            $refProperty->setValue($object, $value);
+        } catch (\ReflectionException $reflectionException) {
+            if ($object instanceof \ArrayAccess) {
+                $object[$property] = $value;
+            } else {
+                throw $reflectionException;
+            }
+        }
     }
 
     /**
      * @param $object
      * @param string $property
      * @param array|string|int $data
+     * @throws \DjinORM\Djin\Exceptions\InvalidArgumentException
+     * @throws \DjinORM\Djin\Exceptions\LogicException
      * @throws \ReflectionException
      */
     public static function setIdFromScalar($object, string $property, $data)
