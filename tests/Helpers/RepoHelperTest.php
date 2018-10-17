@@ -7,6 +7,7 @@
 namespace DjinORM\Djin\Helpers;
 
 
+use ArrayObject;
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Mock\TestModel;
 use PHPUnit\Framework\TestCase;
@@ -17,9 +18,13 @@ class RepoHelperTest extends TestCase
     /** @var TestModel */
     private $model;
 
+    /** @var ArrayObject */
+    private $arrayAccess;
+
     public function setUp()
     {
         $this->model = new TestModel(1, 2);
+        $this->arrayAccess = new ArrayObject(['key' => 'value']);
     }
 
     public function testNewWithoutConstructor()
@@ -38,6 +43,14 @@ class RepoHelperTest extends TestCase
         );
     }
 
+    public function testGetPropertyArrayAccess()
+    {
+        $this->assertSame(
+            $this->arrayAccess['key'],
+            RepoHelper::getProperty($this->arrayAccess, 'key')
+        );
+    }
+
     public function testSetProperty()
     {
         $id = new Id(3);
@@ -45,6 +58,16 @@ class RepoHelperTest extends TestCase
         $this->assertSame(
             $id,
             $this->model->getOtherId()
+        );
+    }
+
+    public function testSetPropertyArrayAccess()
+    {
+        $id = new Id(3);
+        RepoHelper::setProperty($this->arrayAccess, 'otherId', $id);
+        $this->assertSame(
+            $id,
+            $this->arrayAccess['otherId']
         );
     }
 
