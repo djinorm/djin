@@ -19,10 +19,11 @@ class TestModel implements ModelInterface
     protected $otherId;
     protected $custom;
 
-    public function __construct($id = null, $otherId = null)
+    public function __construct($id = null, $otherId = null, $custom = null)
     {
         $this->id = new Id($id);
         $this->otherId = new Id($otherId);
+        $this->custom = $custom;
     }
 
     public function getOtherId()
