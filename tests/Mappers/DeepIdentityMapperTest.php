@@ -54,136 +54,121 @@ class DeepIdentityMapperTest extends MapperTestCase
         ];
 
         $this->data = [
-            '___{identity}___' => '___{array}___',
-            'data' => [
-                0 => [
-                    '___{identity}___' => 'model:test',
-                    'data' => [
-                        'id' => [
-                            '___{identity}___' => 'id',
+            0 => [
+                '___{identity}___' => 'model:test',
+                'data' => [
+                    'id' => [
+                        '___{identity}___' => 'id',
+                        'data' => [
+                            'id' => 1,
+                        ]
+                    ],
+                    'otherId' => [
+                        '___{identity}___' => 'id',
+                        'data' => [
+                            'id' => null,
+                        ]
+                    ],
+                    'custom' => [
+                        0 => [
+                            '___{identity}___' => 'model:test',
                             'data' => [
-                                'id' => 1,
-                            ]
-                        ],
-                        'otherId' => [
-                            '___{identity}___' => 'id',
-                            'data' => [
-                                'id' => null,
-                            ]
-                        ],
-                        'custom' => [
-                            '___{identity}___' => '___{array}___',
-                            'data' => [
-                                0 => [
-                                    '___{identity}___' => 'model:test',
+                                'id' => [
+                                    '___{identity}___' => 'id',
                                     'data' => [
-                                        'id' => [
-                                            '___{identity}___' => 'id',
-                                            'data' => [
-                                                'id' => null,
-                                            ]
-                                        ],
-                                        'otherId' => [
-                                            '___{identity}___' => 'id',
-                                            'data' => [
-                                                'id' => null,
-                                            ]
-                                        ],
-                                        'custom' => [
-                                            '___{identity}___' => '___{array}___',
-                                            'data' => [
-                                                'first' => 1,
-                                                'second' => 2,
-                                                'third' => null,
-                                            ]
-                                        ],
-                                     ]
+                                        'id' => null,
+                                    ]
                                 ],
-                                1 => [
-                                    '___{identity}___' => 'model:test',
+                                'otherId' => [
+                                    '___{identity}___' => 'id',
                                     'data' => [
-                                        'id' => [
-                                            '___{identity}___' => 'id',
-                                            'data' => [
-                                                'id' => null,
-                                            ]
-                                        ],
-                                        'otherId' => [
-                                            '___{identity}___' => 'id',
-                                            'data' => [
-                                                'id' => 1,
-                                            ]
-                                        ],
-                                        'custom' => [
-                                            '___{identity}___' => '___{array}___',
-                                            'data' => [
+                                        'id' => null,
+                                    ]
+                                ],
+                                'custom' => [
+                                    'first' => 1,
+                                    'second' => 2,
+                                    'third' => null,
+                                ],
+                            ]
+                        ],
+                        1 => [
+                            '___{identity}___' => 'model:test',
+                            'data' => [
+                                'id' => [
+                                    '___{identity}___' => 'id',
+                                    'data' => [
+                                        'id' => null,
+                                    ]
+                                ],
+                                'otherId' => [
+                                    '___{identity}___' => 'id',
+                                    'data' => [
+                                        'id' => 1,
+                                    ]
+                                ],
+                                'custom' => [
+                                    0 => [
+                                        '___{identity}___' => 'model:test:second',
+                                        'data' => [
+                                            'id' => [
+                                                '___{identity}___' => 'id',
+                                                'data' => [
+                                                    'id' => 3,
+                                                ]
+                                            ],
+                                            'otherId' => [
+                                                '___{identity}___' => 'id',
+                                                'data' => [
+                                                    'id' => 4,
+                                                ]
+                                            ],
+                                            'custom' => [
                                                 0 => [
-                                                    '___{identity}___' => 'model:test:second',
+                                                    '___{identity}___' => 'model:test',
                                                     'data' => [
                                                         'id' => [
                                                             '___{identity}___' => 'id',
                                                             'data' => [
-                                                                'id' => 3,
+                                                                'id' => null,
                                                             ]
                                                         ],
                                                         'otherId' => [
                                                             '___{identity}___' => 'id',
                                                             'data' => [
-                                                                'id' => 4,
+                                                                'id' => null,
                                                             ]
                                                         ],
-                                                        'custom' => [
-                                                            '___{identity}___' => '___{array}___',
+                                                        'custom' => null,
+                                                    ],
+                                                ],
+                                                1 => [
+                                                    '___{identity}___' => 'model:test:second',
+                                                    'data' => [
+                                                        'id' => [
+                                                            '___{identity}___' => 'id',
                                                             'data' => [
-                                                                0 => [
-                                                                    '___{identity}___' => 'model:test',
-                                                                    'data' => [
-                                                                        'id' => [
-                                                                            '___{identity}___' => 'id',
-                                                                            'data' => [
-                                                                                'id' => null,
-                                                                            ]
-                                                                        ],
-                                                                        'otherId' => [
-                                                                            '___{identity}___' => 'id',
-                                                                            'data' => [
-                                                                                'id' => null,
-                                                                            ]
-                                                                        ],
-                                                                        'custom' => null,
-                                                                    ],
-                                                                ],
-                                                                1 => [
-                                                                    '___{identity}___' => 'model:test:second',
-                                                                    'data' => [
-                                                                        'id' => [
-                                                                            '___{identity}___' => 'id',
-                                                                            'data' => [
-                                                                                'id' => null,
-                                                                            ]
-                                                                        ],
-                                                                        'otherId' => [
-                                                                            '___{identity}___' => 'id',
-                                                                            'data' => [
-                                                                                'id' => null,
-                                                                            ]
-                                                                        ],
-                                                                        'custom' => null,
-                                                                    ],
-                                                                ],
-                                                                2 => [
-                                                                    '___{identity}___' => 'model:test:stub',
-                                                                    'data' => [],
-                                                                ],
+                                                                'id' => null,
                                                             ]
                                                         ],
-                                                    ]
+                                                        'otherId' => [
+                                                            '___{identity}___' => 'id',
+                                                            'data' => [
+                                                                'id' => null,
+                                                            ]
+                                                        ],
+                                                        'custom' => null,
+                                                    ],
+                                                ],
+                                                2 => [
+                                                    '___{identity}___' => 'model:test:stub',
+                                                    'data' => [],
                                                 ],
                                             ],
                                         ]
-                                     ]
-                                ],
-                            ],
+                                    ],
+                                ]
+                            ]
                         ],
                     ],
                 ],
@@ -255,12 +240,6 @@ class DeepIdentityMapperTest extends MapperTestCase
     {
         $this->expectException(ExtractorException::class);
         $this->assertExtracted($this->data, $this->objects, $this->mapperNotAllClasses);
-    }
-
-    public function testHydrateCorruptedData()
-    {
-        $this->expectException(HydratorException::class);
-        $this->assertHydrated($this->objects, [[], []], $this->mapperAllowNull);
     }
 
     public function testExtractNonExtractable()

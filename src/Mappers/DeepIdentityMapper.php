@@ -28,7 +28,6 @@ class DeepIdentityMapper extends AbstractMapper implements ArrayMapperInterface
 {
 
     protected const IDENTITY_KEY = '___{identity}___';
-    protected const IDENTITY_ARRAY = '___{array}___';
 
     /**
      * @var array
@@ -128,12 +127,8 @@ class DeepIdentityMapper extends AbstractMapper implements ArrayMapperInterface
     {
         if (is_array($data)) {
             if (!isset($data[static::IDENTITY_KEY])) {
-                throw new HydratorException("Trying to hydrate corrupted data. No identity key '" . static::IDENTITY_KEY. "' in array");
-            }
-
-            if ($data[static::IDENTITY_KEY] == static::IDENTITY_ARRAY) {
                 $array = [];
-                foreach ($data['data'] as $key => $value) {
+                foreach ($data as $key => $value) {
                     $array[$key] = $this->hydrateRecursive($value);
                 }
                 return $array;
@@ -201,12 +196,9 @@ class DeepIdentityMapper extends AbstractMapper implements ArrayMapperInterface
     protected function extractRecursive($something)
     {
         if (is_array($something)) {
-            $data = [
-                static::IDENTITY_KEY => static::IDENTITY_ARRAY,
-            ];
-
+            $data = [];
             foreach ($something as $key => $value) {
-                $data['data'][$key] = $this->extractRecursive($value);
+                $data[$key] = $this->extractRecursive($value);
             }
 
             return $data;
