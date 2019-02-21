@@ -32,16 +32,16 @@ class BoolMapperTest extends MapperTestCase
     {
         $mapper = new BoolMapper('value', 'value');
 
-        $this->assertExtracted(false, '', $mapper);
-        $this->assertExtracted(false, 0, $mapper);
-        $this->assertExtracted(false, null, $mapper);
-        $this->assertExtracted(false, false, $mapper);
-        $this->assertExtracted(false, 'false', $mapper);
+        $this->assertExtracted(false, '', $mapper, false);
+        $this->assertExtracted(false, 0, $mapper, false);
+        $this->assertExtracted(false, null, $mapper, false);
+        $this->assertExtracted(false, false, $mapper, false);
+        $this->assertExtracted(false, 'false', $mapper, false);
 
-        $this->assertExtracted(true, 1, $mapper);
-        $this->assertExtracted(true, true, $mapper);
-        $this->assertExtracted(true, '1', $mapper);
-        $this->assertExtracted(true, 'true', $mapper);
+        $this->assertExtracted(true, 1, $mapper, false);
+        $this->assertExtracted(true, true, $mapper, false);
+        $this->assertExtracted(true, '1', $mapper, false);
+        $this->assertExtracted(true, 'true', $mapper, false);
     }
 
 }

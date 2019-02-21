@@ -28,7 +28,7 @@ class FloatMapperTest extends MapperTestCase
     public function testExtract()
     {
         $this->assertExtracted(null, null, $this->getMapperAllowNull());
-        $this->assertExtracted(0, 0, $this->getMapperAllowNull());
+        $this->assertExtracted(0.0, 0, $this->getMapperAllowNull());
         $this->assertExtracted(10.5, 10.5, $this->getMapperAllowNull());
 
         $this->expectException(ExtractorException::class);

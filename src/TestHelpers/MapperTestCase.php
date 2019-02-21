@@ -54,14 +54,24 @@ abstract class MapperTestCase extends TestCase
      * @param $expected
      * @param $input
      * @param MapperInterface $mapper
+     * @param bool $strict
      */
-    public function assertExtracted($expected, $input, MapperInterface $mapper)
+    public function assertExtracted($expected, $input, MapperInterface $mapper, bool $strict = true)
     {
         $this->testClass->setValue($input);
-        $this->assertEquals(
-            ['value' => $expected],
-            $mapper->extract($this->testClass)
-        );
+
+        if ($strict) {
+            $this->assertSame(
+                ['value' => $expected],
+                $mapper->extract($this->testClass)
+            );
+        } else {
+            $this->assertEquals(
+                ['value' => $expected],
+                $mapper->extract($this->testClass)
+            );
+        }
+
     }
 
     abstract public function testHydrate();
