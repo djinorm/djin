@@ -54,8 +54,10 @@ class IntMapper extends ScalarMapper
             throw $this->nullExtractorException('integer', $object);
         }
 
+        $value = is_null($value) ? null : (int) $value;
+
         return [
-            $this->getDbAlias() => (int) $value
+            $this->getDbAlias() => $value
         ];
     }
 

@@ -55,8 +55,10 @@ class FloatMapper extends ScalarMapper
             throw $this->nullExtractorException('float/double', $object);
         }
 
+        $value = is_null($value) ? null : (float) $value;
+
         return [
-            $this->getDbAlias() => (float) $value
+            $this->getDbAlias() => $value
         ];
     }
 }
