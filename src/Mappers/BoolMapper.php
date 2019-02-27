@@ -13,27 +13,26 @@ use DjinORM\Djin\Helpers\RepoHelper;
 class BoolMapper extends ScalarMapper
 {
 
-    public function __construct($modelProperty, $dbAlias = null)
-    {
-        parent::__construct($modelProperty,true, $dbAlias);
-    }
-
     /**
      * @param array $data
      * @param object $object
      * @return bool
+     * @throws \DjinORM\Djin\Exceptions\HydratorException
      * @throws \ReflectionException
      */
-    public function hydrate(array $data, object $object): bool
+    public function hydrate(array $data, object $object): ?bool
     {
         $column = $this->getDbAlias();
-        $value = $data[$column] ?? false;
 
-        if (mb_strtolower($value) === 'false') {
-            $value = false;
-        } else {
-            $value = (bool) $data[$column];
+        if (!isset($data[$column])) {
+            if ($this->isNullAllowed()) {
+                RepoHelper::setProperty($object, $this->getModelProperty(), null);
+                return null;
+            }
+            throw $this->nullHydratorException('bool', $object);
         }
+
+        $value = (bool) $data[$column];
 
         RepoHelper::setProperty($object, $this->getModelProperty(), $value);
         return $value;
@@ -42,6 +41,7 @@ class BoolMapper extends ScalarMapper
     /**
      * @param object $object
      * @return array
+     * @throws \DjinORM\Djin\Exceptions\ExtractorException
      * @throws \ReflectionException
      */
     public function extract(object $object): array
@@ -49,14 +49,14 @@ class BoolMapper extends ScalarMapper
         /** @var bool $value */
         $value = RepoHelper::getProperty($object, $this->getModelProperty());
 
-        if (mb_strtolower($value) === 'false') {
-            $value = false;
-        } else {
-            $value = (bool) $value;
+        if ($value === null && $this->isNullAllowed() == false) {
+            throw $this->nullExtractorException('bool', $object);
         }
 
+        $value = is_null($value) ? null : (bool) $value;
+
         return [
-            $this->getDbAlias() => (int) $value
+            $this->getDbAlias() => $value
         ];
     }
 

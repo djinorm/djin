@@ -7,6 +7,8 @@
 
 namespace DjinORM\Djin\Mappers;
 
+use DjinORM\Djin\Exceptions\ExtractorException;
+use DjinORM\Djin\Exceptions\HydratorException;
 use DjinORM\Djin\TestHelpers\MapperTestCase;
 
 class BoolMapperTest extends MapperTestCase
@@ -14,34 +16,46 @@ class BoolMapperTest extends MapperTestCase
 
     public function testHydrate()
     {
-        $mapper = new BoolMapper('value');
+        $this->assertHydrated(false, '', $this->allowNullMapper());
+        $this->assertHydrated(false, 0, $this->allowNullMapper());
+        $this->assertHydrated(null, null, $this->allowNullMapper());
+        $this->assertHydrated(false, false, $this->allowNullMapper());
+        $this->assertHydrated(true, 'false', $this->allowNullMapper());
 
-        $this->assertHydrated(false, '', $mapper);
-        $this->assertHydrated(false, 0, $mapper);
-        $this->assertHydrated(false, null, $mapper);
-        $this->assertHydrated(false, false, $mapper);
-        $this->assertHydrated(false, 'false', $mapper);
+        $this->assertHydrated(true, 1, $this->allowNullMapper());
+        $this->assertHydrated(true, true, $this->allowNullMapper());
+        $this->assertHydrated(true, '1', $this->allowNullMapper());
+        $this->assertHydrated(true, 'true', $this->allowNullMapper());
 
-        $this->assertHydrated(true, 1, $mapper);
-        $this->assertHydrated(true, true, $mapper);
-        $this->assertHydrated(true, '1', $mapper);
-        $this->assertHydrated(true, 'true', $mapper);
+        $this->expectException(HydratorException::class);
+        $this->assertHydrated(null, null, $this->disallowNullMapper());
     }
 
     public function testExtract()
     {
-        $mapper = new BoolMapper('value', 'value');
+        $this->assertExtracted(false, '', $this->allowNullMapper());
+        $this->assertExtracted(false, 0, $this->allowNullMapper());
+        $this->assertExtracted(null, null, $this->allowNullMapper());
+        $this->assertExtracted(false, false, $this->allowNullMapper());
+        $this->assertExtracted(true, 'false', $this->allowNullMapper());
 
-        $this->assertExtracted(false, '', $mapper, false);
-        $this->assertExtracted(false, 0, $mapper, false);
-        $this->assertExtracted(false, null, $mapper, false);
-        $this->assertExtracted(false, false, $mapper, false);
-        $this->assertExtracted(false, 'false', $mapper, false);
+        $this->assertExtracted(true, 1, $this->allowNullMapper());
+        $this->assertExtracted(true, true, $this->allowNullMapper());
+        $this->assertExtracted(true, '1', $this->allowNullMapper());
+        $this->assertExtracted(true, 'true', $this->allowNullMapper());
 
-        $this->assertExtracted(true, 1, $mapper, false);
-        $this->assertExtracted(true, true, $mapper, false);
-        $this->assertExtracted(true, '1', $mapper, false);
-        $this->assertExtracted(true, 'true', $mapper, false);
+        $this->expectException(ExtractorException::class);
+        $this->assertExtracted(null, null, $this->disallowNullMapper());
+    }
+
+    public function allowNullMapper(): BoolMapper
+    {
+        return new BoolMapper('value', true, 'value');
+    }
+
+    public function disallowNullMapper(): BoolMapper
+    {
+        return new BoolMapper('value', false, 'value');
     }
 
 }
