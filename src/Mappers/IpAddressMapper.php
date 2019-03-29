@@ -15,15 +15,9 @@ use DjinORM\Djin\Helpers\RepoHelper;
 class IpAddressMapper extends AbstractMapper
 {
 
-    /**
-     * @var bool
-     */
-    protected $isBinary;
-
-    public function __construct($modelProperty, $storeAsBinary = true, $allowNull = false, $dbAlias = null)
+    public function __construct($modelProperty, $allowNull = false, $dbAlias = null)
     {
         $this->modelProperty = $modelProperty;
-        $this->isBinary = $storeAsBinary;
         $this->allowNull = $allowNull;
         $this->dbAlias = $dbAlias ?? $modelProperty;
     }
@@ -47,7 +41,7 @@ class IpAddressMapper extends AbstractMapper
             throw $this->nullHydratorException('IP address', $object);
         }
 
-        $ip = $this->isBinary ? inet_ntop($data[$column]) : $data[$column];
+        $ip = $data[$column];
 
         if (!filter_var($ip, FILTER_VALIDATE_IP)) {
             throw new HydratorException(sprintf('Trying to hydrate invalid IP address "%s" in %s',
@@ -87,7 +81,7 @@ class IpAddressMapper extends AbstractMapper
         }
 
         return [
-            $this->getDbAlias() => $this->isBinary ? inet_pton($ip) : $ip,
+            $this->getDbAlias() => $ip,
         ];
     }
 

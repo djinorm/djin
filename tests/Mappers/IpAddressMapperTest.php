@@ -19,55 +19,33 @@ class IpAddressMapperTest extends MapperTestCase
 
     public function testHydrate()
     {
-        $this->assertHydrated(null, null, $this->getMapperAllowNull(false));
-        $this->assertHydrated(null, '', $this->getMapperAllowNull(false));
-        $this->assertHydrated(self::IPv4, self::IPv4, $this->getMapperAllowNull(false));
-        $this->assertHydrated(self::IPv6, self::IPv6, $this->getMapperAllowNull(false));
+        $this->assertHydrated(null, null, $this->getMapperAllowNull());
+        $this->assertHydrated(null, '', $this->getMapperAllowNull());
+        $this->assertHydrated(self::IPv4, self::IPv4, $this->getMapperAllowNull());
+        $this->assertHydrated(self::IPv6, self::IPv6, $this->getMapperAllowNull());
 
         $this->expectException(HydratorException::class);
         $this->assertHydrated(null, null, $this->getMapperDisallowNull(false));
     }
 
-    public function testHydrateAsBinary()
-    {
-        $this->assertHydrated(null, null, $this->getMapperAllowNull(true));
-        $this->assertHydrated(null, '', $this->getMapperAllowNull(true));
-        $this->assertHydrated(self::IPv4, inet_pton(self::IPv4), $this->getMapperAllowNull(true));
-        $this->assertHydrated(self::IPv6, inet_pton(self::IPv6), $this->getMapperAllowNull(true));
-
-        $this->expectException(HydratorException::class);
-        $this->assertHydrated(null, null, $this->getMapperDisallowNull(true));
-    }
-
     public function testExtract()
     {
-        $this->assertExtracted(null, null, $this->getMapperAllowNull(false));
-        $this->assertExtracted(null, '', $this->getMapperAllowNull(false));
-        $this->assertExtracted(self::IPv4, self::IPv4, $this->getMapperAllowNull(false));
-        $this->assertExtracted(self::IPv6, self::IPv6, $this->getMapperAllowNull(false));
+        $this->assertExtracted(null, null, $this->getMapperAllowNull());
+        $this->assertExtracted(null, '', $this->getMapperAllowNull());
+        $this->assertExtracted(self::IPv4, self::IPv4, $this->getMapperAllowNull());
+        $this->assertExtracted(self::IPv6, self::IPv6, $this->getMapperAllowNull());
 
         $this->expectException(ExtractorException::class);
-        $this->assertExtracted(null, null, $this->getMapperDisallowNull(false));
+        $this->assertExtracted(null, null, $this->getMapperDisallowNull());
     }
 
-    public function testExtractAsBinary()
+    protected function getMapperAllowNull(): IpAddressMapper
     {
-        $this->assertExtracted(null, null, $this->getMapperAllowNull(true));
-        $this->assertExtracted(null, '', $this->getMapperAllowNull(true));
-        $this->assertExtracted(inet_pton(self::IPv4), self::IPv4, $this->getMapperAllowNull(true));
-        $this->assertExtracted(inet_pton(self::IPv6), self::IPv6, $this->getMapperAllowNull(true));
-
-        $this->expectException(ExtractorException::class);
-        $this->assertExtracted(null, null, $this->getMapperDisallowNull(true));
+        return new IpAddressMapper('value', true);
     }
 
-    protected function getMapperAllowNull($asBinary): IpAddressMapper
+    protected function getMapperDisallowNull(): IpAddressMapper
     {
-        return new IpAddressMapper('value', $asBinary, true);
-    }
-
-    protected function getMapperDisallowNull($asBinary): IpAddressMapper
-    {
-        return new IpAddressMapper('value', $asBinary, false);
+        return new IpAddressMapper('value', false);
     }
 }
