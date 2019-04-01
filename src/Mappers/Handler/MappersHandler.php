@@ -35,7 +35,7 @@ class MappersHandler implements MappersHandlerInterface
     {
         $this->classname = $classname;
         foreach ($mappers as $mapper) {
-            $this->mappers[$mapper->getModelProperty()] = $mapper;
+            $this->mappers[$mapper->getProperty()] = $mapper;
         }
     }
 
@@ -80,84 +80,11 @@ class MappersHandler implements MappersHandlerInterface
     }
 
     /**
-     * @return string[] representation mappers as dot-notation. For example, we have UserModel with id and email, and
-     * nested Profile witch contain firstName and lastName values. It can be represented like
-     * [
-     *      'id' => 'user_id',
-     *      'email' => 'email',
-     *      'profile.firstName' => 'profile.first_name',
-     *      'profile.lastName' => 'profile.last_name',
-     * ]
-     */
-    public function getModelPropertiesToDbAliases(): array
-    {
-        if (null === $this->map) {
-            $this->map = $this->recursiveModelPropertiesToDbAliases($this);
-        }
-        return $this->map;
-    }
-
-    /**
-     * @see getModelPropertiesToDbAliases()
-     * @param string $property
-     * @return string
-     */
-    public function getModelPropertyToDbAlias(string $property): ?string
-    {
-        return $this->getModelPropertiesToDbAliases()[$property] ?? null;
-    }
-
-    protected function recursiveModelPropertiesToDbAliases(MappersHandlerInterface $mappersHandler)
-    {
-        $map = [];
-        foreach ($mappersHandler->getMappers() as $mapper) {
-            if ($mapper instanceof NestedMapperInterface) {
-                $property = $mapper->getModelProperty();
-                $dbAlias = $mapper->getDbAlias();
-                $subMap = $this->recursiveModelPropertiesToDbAliases($mapper->getNestedMappersHandler());
-                $map["{$property}"] = "{$dbAlias}";
-                foreach ($subMap as $subProperty => $subDbAlias) {
-                    $map["{$property}.{$subProperty}"] = "{$dbAlias}.{$subDbAlias}";
-                }
-                continue;
-            }
-
-            $map[$mapper->getModelProperty()] = $mapper->getDbAlias();
-        }
-        return $map;
-    }
-
-    /**
-     * @return string[] representation mappers as dot-notation. For example, we have UserModel with id and email, and
-     * nested Profile witch contain firstName and lastName values. It can be represented like
-     * [
-     *      'id' => 'user_id',
-     *      'email' => 'email',
-     *      'profile_first_name' => 'profile.firstName',
-     *      'profile_last_name' => 'profile.lastName',
-     * ]
-     */
-    public function getDbAliasesToModelProperties(): array
-    {
-        return array_flip($this->getModelPropertiesToDbAliases());
-    }
-
-    /**
-     * @see getModelPropertiesToDbAliases()
-     * @param string $property
-     * @return string
-     */
-    public function getDbAliasToModelProperty(string $property): ?string
-    {
-        return $this->getDbAliasesToModelProperties()[$property] ?? null;
-    }
-
-    /**
      * This method allow you to get mapper by model property name
      * @param string $property - model property. Can be nested, for example: profile.firstName
      * @return MapperInterface|null
      */
-    public function getMapperByModelProperty(string $property): ?MapperInterface
+    public function getMapperByProperty(string $property): ?MapperInterface
     {
         return $this->getMapperRecursive($property, $this);
     }
@@ -187,19 +114,5 @@ class MappersHandler implements MappersHandlerInterface
         }
 
         return null;
-    }
-
-    /**
-     * This method allow you to get mapper by db alias name
-     * @param string $dbAlias - can be nested, for example: profile.first_name
-     * @return MapperInterface|null
-     */
-    public function getMapperByDbAlias(string $dbAlias): ?MapperInterface
-    {
-        $modelProperty = $this->getDbAliasToModelProperty($dbAlias);
-        if ($modelProperty === null) {
-            return null;
-        }
-        return $this->getMapperByModelProperty($modelProperty);
     }
 }

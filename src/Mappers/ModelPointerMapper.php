@@ -15,16 +15,15 @@ class ModelPointerMapper extends NestedMapper
 
     /**
      * ModelPointerMapper constructor.
-     * @param string $modelProperty
+     * @param string $property
      * @param bool $allowNull
-     * @param string|null $dbAlias
      */
-    public function __construct(string $modelProperty, bool $allowNull = false, string $dbAlias = null)
+    public function __construct(string $property, bool $allowNull = false)
     {
-        parent::__construct($modelProperty,  ModelPointer::class, [
+        parent::__construct($property,  ModelPointer::class, [
             new IdMapper('id'),
             new StringMapper('model')
-        ], $allowNull, $dbAlias);
+        ], $allowNull);
     }
 
 }

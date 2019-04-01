@@ -23,13 +23,12 @@ class DatetimeMapper extends AbstractMapper
      */
     private $format;
 
-    public function __construct($modelProperty, $allowNull = false, $isImmutable = true, $format = 'Y-m-d H:i:s', $dbAlias = null)
+    public function __construct($property, $allowNull = false, $isImmutable = true, $format = 'Y-m-d H:i:s')
     {
-        $this->modelProperty = $modelProperty;
+        $this->property = $property;
         $this->allowNull = $allowNull;
         $this->isImmutable = $isImmutable;
         $this->format = $format;
-        $this->dbAlias = $dbAlias ?? $modelProperty;
     }
 
     /**
@@ -41,19 +40,19 @@ class DatetimeMapper extends AbstractMapper
      */
     public function hydrate(array $data, object $object): ?DateTimeInterface
     {
-        $column = $this->getDbAlias();
+        $property = $this->getProperty();
 
-        if (!isset($data[$column]) || $data[$column] === '') {
+        if (!isset($data[$property]) || $data[$property] === '') {
             if ($this->isNullAllowed()) {
-                RepoHelper::setProperty($object, $this->getModelProperty(), null);
+                RepoHelper::setProperty($object, $this->getProperty(), null);
                 return null;
             }
             throw $this->nullHydratorException($this->getClassName(), $object);
         }
 
         $class = $this->getClassName();
-        $datetime = new $class($data[$column]);
-        RepoHelper::setProperty($object, $this->getModelProperty(), $datetime);
+        $datetime = new $class($data[$property]);
+        RepoHelper::setProperty($object, $this->getProperty(), $datetime);
         return $datetime;
     }
 
@@ -66,19 +65,19 @@ class DatetimeMapper extends AbstractMapper
     public function extract(object $object): array
     {
         /** @var DateTimeInterface $datetime */
-        $datetime = RepoHelper::getProperty($object, $this->getModelProperty());
+        $datetime = RepoHelper::getProperty($object, $this->getProperty());
 
         if ($datetime === null || $datetime === '') {
             if ($this->isNullAllowed() == false) {
                 throw $this->nullExtractorException($this->getClassName(), $object);
             }
             return [
-                $this->getDbAlias() => null
+                $this->getProperty() => null
             ];
         }
 
         return [
-            $this->getDbAlias() => $datetime->format($this->format)
+            $this->getProperty() => $datetime->format($this->format)
         ];
     }
 

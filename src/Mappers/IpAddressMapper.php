@@ -15,11 +15,10 @@ use DjinORM\Djin\Helpers\RepoHelper;
 class IpAddressMapper extends AbstractMapper
 {
 
-    public function __construct($modelProperty, $allowNull = false, $dbAlias = null)
+    public function __construct($modelProperty, $allowNull = false)
     {
-        $this->modelProperty = $modelProperty;
+        $this->property = $modelProperty;
         $this->allowNull = $allowNull;
-        $this->dbAlias = $dbAlias ?? $modelProperty;
     }
 
     /**
@@ -31,26 +30,26 @@ class IpAddressMapper extends AbstractMapper
      */
     public function hydrate(array $data, object $object): ?string
     {
-        $column = $this->getDbAlias();
+        $property = $this->getProperty();
 
-        if (!isset($data[$column]) || $data[$column] === '') {
+        if (!isset($data[$property]) || $data[$property] === '') {
             if ($this->isNullAllowed()) {
-                RepoHelper::setProperty($object, $this->getModelProperty(), null);
+                RepoHelper::setProperty($object, $this->getProperty(), null);
                 return null;
             }
             throw $this->nullHydratorException('IP address', $object);
         }
 
-        $ip = $data[$column];
+        $ip = $data[$property];
 
         if (!filter_var($ip, FILTER_VALIDATE_IP)) {
             throw new HydratorException(sprintf('Trying to hydrate invalid IP address "%s" in %s',
-                $data[$column],
+                $data[$property],
                 $this->getDescription($object)
             ));
         }
 
-        RepoHelper::setProperty($object, $this->getModelProperty(), $ip);
+        RepoHelper::setProperty($object, $this->getProperty(), $ip);
         return $ip;
     }
 
@@ -62,14 +61,14 @@ class IpAddressMapper extends AbstractMapper
      */
     public function extract(object $object): array
     {
-        $ip = RepoHelper::getProperty($object, $this->getModelProperty());
+        $ip = RepoHelper::getProperty($object, $this->getProperty());
 
         if ($ip === null || $ip === '') {
             if ($this->isNullAllowed() == false) {
                 throw $this->nullExtractorException('IP address', $object);
             }
             return [
-                $this->getDbAlias() => null
+                $this->getProperty() => null
             ];
         }
 
@@ -81,7 +80,7 @@ class IpAddressMapper extends AbstractMapper
         }
 
         return [
-            $this->getDbAlias() => $ip,
+            $this->getProperty() => $ip,
         ];
     }
 

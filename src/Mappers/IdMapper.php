@@ -27,17 +27,17 @@ class IdMapper extends ScalarMapper
      */
     public function hydrate(array $data, object $object): ?Id
     {
-        $column = $this->getDbAlias();
-        if (!isset($data[$column])) {
+        $property = $this->getProperty();
+        if (!isset($data[$property])) {
             if ($this->isNullAllowed()) {
-                RepoHelper::setProperty($object, $this->getModelProperty(), null);
+                RepoHelper::setProperty($object, $this->getProperty(), null);
                 return null;
             }
             throw $this->nullHydratorException('Id', $object);
         }
 
-        $id = new Id($data[$column]);
-        RepoHelper::setProperty($object, $this->getModelProperty(), $id);
+        $id = new Id($data[$property]);
+        RepoHelper::setProperty($object, $this->getProperty(), $id);
         return $id;
     }
 
@@ -50,19 +50,19 @@ class IdMapper extends ScalarMapper
     public function extract(object $object): array
     {
         /** @var Id $id */
-        $id = RepoHelper::getProperty($object, $this->getModelProperty());
+        $id = RepoHelper::getProperty($object, $this->getProperty());
 
         if ($id === null) {
             if ($this->isNullAllowed() == false) {
                 throw $this->nullExtractorException('Id', $object);
             }
             return [
-                $this->getDbAlias() => null
+                $this->getProperty() => null
             ];
         }
 
         return [
-            $this->getDbAlias() => $id->toScalar()
+            $this->getProperty() => $id->toScalar()
         ];
     }
 }

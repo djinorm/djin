@@ -17,12 +17,7 @@ abstract class AbstractMapper implements MapperInterface
     /**
      * @var string
      */
-    protected $modelProperty;
-
-    /**
-     * @var string
-     */
-    protected $dbAlias;
+    protected $property;
 
     /**
      * @var bool
@@ -32,17 +27,9 @@ abstract class AbstractMapper implements MapperInterface
     /**
      * @return string
      */
-    public function getModelProperty(): string
+    public function getProperty(): string
     {
-        return $this->modelProperty;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDbAlias(): string
-    {
-        return $this->dbAlias;
+        return $this->property;
     }
 
     /**
@@ -55,7 +42,7 @@ abstract class AbstractMapper implements MapperInterface
 
     protected function getDescription(object $object): string
     {
-        return get_class($object) . '::' . $this->getModelProperty();
+        return get_class($object) . '::' . $this->getProperty();
     }
 
     /**

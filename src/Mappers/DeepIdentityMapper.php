@@ -48,27 +48,24 @@ class DeepIdentityMapper extends AbstractMapper implements ArrayMapperInterface
 
     /**
      * DeepIdentityMapper constructor.
-     * @param string $modelProperty
+     * @param string $property
      * @param array $map
      * @param array $reflectionProperties
      * @param bool $allowNull
-     * @param string|null $dbAlias
      * @throws InvalidArgumentException
      */
     public function __construct(
-        string $modelProperty,
+        string $property,
         array $map,
         array $reflectionProperties = [
             ReflectionProperty::IS_PUBLIC,
             ReflectionProperty::IS_PROTECTED,
             ReflectionProperty::IS_PRIVATE,
         ],
-        bool $allowNull = false,
-        string $dbAlias = null
+        bool $allowNull = false
     )
     {
-        $this->modelProperty = $modelProperty;
-        $this->dbAlias = $dbAlias ?? $modelProperty;
+        $this->property = $property;
         $this->allowNull = $allowNull;
 
         foreach ($map as $className => $callableOrIdentity) {
@@ -100,18 +97,18 @@ class DeepIdentityMapper extends AbstractMapper implements ArrayMapperInterface
      */
     public function hydrate(array $data, object $object)
     {
-        $column = $this->getDbAlias();
+        $property = $this->getProperty();
 
-        if (!isset($data[$column])) {
+        if (!isset($data[$property])) {
             if ($this->isNullAllowed()) {
-                RepoHelper::setProperty($object, $this->getModelProperty(), null);
+                RepoHelper::setProperty($object, $this->getProperty(), null);
                 return null;
             }
-            throw $this->nullHydratorException("{$column} value", $object);
+            throw $this->nullHydratorException("{$property} value", $object);
         }
 
-        $value = $this->hydrateRecursive($data[$column]);
-        RepoHelper::setProperty($object, $this->getModelProperty(), $value);
+        $value = $this->hydrateRecursive($data[$property]);
+        RepoHelper::setProperty($object, $this->getProperty(), $value);
         return $value;
     }
 
@@ -171,19 +168,19 @@ class DeepIdentityMapper extends AbstractMapper implements ArrayMapperInterface
     public function extract(object $object): array
     {
         /** @var int $value */
-        $value = RepoHelper::getProperty($object, $this->getModelProperty());
+        $value = RepoHelper::getProperty($object, $this->getProperty());
 
         if ($value === null) {
             if ($this->isNullAllowed() == false) {
-                throw $this->nullExtractorException("{$this->getModelProperty()} type", $object);
+                throw $this->nullExtractorException("{$this->getProperty()} type", $object);
             }
             return [
-                $this->getDbAlias() => null
+                $this->getProperty() => null
             ];
         }
 
         return [
-            $this->getDbAlias() => $this->extractRecursive($value),
+            $this->getProperty() => $this->extractRecursive($value),
         ];
     }
 

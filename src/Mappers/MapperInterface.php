@@ -28,12 +28,7 @@ interface MapperInterface
     /**
      * @return string
      */
-    public function getModelProperty(): string;
-
-    /**
-     * @return string
-     */
-    public function getDbAlias(): string;
+    public function getProperty(): string;
 
     /**
      * @return bool

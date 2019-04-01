@@ -27,17 +27,15 @@ class NestedArrayMapper extends AbstractMapper implements ArrayMapperInterface, 
     protected $allowNullNested;
 
     public function __construct(
-        string $modelProperty,
+        string $property,
         string $classname,
         array $mappers,
-        bool $allowNull = false,
-        string $dbAlias = null
+        bool $allowNull = false
     )
     {
-        $this->modelProperty = $modelProperty;
+        $this->property = $property;
         $this->nestedMapper = new MappersHandler($classname, $mappers);
         $this->allowNull = $allowNull;
-        $this->dbAlias = $dbAlias ?? $modelProperty;
     }
 
     /**
@@ -49,11 +47,11 @@ class NestedArrayMapper extends AbstractMapper implements ArrayMapperInterface, 
      */
     public function hydrate(array $data, object $object): ?array
     {
-        $column = $this->getDbAlias();
+        $property = $this->getProperty();
 
-        if (!isset($data[$column]) || $data[$column] === '') {
+        if (!isset($data[$property]) || $data[$property] === '') {
             if ($this->isNullAllowed()) {
-                RepoHelper::setProperty($object, $this->getModelProperty(), null);
+                RepoHelper::setProperty($object, $this->getProperty(), null);
                 return null;
             }
             throw $this->nullHydratorException('array', $object);
@@ -67,9 +65,9 @@ class NestedArrayMapper extends AbstractMapper implements ArrayMapperInterface, 
                 return new HydratorException("Null instead of nested object is not allowed in " . $this->getDescription($object));
             }
             return $this->nestedMapper->hydrate($data);
-        }, $data[$column]);
+        }, $data[$property]);
 
-        RepoHelper::setProperty($object, $this->getModelProperty(), $array);
+        RepoHelper::setProperty($object, $this->getProperty(), $array);
         return $array;
     }
 
@@ -81,14 +79,14 @@ class NestedArrayMapper extends AbstractMapper implements ArrayMapperInterface, 
      */
     public function extract(object $object): array
     {
-        $array = RepoHelper::getProperty($object, $this->getModelProperty());
+        $array = RepoHelper::getProperty($object, $this->getProperty());
 
         if (!is_array($array) && !is_a($array, \ArrayAccess::class)) {
             if ($this->isNullAllowed() == false) {
                 throw $this->nullExtractorException('array', $object);
             }
             return [
-                $this->getDbAlias() => null
+                $this->getProperty() => null
             ];
         }
 
@@ -103,7 +101,7 @@ class NestedArrayMapper extends AbstractMapper implements ArrayMapperInterface, 
         }, $array);
 
         return [
-            $this->getDbAlias() => $array
+            $this->getProperty() => $array
         ];
     }
 

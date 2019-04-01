@@ -32,7 +32,7 @@ class NestedMapperTest extends MapperTestCase
         $this->testSubClass->datetime = null;
 
         $expected = $this->getMapper()->hydrate([
-            'dbValue' => [
+            'value' => [
                 'id' => 1,
                 'name' => 'Tony',
                 'datetime' => null
@@ -51,7 +51,7 @@ class NestedMapperTest extends MapperTestCase
         $this->testClass->setValue($this->testSubClass);
 
         $expected = [
-            'dbValue' => [
+            'value' => [
                 'id' => 1,
                 'name' => 'Tony',
                 'datetime' => null
@@ -67,7 +67,7 @@ class NestedMapperTest extends MapperTestCase
             new IdMapper('id'),
             new StringMapper('name'),
             new DatetimeMapper('datetime', true)
-        ], false, 'dbValue');
+        ], false);
     }
 
 }

@@ -25,7 +25,7 @@ class ModelPointerMapperTest extends MapperTestCase
     public function testHydrate()
     {
         $expected = $this->getMapper()->hydrate([
-            'dbValue' => [
+            'value' => [
                 'id' => 1,
                 'model' => 'MyModelName',
             ],
@@ -38,7 +38,7 @@ class ModelPointerMapperTest extends MapperTestCase
     {
         $this->testClass->setValue($this->testSubClass);
         $expected = [
-            'dbValue' => [
+            'value' => [
                 'id' => 100,
                 'model' => 'MyModelName',
             ],
@@ -49,7 +49,7 @@ class ModelPointerMapperTest extends MapperTestCase
 
     protected function getMapper(): ModelPointerMapper
     {
-        return new ModelPointerMapper('value', false, 'dbValue');
+        return new ModelPointerMapper('value', false);
     }
 
 }

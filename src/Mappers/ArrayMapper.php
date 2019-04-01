@@ -20,14 +20,9 @@ class ArrayMapper extends AbstractMapper implements ArrayMapperInterface
      */
     protected $allowNullNested;
 
-    public function __construct(
-        string $modelProperty,
-        bool $allowNull = false,
-        string $dbAlias = null
-    )
+    public function __construct(string $property, bool $allowNull = false)
     {
-        $this->modelProperty = $modelProperty;
-        $this->dbAlias = $dbAlias ?? $modelProperty;
+        $this->property = $property;
         $this->allowNull = $allowNull;
     }
 
@@ -40,19 +35,19 @@ class ArrayMapper extends AbstractMapper implements ArrayMapperInterface
      */
     public function hydrate(array $data, object $object): ?array
     {
-        $column = $this->getDbAlias();
+        $property = $this->getProperty();
 
-        if (!isset($data[$column]) || $data[$column] === '') {
+        if (!isset($data[$property]) || $data[$property] === '') {
             if ($this->isNullAllowed()) {
-                RepoHelper::setProperty($object, $this->getModelProperty(), null);
+                RepoHelper::setProperty($object, $this->getProperty(), null);
                 return null;
             }
             throw $this->nullHydratorException('array', $object);
         }
 
-        $array = $data[$column];
+        $array = $data[$property];
 
-        RepoHelper::setProperty($object, $this->getModelProperty(), $array);
+        RepoHelper::setProperty($object, $this->getProperty(), $array);
         return $array;
     }
 
@@ -64,19 +59,19 @@ class ArrayMapper extends AbstractMapper implements ArrayMapperInterface
      */
     public function extract(object $object): array
     {
-        $array = RepoHelper::getProperty($object, $this->getModelProperty());
+        $array = RepoHelper::getProperty($object, $this->getProperty());
 
         if (!is_array($array)) {
             if ($this->isNullAllowed() == false) {
                 throw $this->nullExtractorException('array', $object);
             }
             return [
-                $this->getDbAlias() => null
+                $this->getProperty() => null
             ];
         }
 
         return [
-            $this->getDbAlias() => $array
+            $this->getProperty() => $array
         ];
     }
 }

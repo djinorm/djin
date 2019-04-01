@@ -8,21 +8,18 @@
 namespace DjinORM\Djin\Mappers;
 
 
-
 abstract class ScalarMapper extends AbstractMapper implements ScalarMapperInterface
 {
 
     /**
      * ScalarMapper constructor.
-     * @param string $modelProperty
+     * @param string $property
      * @param bool $allowNull
-     * @param string|null $dbAlias
      */
-    public function __construct(string $modelProperty, bool $allowNull = false, string $dbAlias = null)
+    public function __construct(string $property, bool $allowNull = false)
     {
-        $this->modelProperty = $modelProperty;
+        $this->property = $property;
         $this->allowNull = $allowNull;
-        $this->dbAlias = $dbAlias ?? $modelProperty;
     }
 
 }

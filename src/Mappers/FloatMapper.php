@@ -25,18 +25,18 @@ class FloatMapper extends ScalarMapper
      */
     public function hydrate(array $data, object $object): ?float
     {
-        $column = $this->getDbAlias();
+        $property = $this->getProperty();
 
-        if (!isset($data[$column])) {
+        if (!isset($data[$property])) {
             if ($this->isNullAllowed()) {
-                RepoHelper::setProperty($object, $this->getModelProperty(), null);
+                RepoHelper::setProperty($object, $this->getProperty(), null);
                 return null;
             }
             throw $this->nullHydratorException('float/double', $object);
         }
 
-        $value = (float) $data[$column];
-        RepoHelper::setProperty($object, $this->getModelProperty(), $value);
+        $value = (float) $data[$property];
+        RepoHelper::setProperty($object, $this->getProperty(), $value);
         return $value;
     }
 
@@ -49,7 +49,7 @@ class FloatMapper extends ScalarMapper
     public function extract(object $object): array
     {
         /** @var int $value */
-        $value = RepoHelper::getProperty($object, $this->getModelProperty());
+        $value = RepoHelper::getProperty($object, $this->getProperty());
 
         if ($value === null && $this->isNullAllowed() == false) {
             throw $this->nullExtractorException('float/double', $object);
@@ -58,7 +58,7 @@ class FloatMapper extends ScalarMapper
         $value = is_null($value) ? null : (float) $value;
 
         return [
-            $this->getDbAlias() => $value
+            $this->getProperty() => $value
         ];
     }
 }

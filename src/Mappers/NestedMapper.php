@@ -21,17 +21,15 @@ class NestedMapper extends AbstractMapper implements NestedMapperInterface
     protected $nestedMapper;
 
     public function __construct(
-        string $modelProperty,
+        string $property,
         string $classname,
         array $mappers,
-        bool $allowNull = false,
-        string $dbAlias = null
+        bool $allowNull = false
     )
     {
-        $this->modelProperty = $modelProperty;
+        $this->property = $property;
         $this->nestedMapper = new MappersHandler($classname, $mappers);
         $this->allowNull = $allowNull;
-        $this->dbAlias = $dbAlias ?? $modelProperty;
     }
 
     /**
@@ -43,17 +41,17 @@ class NestedMapper extends AbstractMapper implements NestedMapperInterface
      */
     public function hydrate(array $data, object $object)
     {
-        if (!isset($data[$this->getDbAlias()])) {
+        if (!isset($data[$this->getProperty()])) {
             if ($this->isNullAllowed()) {
-                RepoHelper::setProperty($object, $this->getModelProperty(), null);
+                RepoHelper::setProperty($object, $this->getProperty(), null);
                 return null;
             }
             throw $this->nullHydratorException($this->nestedMapper->getModelClassName(), $object);
         }
 
-        $data = $data[$this->getDbAlias()];
+        $data = $data[$this->getProperty()];
         $subObject = $this->nestedMapper->hydrate($data);
-        RepoHelper::setProperty($object, $this->getModelProperty(), $subObject);
+        RepoHelper::setProperty($object, $this->getProperty(), $subObject);
         return $subObject;
     }
 
@@ -65,18 +63,18 @@ class NestedMapper extends AbstractMapper implements NestedMapperInterface
      */
     public function extract(object $object): array
     {
-        $subObject = RepoHelper::getProperty($object, $this->modelProperty);
+        $subObject = RepoHelper::getProperty($object, $this->property);
 
         if ($subObject === null) {
             if ($this->isNullAllowed() == true) {
-                return [$this->getDbAlias() => null];
+                return [$this->getProperty() => null];
             }
             throw $this->nullExtractorException($this->nestedMapper->getModelClassName(), $object);
         }
 
         $data = $this->nestedMapper->extract($subObject);
         return [
-            $this->getDbAlias() => $data,
+            $this->getProperty() => $data,
         ];
     }
 
