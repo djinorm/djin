@@ -15,6 +15,4 @@ interface MappedRepositoryInterface extends RepositoryInterface
 
     public function getMappersHandler(): MappersHandlerInterface;
 
-    public function getAlias(string $modelProperty): string;
-
 }
