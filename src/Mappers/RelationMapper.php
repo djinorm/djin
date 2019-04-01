@@ -8,9 +8,9 @@
 namespace DjinORM\Djin\Mappers;
 
 
-use DjinORM\Djin\Model\ModelPointer;
+use DjinORM\Djin\Model\Relation;
 
-class ModelPointerMapper extends NestedMapper
+class RelationMapper extends NestedMapper
 {
 
     /**
@@ -20,7 +20,7 @@ class ModelPointerMapper extends NestedMapper
      */
     public function __construct(string $property, bool $allowNull = false)
     {
-        parent::__construct($property,  ModelPointer::class, [
+        parent::__construct($property,  Relation::class, [
             new IdMapper('id'),
             new StringMapper('model')
         ], $allowNull);

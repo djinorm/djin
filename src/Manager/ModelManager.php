@@ -8,7 +8,7 @@ namespace DjinORM\Djin\Manager;
 
 use DjinORM\Djin\Exceptions\UnknownModelException;
 use DjinORM\Djin\Model\ModelInterface;
-use DjinORM\Djin\Model\ModelPointer;
+use DjinORM\Djin\Model\Relation;
 use DjinORM\Djin\Model\StubModelInterface;
 use DjinORM\Djin\Exceptions\NotModelInterfaceException;
 use DjinORM\Djin\Repository\RepositoryInterface;
@@ -102,14 +102,14 @@ class ModelManager
     }
 
     /**
-     * @param ModelPointer $shadow
+     * @param Relation $relation
      * @return ModelInterface|null
      * @throws UnknownModelException
      */
-    public function findModelByPointer(ModelPointer $shadow): ?ModelInterface
+    public function findRelation(Relation $relation): ?ModelInterface
     {
-        $repo = $this->getRepositoryByModelName($shadow->getModelName());
-        return $repo->findById($shadow->getId());
+        $repo = $this->getRepositoryByModelName($relation->getModelName());
+        return $repo->findById($relation->getId());
     }
 
     /**
@@ -133,9 +133,9 @@ class ModelManager
             $this->guardNotModelInterface($model);
 
             $class = get_class($model);
-            $tempId = $model->getId()->getTempId();
+            $hash = spl_object_hash($model);
 
-            $this->models[$class][$tempId] = $model;
+            $this->models[$class][$hash] = $model;
         }
 
         return $this->getModelsCount($this->models);
@@ -186,10 +186,10 @@ class ModelManager
         }
 
         $class = get_class($modelToDelete);
-        $tempId = $modelToDelete->getId()->getTempId();
+        $hash = spl_object_hash($modelToDelete);
 
-        unset($this->models[$class][$tempId]);
-        $this->modelsToDelete[$class][$tempId] = $modelToDelete;
+        unset($this->models[$class][$hash]);
+        $this->modelsToDelete[$class][$hash] = $modelToDelete;
 
         return $this->getModelsCount($this->modelsToDelete);
     }

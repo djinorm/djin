@@ -11,11 +11,11 @@ use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Mock\TestModel;
 use PHPUnit\Framework\TestCase;
 
-class ModelPointerTest extends TestCase
+class RelationTest extends TestCase
 {
 
-    /** @var ModelPointer */
-    private $pointer;
+    /** @var Relation */
+    private $relation;
 
     /** @var ModelInterface */
     private $model;
@@ -24,40 +24,40 @@ class ModelPointerTest extends TestCase
     {
         parent::setUp();
         $this->model = new TestModel(1);
-        $this->pointer = new ModelPointer($this->model);
+        $this->relation = Relation::link($this->model);
     }
 
     public function testConstructFromNameAndId()
     {
         $id = new Id(1);
-        $pointer = new ModelPointer(TestModel::getModelName(), $id);
+        $pointer = new Relation(TestModel::getModelName(), $id);
         $this->assertSame($id, $pointer->getId());
     }
 
     public function testConstructFromNameAndScalarId()
     {
-        $pointer = new ModelPointer(TestModel::getModelName(), 1);
-        $this->assertInstanceOf(Id::class, $pointer->getId());
-        $this->assertEquals(1, $pointer->getId()->toScalar());
+        $relation = new Relation(TestModel::getModelName(), new Id(1));
+        $this->assertInstanceOf(Id::class, $relation->getId());
+        $this->assertEquals(1, $relation->getId()->toScalar());
     }
 
     public function testGetId()
     {
-        $this->assertSame($this->model->getId(), $this->pointer->getId());
+        $this->assertSame($this->model->getId(), $this->relation->getId());
     }
 
     public function testGetModelName()
     {
-        $this->assertEquals($this->model::getModelName(), $this->pointer->getModelName());
+        $this->assertEquals($this->model::getModelName(), $this->relation->getModelName());
     }
 
     public function testToJson()
     {
         $expected = json_encode([
-            'name' => $this->model::getModelName(),
+            'model' => $this->model::getModelName(),
             'id' => $this->model->getId()->toScalar(),
         ]);
-        $this->assertEquals($expected, json_encode($this->pointer));
+        $this->assertEquals($expected, json_encode($this->relation));
     }
 
 }

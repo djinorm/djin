@@ -10,7 +10,7 @@ namespace DjinORM\Djin\Model;
 
 use DjinORM\Djin\Id\Id;
 
-class ModelPointer implements \JsonSerializable
+class Relation implements \JsonSerializable
 {
 
     /** @var Id */
@@ -21,25 +21,13 @@ class ModelPointer implements \JsonSerializable
 
     /**
      * ModelPointer constructor.
-     * @param ModelInterface|string $modelOrName
+     * @param string $modelName
      * @param Id|int|string $id
-     * @throws \DjinORM\Djin\Exceptions\InvalidArgumentException
-     * @throws \DjinORM\Djin\Exceptions\LogicException
      */
-    public function __construct($modelOrName, $id = null)
+    public function __construct(string $modelName, Id $id)
     {
-        if ($modelOrName instanceof ModelInterface) {
-            $this->model = $modelOrName::getModelName();
-            $this->id = $modelOrName->getId();
-        } else {
-            if ($id instanceof Id) {
-                $this->id = $id;
-            } else {
-                $this->id = new Id($id);
-            }
-
-            $this->model = $modelOrName;
-        }
+        $this->model = $modelName;
+        $this->id = $id;
     }
 
     /**
@@ -68,8 +56,13 @@ class ModelPointer implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'name' => $this->model,
+            'model' => $this->model,
             'id' => $this->id->toScalar(),
         ];
+    }
+
+    public static function link(ModelInterface $model)
+    {
+        return new static($model::getModelName(), $model->getId());
     }
 }

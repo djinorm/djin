@@ -8,7 +8,7 @@
 namespace DjinORM\Djin\Mappers;
 
 use DjinORM\Djin\Id\Id;
-use DjinORM\Djin\Model\ModelPointer;
+use DjinORM\Djin\Model\Relation;
 use DjinORM\Djin\TestHelpers\MapperTestCase;
 
 class ModelPointerMapperTest extends MapperTestCase
@@ -19,7 +19,7 @@ class ModelPointerMapperTest extends MapperTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->testSubClass = new ModelPointer('MyModelName', new Id(100));
+        $this->testSubClass = new Relation('MyModelName', new Id(100));
     }
 
     public function testHydrate()
@@ -47,9 +47,9 @@ class ModelPointerMapperTest extends MapperTestCase
         $this->assertEquals($expected, $this->getMapper()->extract($this->testClass));
     }
 
-    protected function getMapper(): ModelPointerMapper
+    protected function getMapper(): RelationMapper
     {
-        return new ModelPointerMapper('value', false);
+        return new RelationMapper('value', false);
     }
 
 }

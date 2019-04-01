@@ -14,7 +14,6 @@ use DjinORM\Djin\Model\ModelInterface;
 class Id
 {
 
-    private $tempId;
     private $permanentId;
 
     /**
@@ -36,14 +35,6 @@ class Id
             return $this->permanentId;
         }
         return null;
-    }
-
-    public function getTempId()
-    {
-        if ($this->tempId === null) {
-            $this->tempId = uniqid('__DJIN__', true);
-        }
-        return $this->tempId;
     }
 
     public function isPermanent(): bool
@@ -93,10 +84,7 @@ class Id
 
     public function toScalar()
     {
-        if ($this->isPermanent()) {
-            return $this->permanentId;
-        }
-        return $this->getTempId();
+        return $this->permanentId;
     }
 
     public function __toString()

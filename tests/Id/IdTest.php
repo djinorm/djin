@@ -49,11 +49,6 @@ class IdTest extends TestCase
         $this->assertNull($this->temp->getPermanentOrNull());
     }
 
-    public function testGetTempId()
-    {
-        $this->assertContains('__DJIN__', $this->temp->getTempId());
-    }
-
     public function testSetPermanentIdInvalidType()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -96,15 +91,13 @@ class IdTest extends TestCase
     public function testToScalar()
     {
         $this->assertEquals(1, $this->permanent->toScalar());
-        $this->assertNotEquals($this->permanent->getTempId(), $this->permanent->toScalar());
-        $this->assertEquals($this->temp->getTempId(), $this->temp->toScalar());
+        $this->assertNull($this->temp->toScalar());
     }
 
     public function testToString()
     {
         $this->assertEquals(1, (string) $this->permanent);
-        $this->assertNotEquals($this->permanent->getTempId(), (string) $this->permanent);
-        $this->assertEquals($this->temp->getTempId(), (string) $this->temp);
+        $this->assertEquals($this->temp->toScalar(), '');
     }
 
     public function testNonStrictCompare()
