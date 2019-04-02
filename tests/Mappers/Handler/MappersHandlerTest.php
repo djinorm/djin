@@ -213,7 +213,7 @@ class MappersHandlerTest extends TestCase
         $this->assertEquals($expected, $this->mappersHandler->extract($model));
     }
 
-    public function testGetMapperByModelProperty()
+    public function testGetMapperByProperty()
     {
         $this->assertInstanceOf(
             NestedMapper::class,
@@ -238,6 +238,32 @@ class MappersHandlerTest extends TestCase
             $this->mappersHandler->getMapperByProperty('qwerty')
         );
 
+    }
+
+    public function testGetScheme()
+    {
+        $scheme = $this->mappersHandler->getScheme();
+        $this->assertSame($scheme, [
+            'id' => null,
+            'string' => null,
+            'indexedArrayOfString' => [],
+            'associativeArrayOfString' => [],
+            'indexedArrayOfModel' => [],
+            'indexedArrayOfModel.id' => null,
+            'indexedArrayOfModel.otherId' => null,
+            'associativeArrayOfModel' => [],
+            'associativeArrayOfModel.id' => null,
+            'associativeArrayOfModel.otherId' => null,
+            'sub' => null,
+            'sub.string' => null,
+            'sub.indexedArrayOfModel' => [],
+            'sub.indexedArrayOfModel.id' => null,
+            'sub.indexedArrayOfModel.otherId' => null,
+            'sub.associativeArrayOfModel' => [],
+            'sub.associativeArrayOfModel.id' => null,
+            'sub.associativeArrayOfModel.otherId' => null,
+
+        ]);
     }
 
 }

@@ -9,6 +9,7 @@ namespace DjinORM\Djin\Mappers\Handler;
 
 
 use DjinORM\Djin\Helpers\RepoHelper;
+use DjinORM\Djin\Mappers\ArrayMapperInterface;
 use DjinORM\Djin\Mappers\MapperInterface;
 use DjinORM\Djin\Mappers\NestedMapperInterface;
 
@@ -24,7 +25,7 @@ class MappersHandler implements MappersHandlerInterface
     protected $mappers;
 
     /** @var array */
-    private $map;
+    private $scheme;
 
     /**
      * Mapper constructor.
@@ -87,6 +88,35 @@ class MappersHandler implements MappersHandlerInterface
     public function getMapperByProperty(string $property): ?MapperInterface
     {
         return $this->getMapperRecursive($property, $this);
+    }
+
+    public function getScheme(): array
+    {
+        if (!$this->scheme) {
+            $this->scheme = $this->getSchemeRecursive('', $this);
+        }
+        return $this->scheme;
+    }
+
+    protected function getSchemeRecursive(string $prefix, MappersHandlerInterface $mappersHandler)
+    {
+        $map = [];
+        foreach ($mappersHandler->getMappers() as $mapper) {
+
+            $value = $mapper instanceof ArrayMapperInterface ? [] : null;
+            $path = "{$prefix}{$mapper->getProperty()}";
+            $map[$path] = $value;
+
+            if ($mapper instanceof NestedMapperInterface) {
+                $subProperties = $this->getSchemeRecursive($path . '.', $mapper->getNestedMappersHandler());
+                foreach ($subProperties as $subProperty => $subValue) {
+                    $map[$subProperty] = $subValue;
+                }
+                continue;
+            }
+
+        }
+        return $map;
     }
 
     /**
