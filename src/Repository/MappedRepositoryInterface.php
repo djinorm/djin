@@ -8,11 +8,11 @@
 namespace DjinORM\Djin\Repository;
 
 
-use DjinORM\Djin\Mappers\Handler\MappersHandlerInterface;
+use DjinORM\Djin\Mappers\Handler\MappersHandler;
 
 interface MappedRepositoryInterface extends RepositoryInterface
 {
 
-    public function getMappersHandler(): MappersHandlerInterface;
+    public function getMappersHandler(): MappersHandler;
 
 }

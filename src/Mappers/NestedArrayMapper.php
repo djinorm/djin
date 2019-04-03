@@ -12,13 +12,12 @@ use DjinORM\Djin\Exceptions\ExtractorException;
 use DjinORM\Djin\Exceptions\HydratorException;
 use DjinORM\Djin\Helpers\RepoHelper;
 use DjinORM\Djin\Mappers\Handler\MappersHandler;
-use DjinORM\Djin\Mappers\Handler\MappersHandlerInterface;
 
 class NestedArrayMapper extends AbstractMapper implements ArrayMapperInterface, NestedMapperInterface
 {
 
     /**
-     * @var MappersHandlerInterface
+     * @var MappersHandler
      */
     protected $nestedMapper;
     /**
@@ -106,9 +105,9 @@ class NestedArrayMapper extends AbstractMapper implements ArrayMapperInterface, 
     }
 
     /**
-     * @return MappersHandlerInterface
+     * @return MappersHandler
      */
-    public function getNestedMappersHandler(): MappersHandlerInterface
+    public function getNestedMappersHandler(): MappersHandler
     {
         return $this->nestedMapper;
     }

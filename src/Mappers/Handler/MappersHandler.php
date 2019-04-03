@@ -13,7 +13,7 @@ use DjinORM\Djin\Mappers\ArrayMapperInterface;
 use DjinORM\Djin\Mappers\MapperInterface;
 use DjinORM\Djin\Mappers\NestedMapperInterface;
 
-class MappersHandler implements MappersHandlerInterface
+class MappersHandler
 {
     /**
      * @var string
@@ -98,7 +98,7 @@ class MappersHandler implements MappersHandlerInterface
         return $this->scheme;
     }
 
-    protected function getSchemeRecursive(string $prefix, MappersHandlerInterface $mappersHandler)
+    protected function getSchemeRecursive(string $prefix, MappersHandler $mappersHandler)
     {
         $map = [];
         foreach ($mappersHandler->getMappers() as $mapper) {
@@ -121,10 +121,10 @@ class MappersHandler implements MappersHandlerInterface
 
     /**
      * @param string $property
-     * @param MappersHandlerInterface $mappersHandler
+     * @param MappersHandler $mappersHandler
      * @return MapperInterface
      */
-    protected function getMapperRecursive(string $property, MappersHandlerInterface $mappersHandler): ?MapperInterface
+    protected function getMapperRecursive(string $property, MappersHandler $mappersHandler): ?MapperInterface
     {
         $path = explode('.', $property);
         $property = $path[0];

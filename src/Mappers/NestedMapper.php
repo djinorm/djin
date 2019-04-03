@@ -10,13 +10,12 @@ namespace DjinORM\Djin\Mappers;
 
 use DjinORM\Djin\Helpers\RepoHelper;
 use DjinORM\Djin\Mappers\Handler\MappersHandler;
-use DjinORM\Djin\Mappers\Handler\MappersHandlerInterface;
 
 class NestedMapper extends AbstractMapper implements NestedMapperInterface
 {
 
     /**
-     * @var MappersHandlerInterface
+     * @var MappersHandler
      */
     protected $nestedMapper;
 
@@ -79,9 +78,9 @@ class NestedMapper extends AbstractMapper implements NestedMapperInterface
     }
 
     /**
-     * @return MappersHandlerInterface
+     * @return MappersHandler
      */
-    public function getNestedMappersHandler(): MappersHandlerInterface
+    public function getNestedMappersHandler(): MappersHandler
     {
         return $this->nestedMapper;
     }
