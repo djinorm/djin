@@ -9,7 +9,6 @@ namespace DjinORM\Djin\Mappers\Handler;
 
 
 use DjinORM\Djin\Helpers\RepoHelper;
-use DjinORM\Djin\Mappers\ArrayMapperInterface;
 use DjinORM\Djin\Mappers\MapperInterface;
 use DjinORM\Djin\Mappers\NestedMapperInterface;
 
@@ -87,9 +86,13 @@ class MappersHandler
      */
     public function getMapperByProperty(string $property): ?MapperInterface
     {
-        return $this->getMapperRecursive($property, $this);
+        return $this->getScheme()[$property];
     }
 
+    /**
+     * Возвращает схему мапперов в точечной нотации
+     * @return MapperInterface[]
+     */
     public function getScheme(): array
     {
         if (!$this->scheme) {
@@ -102,10 +105,8 @@ class MappersHandler
     {
         $map = [];
         foreach ($mappersHandler->getMappers() as $mapper) {
-
-            $value = $mapper instanceof ArrayMapperInterface ? [] : null;
             $path = "{$prefix}{$mapper->getProperty()}";
-            $map[$path] = $value;
+            $map[$path] = $mapper;
 
             if ($mapper instanceof NestedMapperInterface) {
                 $subProperties = $this->getSchemeRecursive($path . '.', $mapper->getNestedMappersHandler());
@@ -117,32 +118,5 @@ class MappersHandler
 
         }
         return $map;
-    }
-
-    /**
-     * @param string $property
-     * @param MappersHandler $mappersHandler
-     * @return MapperInterface
-     */
-    protected function getMapperRecursive(string $property, MappersHandler $mappersHandler): ?MapperInterface
-    {
-        $path = explode('.', $property);
-        $property = $path[0];
-        unset($path[0]);
-
-        $mapper = $mappersHandler->getMappers()[$property] ?? null;
-
-        if (empty($path)) {
-            return $mapper;
-        }
-
-        if ($mapper instanceof NestedMapperInterface) {
-            return $this->getMapperRecursive(
-                implode('.', $path),
-                $mapper->getNestedMappersHandler()
-            );
-        }
-
-        return null;
     }
 }
