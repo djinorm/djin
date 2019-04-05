@@ -8,7 +8,7 @@
 namespace DjinORM\Djin\TestHelpers;
 
 
-use DjinORM\Djin\Mappers\MapperInterface;
+use DjinORM\Djin\Hydrator\Mappers\MapperInterface;
 use PHPUnit\Framework\TestCase;
 
 abstract class MapperTestCase extends TestCase
