@@ -11,9 +11,11 @@ namespace DjinORM\Djin\Hydrator\Mappers;
 use DjinORM\Djin\Exceptions\ExtractorException;
 use DjinORM\Djin\Exceptions\HydratorException;
 use DjinORM\Djin\Exceptions\InvalidArgumentException;
+use DjinORM\Djin\Exceptions\LogicException;
 use DjinORM\Djin\Helpers\RepoHelper;
 use DjinORM\Djin\Id\Id;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionProperty;
 
 /**
@@ -91,9 +93,9 @@ class DeepIdentityMapper extends AbstractMapper implements ArrayMapperInterface
      * @param object $object
      * @return mixed
      * @throws HydratorException
-     * @throws \DjinORM\Djin\Exceptions\InvalidArgumentException
-     * @throws \DjinORM\Djin\Exceptions\LogicException
-     * @throws \ReflectionException
+     * @throws InvalidArgumentException
+     * @throws LogicException
+     * @throws ReflectionException
      */
     public function hydrate(array $data, object $object)
     {
@@ -116,9 +118,9 @@ class DeepIdentityMapper extends AbstractMapper implements ArrayMapperInterface
      * @param $data
      * @return array|object
      * @throws HydratorException
-     * @throws \DjinORM\Djin\Exceptions\InvalidArgumentException
-     * @throws \DjinORM\Djin\Exceptions\LogicException
-     * @throws \ReflectionException
+     * @throws InvalidArgumentException
+     * @throws LogicException
+     * @throws ReflectionException
      */
     protected function hydrateRecursive($data)
     {
@@ -163,7 +165,7 @@ class DeepIdentityMapper extends AbstractMapper implements ArrayMapperInterface
      * @param object $object
      * @return array
      * @throws ExtractorException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function extract(object $object): array
     {
@@ -188,7 +190,7 @@ class DeepIdentityMapper extends AbstractMapper implements ArrayMapperInterface
      * @param $something
      * @return array|mixed
      * @throws ExtractorException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function extractRecursive($something)
     {
@@ -235,7 +237,7 @@ class DeepIdentityMapper extends AbstractMapper implements ArrayMapperInterface
      * @param $class
      * @param string $exceptionClass
      * @return ReflectionClass
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function getReflectionClass($class, string $exceptionClass): ReflectionClass
     {
