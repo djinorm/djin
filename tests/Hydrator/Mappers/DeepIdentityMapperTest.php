@@ -162,7 +162,14 @@ class DeepIdentityMapperTest extends MapperTestCase
                                                 ],
                                                 2 => [
                                                     '___{identity}___' => 'model:test:stub',
-                                                    'data' => [],
+                                                    'data' => [
+                                                        'id' => [
+                                                            '___{identity}___' => 'id',
+                                                            'data' => [
+                                                                'id' => null,
+                                                            ]
+                                                        ],
+                                                    ],
                                                 ],
                                             ],
                                         ]

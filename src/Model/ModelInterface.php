@@ -15,6 +15,4 @@ interface ModelInterface
 
     public static function getModelName():string;
 
-    public static function getModelIdPropertyName():string;
-
 }

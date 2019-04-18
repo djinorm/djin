@@ -11,12 +11,9 @@ namespace DjinORM\Djin\Mock\MappersHandler;
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Mock\TestModel;
 use DjinORM\Djin\Model\ModelInterface;
-use DjinORM\Djin\Model\ModelTrait;
 
 class TestModelMappersHandler implements ModelInterface
 {
-
-    use ModelTrait;
 
     /** @var Id */
     public $id;
@@ -67,6 +64,11 @@ class TestModelMappersHandler implements ModelInterface
         ];
 
         $this->sub = new TestSubmodelMapper();
+    }
+
+    public function getId(): Id
+    {
+        return $this->id;
     }
 
     public static function getModelName(): string
