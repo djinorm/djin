@@ -15,9 +15,9 @@ use DjinORM\Djin\Helpers\RepoHelper;
 class IpAddressMapper extends AbstractMapper
 {
 
-    public function __construct($modelProperty, $allowNull = false)
+    public function __construct($property, $allowNull = false)
     {
-        $this->property = $modelProperty;
+        $this->property = $property;
         $this->allowNull = $allowNull;
     }
 

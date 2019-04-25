@@ -17,7 +17,9 @@ use DjinORM\Djin\Mock\TestSecondModel;
 use DjinORM\Djin\Mock\TestStubModel;
 use DjinORM\Djin\Mock\TestModelRepository;
 use DjinORM\Djin\Model\Relation;
+use Exception;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class ModelManagerTest extends TestCase
 {
@@ -37,9 +39,21 @@ class ModelManagerTest extends TestCase
         $this->container = $container = ContainerBuilder::buildDevContainer();
         $this->manager = new ModelManager(
             $this->container,
-            function () {$this->callbacks['beforeCommit'] = true;},
-            function () {$this->callbacks['afterCommit'] = true;},
-            function () {$this->callbacks['errorCommit'] = true;}
+            function (array $saved, array $deleted) {
+                $this->callbacks['beforeCommit'] = true;
+                $this->callbacks['beforeCommitSaved'] = $saved;
+                $this->callbacks['beforeCommitDeleted'] = $deleted;
+            },
+            function (array $saved, array $deleted) {
+                $this->callbacks['afterCommit'] = true;
+                $this->callbacks['afterCommitSaved'] = $saved;
+                $this->callbacks['afterCommitDeleted'] = $deleted;
+            },
+            function (array $saved, array $deleted) {
+                $this->callbacks['errorCommit'] = true;
+                $this->callbacks['errorCommitSaved'] = $saved;
+                $this->callbacks['errorCommitDeleted'] = $deleted;
+            }
         );
         $this->manager->setModelRepository(TestModelRepository::class);
         $this->manager->setModelRepository(TestModelSecondRepository::class);
@@ -129,8 +143,8 @@ class ModelManagerTest extends TestCase
     public function testPersistsNotModelInterface()
     {
         $this->expectException(NotModelInterfaceException::class);
-        $model_1 = new \stdClass();
-        $model_2 = new \stdClass();
+        $model_1 = new stdClass();
+        $model_2 = new stdClass();
         $this->manager->persists($model_1, $model_2);
     }
 
@@ -253,6 +267,24 @@ class ModelManagerTest extends TestCase
         $this->assertArrayHasKey('afterCommit', $this->callbacks);
         $this->assertArrayNotHasKey('errorCommit', $this->callbacks);
 
+        $this->assertEquals($this->callbacks['beforeCommitSaved'], [
+            TestModel::class => [$newModel_1],
+            TestSecondModel::class => [$newModel_2],
+        ]);
+
+        $this->assertEquals($this->callbacks['beforeCommitDeleted'], [
+            TestModel::class => [$permanentModel],
+        ]);
+
+        $this->assertEquals($this->callbacks['afterCommitSaved'], [
+            TestModel::class => [$newModel_1],
+            TestSecondModel::class => [$newModel_2],
+        ]);
+
+        $this->assertEquals($this->callbacks['afterCommitDeleted'], [
+            TestModel::class => [$permanentModel],
+        ]);
+
         $this->assertTrue($newModel_1->getId()->isPermanent());
         $this->assertTrue($newModel_2->getId()->isPermanent());
         $this->assertEquals(0, $this->manager->persists());
@@ -263,6 +295,10 @@ class ModelManagerTest extends TestCase
 
     public function testCommitErrorException()
     {
+        $permanentModel = new TestModel();
+        $permanentModel->getId()->setPermanentId(1);
+        $this->manager->delete($permanentModel);
+
         $model = new TestSecondModel();
         $this->manager->persists($model);
 
@@ -276,10 +312,18 @@ class ModelManagerTest extends TestCase
 
         try {
             $this->manager->commit();
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->assertArrayHasKey('beforeCommit', $this->callbacks);
             $this->assertArrayNotHasKey('afterCommit', $this->callbacks);
             $this->assertArrayHasKey('errorCommit', $this->callbacks);
+
+            $this->assertEquals($this->callbacks['errorCommitSaved'], [
+                TestSecondModel::class => [$model],
+            ]);
+
+            $this->assertEquals($this->callbacks['errorCommitDeleted'], [
+                TestModel::class => [$permanentModel],
+            ]);
         }
     }
 
