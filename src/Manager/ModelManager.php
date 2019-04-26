@@ -241,7 +241,7 @@ class ModelManager
 
         if ($this->onBeforeCommit) {
             $beforeCommitCallback = $this->onBeforeCommit;
-            $beforeCommitCallback($modelsToSave, $modelsToDelete);
+            $beforeCommitCallback($this, $modelsToSave, $modelsToDelete);
         }
 
         try {
@@ -267,13 +267,13 @@ class ModelManager
 
             if ($this->onAfterCommit) {
                 $afterCommitCallback = $this->onAfterCommit;
-                $afterCommitCallback($modelsToSave, $modelsToDelete);
+                $afterCommitCallback($this, $modelsToSave, $modelsToDelete);
             }
 
         } catch (Exception $exception) {
             if ($this->onCommitException) {
                 $commitExceptionCallback = $this->onCommitException;
-                $commitExceptionCallback($modelsToSave, $modelsToDelete);
+                $commitExceptionCallback($this, $modelsToSave, $modelsToDelete);
             }
             throw $exception;
         }

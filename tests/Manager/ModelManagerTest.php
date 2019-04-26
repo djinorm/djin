@@ -39,18 +39,21 @@ class ModelManagerTest extends TestCase
         $this->container = $container = ContainerBuilder::buildDevContainer();
         $this->manager = new ModelManager(
             $this->container,
-            function (array $saved, array $deleted) {
+            function (ModelManager $manager, array $saved, array $deleted) {
                 $this->callbacks['beforeCommit'] = true;
+                $this->callbacks['beforeCommitManager'] = $manager;
                 $this->callbacks['beforeCommitSaved'] = $saved;
                 $this->callbacks['beforeCommitDeleted'] = $deleted;
             },
-            function (array $saved, array $deleted) {
+            function (ModelManager $manager, array $saved, array $deleted) {
                 $this->callbacks['afterCommit'] = true;
+                $this->callbacks['afterCommitManager'] = $manager;
                 $this->callbacks['afterCommitSaved'] = $saved;
                 $this->callbacks['afterCommitDeleted'] = $deleted;
             },
-            function (array $saved, array $deleted) {
+            function (ModelManager $manager, array $saved, array $deleted) {
                 $this->callbacks['errorCommit'] = true;
+                $this->callbacks['errorCommitManager'] = $manager;
                 $this->callbacks['errorCommitSaved'] = $saved;
                 $this->callbacks['errorCommitDeleted'] = $deleted;
             }
@@ -285,6 +288,9 @@ class ModelManagerTest extends TestCase
             TestModel::class => [$permanentModel],
         ]);
 
+        $this->assertSame($this->manager, $this->callbacks['beforeCommitManager']);
+        $this->assertSame($this->manager, $this->callbacks['afterCommitManager']);
+
         $this->assertTrue($newModel_1->getId()->isPermanent());
         $this->assertTrue($newModel_2->getId()->isPermanent());
         $this->assertEquals(0, $this->manager->persists());
@@ -324,6 +330,8 @@ class ModelManagerTest extends TestCase
             $this->assertEquals($this->callbacks['errorCommitDeleted'], [
                 TestModel::class => [$permanentModel],
             ]);
+
+            $this->assertSame($this->manager, $this->callbacks['errorCommitManager']);
         }
     }
 
