@@ -8,9 +8,12 @@
 namespace DjinORM\Djin\Model;
 
 
+use DjinORM\Djin\Exceptions\InvalidArgumentException;
+use DjinORM\Djin\Exceptions\LogicException;
 use DjinORM\Djin\Id\Id;
+use JsonSerializable;
 
-class Relation implements \JsonSerializable
+class Relation implements JsonSerializable
 {
 
     /** @var Id */
@@ -61,8 +64,23 @@ class Relation implements \JsonSerializable
         ];
     }
 
-    public static function link(ModelInterface $model)
+    public static function link(ModelInterface $model): self
     {
         return new static($model::getModelName(), $model->getId());
+    }
+
+    /**
+     * @param string $json
+     * @return Relation|null
+     * @throws InvalidArgumentException
+     * @throws LogicException
+     */
+    public static function fromJson(string $json): ?self
+    {
+        $data = json_decode($json, true);
+        if (is_array($data) && isset($data['model']) && isset($data['id'])) {
+            return new static($data['model'], new Id($data['id']));
+        }
+        return null;
     }
 }
