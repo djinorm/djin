@@ -7,6 +7,7 @@
 namespace DjinORM\Djin\Id;
 
 use DjinORM\Djin\Model\ModelInterface;
+use Redis;
 
 class RedisIdGenerator implements IdGeneratorInterface
 {
@@ -14,7 +15,7 @@ class RedisIdGenerator implements IdGeneratorInterface
     private $prefix;
     private $redis;
 
-    public function __construct(\Redis $redis, $prefix = 'RedisIdGenerator')
+    public function __construct(Redis $redis, $prefix = 'RedisIdGenerator')
     {
         $this->prefix = $prefix;
         $this->redis = $redis;
