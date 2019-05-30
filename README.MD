@@ -259,7 +259,7 @@ DateTimeImmutable
 - [\DjinORM\Djin\Hydrator\Mappers\NestedMapper](src/Hydrator/Mappers/NestedMapper.php) - составной маппер, в который можено
 передать набор любых других мапперов с целью конвертирования сложных составных объектов
 - [\DjinORM\Djin\Hydrator\Mappers\NestedArrayMapper](src/Hydrator/Mappers/NestedArrayMapper.php) - составной маппер, в который
-можено передать набор любых других мапперов с целью конвертирования сложных **массива** составных объектов
+можено передать набор любых других мапперов с целью конвертирования сложных **массивов** составных объектов
 - [\DjinORM\Djin\Hydrator\Mappers\RelationMapper](src/Hydrator/Mappers/RelationMapper.php) - маппер для реляций (о них 
 читайте ниже)
 - [\DjinORM\Djin\Hydrator\Mappers\StringMapper](src/Hydrator/Mappers/StringMapper.php) - маппер строковых значений
