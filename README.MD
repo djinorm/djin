@@ -1,4 +1,4 @@
-# DjinORM
+# DjinORM [![Build Status](https://travis-ci.org/djinorm/djin.svg?branch=master)](https://travis-ci.org/djinorm/djin)
 
 Легковесная ORM, нацеленная на работу с любым типом баз данных, будь то реляционные, документ-ориентированные, колоночные
 или key-value хранилища. Вы полностью управляете тем, как что и куда вы хотите сохранять и извлекать. Все что для этого
