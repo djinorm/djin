@@ -69,7 +69,7 @@ class StringMapper extends ScalarMapper
         }
 
         return [
-            $this->getProperty() => (string) $value
+            $this->getProperty() => $value
         ];
     }
 
