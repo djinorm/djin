@@ -263,6 +263,9 @@ DateTimeImmutable
 - [\DjinORM\Djin\Hydrator\Mappers\RelationMapper](src/Hydrator/Mappers/RelationMapper.php) - маппер для реляций (о них 
 читайте ниже)
 - [\DjinORM\Djin\Hydrator\Mappers\StringMapper](src/Hydrator/Mappers/StringMapper.php) - маппер строковых значений
+- [\DjinORM\Djin\Hydrator\Mappers\ValueObjectMapper](src/Hydrator/Mappers/ValueObjectMapper.php) - маппер объектов-значений,
+используется в тех случаях, когда какой-либо объект содержит в себе лишь одно значение, и используется просто в качестве удобной
+ООП-обертки
 
 #### Гидратор
 

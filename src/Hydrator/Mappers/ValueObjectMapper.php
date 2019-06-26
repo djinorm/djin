@@ -13,7 +13,7 @@ use DjinORM\Djin\Exceptions\HydratorException;
 use DjinORM\Djin\Helpers\RepoHelper;
 use ReflectionException;
 
-class ObjectValueMapper extends ScalarMapper
+class ValueObjectMapper extends ScalarMapper
 {
 
     /**

@@ -12,7 +12,7 @@ use DjinORM\Djin\Exceptions\HydratorException;
 use DjinORM\Djin\Mock\ObjectValue;
 use DjinORM\Djin\TestHelpers\MapperTestCase;
 
-class ObjectValueMapperTest extends MapperTestCase
+class ValueObjectMapperTest extends MapperTestCase
 {
 
     public function testHydrate()
@@ -33,14 +33,14 @@ class ObjectValueMapperTest extends MapperTestCase
         $this->assertExtracted(null, null, $this->getMapperDisallowNull());
     }
 
-    protected function getMapperAllowNull(): ObjectValueMapper
+    protected function getMapperAllowNull(): ValueObjectMapper
     {
-        return new ObjectValueMapper('value', ObjectValue::class, new IntMapper('myValue', true));
+        return new ValueObjectMapper('value', ObjectValue::class, new IntMapper('myValue', true));
     }
 
-    protected function getMapperDisallowNull(): ObjectValueMapper
+    protected function getMapperDisallowNull(): ValueObjectMapper
     {
-        return new ObjectValueMapper('value', ObjectValue::class, new IntMapper('myValue', false));
+        return new ValueObjectMapper('value', ObjectValue::class, new IntMapper('myValue', false));
     }
 
 }
