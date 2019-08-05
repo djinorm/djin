@@ -10,8 +10,9 @@ namespace DjinORM\Djin\Id;
 use DjinORM\Djin\Exceptions\InvalidArgumentException;
 use DjinORM\Djin\Exceptions\LogicException;
 use DjinORM\Djin\Model\ModelInterface;
+use JsonSerializable;
 
-class Id
+class Id implements JsonSerializable
 {
 
     private $permanentId;
@@ -114,4 +115,15 @@ class Id
         }
     }
 
+    /**
+     * Specify data which should be serialized to JSON
+     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return $this->permanentId;
+    }
 }
