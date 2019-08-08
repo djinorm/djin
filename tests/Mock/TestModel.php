@@ -9,11 +9,9 @@ namespace DjinORM\Djin\Mock;
 
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Model\ModelInterface;
-use DjinORM\Djin\Model\ModelTrait;
 
 class TestModel implements ModelInterface
 {
-    use ModelTrait;
 
     public $id;
     protected $otherId;
@@ -24,6 +22,11 @@ class TestModel implements ModelInterface
         $this->id = new Id($id);
         $this->otherId = new Id($otherId);
         $this->custom = $custom;
+    }
+
+    public function getId(): Id
+    {
+        return $this->id;
     }
 
     public function getOtherId()

@@ -12,7 +12,10 @@ use DjinORM\Djin\Model\Relation;
 use DjinORM\Djin\Model\StubModelInterface;
 use DjinORM\Djin\Exceptions\NotModelInterfaceException;
 use DjinORM\Djin\Repository\RepositoryInterface;
+use Exception;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class ModelManager
 {
@@ -59,8 +62,8 @@ class ModelManager
      * @param $modelClassOrObject
      * @return RepositoryInterface
      * @throws UnknownModelException
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function getModelRepository($modelClassOrObject): RepositoryInterface
     {
@@ -229,13 +232,16 @@ class ModelManager
 
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function commit()
     {
+        $modelsToSave = array_map('array_values', $this->models);
+        $modelsToDelete = array_map('array_values', $this->modelsToDelete);
+
         if ($this->onBeforeCommit) {
             $beforeCommitCallback = $this->onBeforeCommit;
-            $beforeCommitCallback();
+            $beforeCommitCallback($this, $modelsToSave, $modelsToDelete);
         }
 
         try {
@@ -261,13 +267,13 @@ class ModelManager
 
             if ($this->onAfterCommit) {
                 $afterCommitCallback = $this->onAfterCommit;
-                $afterCommitCallback();
+                $afterCommitCallback($this, $modelsToSave, $modelsToDelete);
             }
 
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             if ($this->onCommitException) {
                 $commitExceptionCallback = $this->onCommitException;
-                $commitExceptionCallback();
+                $commitExceptionCallback($this, $modelsToSave, $modelsToDelete);
             }
             throw $exception;
         }
@@ -280,8 +286,8 @@ class ModelManager
      * в БД будет вставлена новая запись вместо обновления существующей
      *
      * @throws UnknownModelException
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function freeUpMemory()
     {

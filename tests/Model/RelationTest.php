@@ -60,4 +60,21 @@ class RelationTest extends TestCase
         $this->assertEquals($expected, json_encode($this->relation));
     }
 
+    public function testFromJson()
+    {
+        $json = json_encode($this->relation);
+        $relation = Relation::fromJson($json);
+        $this->assertEquals($this->relation, $relation);
+    }
+
+    public function testFromJsonNullOrFail()
+    {
+        $this->assertNull(Relation::fromJson(''));
+        $this->assertNull(Relation::fromJson('null'));
+        $this->assertNull(Relation::fromJson('[]'));
+        $this->assertNull(Relation::fromJson('{}'));
+        $this->assertNull(Relation::fromJson('{"model": "name"}'));
+        $this->assertNull(Relation::fromJson('{"id": 123}'));
+    }
+
 }

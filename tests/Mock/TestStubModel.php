@@ -7,14 +7,24 @@
 namespace DjinORM\Djin\Mock;
 
 
+use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Model\ModelInterface;
-use DjinORM\Djin\Model\ModelTrait;
 use DjinORM\Djin\Model\StubModelInterface;
 
 class TestStubModel implements StubModelInterface, ModelInterface
 {
 
-    use ModelTrait;
+    protected $id;
+
+    public function __construct()
+    {
+        $this->id = new Id();
+    }
+
+    public function getId(): Id
+    {
+        return $this->id;
+    }
 
     public static function getModelName(): string
     {
