@@ -51,11 +51,6 @@ class Id
     {
         $this->guardWrongIdType($id);
         $this->guardAlreadyPermanent();
-
-        if (preg_match('~^\d+$~', $id)) {
-            $id = (int) $id;
-        }
-
         $this->permanentId = $id;
     }
 
