@@ -117,7 +117,7 @@ class ModelManager
 
     /**
      * Подготавливает модели для будущего сохранения в базу
-     * @param ModelInterface[] $models
+     * @param ModelInterface|ModelInterface[] $models
      * @return int общее число подготовленных для сохранения моделей
      * @throws NotModelInterfaceException
      */
@@ -142,6 +142,11 @@ class ModelManager
         }
 
         return $this->getModelsCount($this->models);
+    }
+
+    public function resetPersisted()
+    {
+        $this->models = [];
     }
 
     /**
@@ -178,23 +183,37 @@ class ModelManager
 
 
     /**
-     * Подготавливает модели для будущего сохранения в базу
-     * @param ModelInterface $modelToDelete
+     * Подготавливает модели для будущего удаления из базы
+     * @param ModelInterface|ModelInterface[] $models
      * @return int общее число подготовленных для удаления моделей
+     * @throws NotModelInterfaceException
      */
-    public function delete(ModelInterface $modelToDelete): int
+    public function delete($models = []): int
     {
-        if ($modelToDelete instanceof StubModelInterface) {
-            return $this->getModelsCount($this->modelsToDelete);
+        if (!is_array($models)) {
+            $models = func_get_args();
         }
 
-        $class = get_class($modelToDelete);
-        $hash = spl_object_hash($modelToDelete);
+        foreach ($models as $model) {
+            if ($model instanceof StubModelInterface) {
+                return $this->getModelsCount($this->modelsToDelete);
+            }
 
-        unset($this->models[$class][$hash]);
-        $this->modelsToDelete[$class][$hash] = $modelToDelete;
+            $this->guardNotModelInterface($model);
+
+            $class = get_class($model);
+            $hash = spl_object_hash($model);
+
+            unset($this->models[$class][$hash]);
+            $this->modelsToDelete[$class][$hash] = $model;
+        }
 
         return $this->getModelsCount($this->modelsToDelete);
+    }
+
+    public function resetDeleted()
+    {
+        $this->modelsToDelete = [];
     }
 
     /**

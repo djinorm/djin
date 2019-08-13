@@ -186,11 +186,34 @@ class ModelManagerTest extends TestCase
         $this->assertFalse($this->manager->isPersistedModel($model_2));
     }
 
+    public function testResetPersisted()
+    {
+        $this->assertEquals(0, $this->manager->persists());
+        $this->manager->persists(new TestModel(1), new TestModel(2));
+        $this->assertEquals(2, $this->manager->persists());
+        $this->manager->resetPersisted();
+        $this->assertEquals(0, $this->manager->persists());
+    }
+
     public function testDeletePermanentModel()
     {
         $model = new TestModel();
         $model->getId()->setPermanentId(1);
         $this->assertEquals(1, $this->manager->delete($model));
+    }
+
+    public function testDeletePermanentModelsAsArray()
+    {
+        $model_1 = new TestModel(1);
+        $model_2 = new TestModel(2);
+        $this->assertEquals(2, $this->manager->delete([$model_1, $model_2]));
+    }
+
+    public function testDeletePermanentModelsAsArguments()
+    {
+        $model_1 = new TestModel(1);
+        $model_2 = new TestModel(2);
+        $this->assertEquals(2, $this->manager->delete($model_1, $model_2));
     }
 
     public function testDeletePermanentPersistedModel()
@@ -245,6 +268,15 @@ class ModelManagerTest extends TestCase
         $this->manager->delete($model_1);
         $this->assertTrue($this->manager->isPreparedToDeleteModel($model_1));
         $this->assertFalse($this->manager->isPreparedToDeleteModel($model_2));
+    }
+
+    public function testResetDeleted()
+    {
+        $this->assertCount(0, $this->manager->getPreparedToDeleteModels());
+        $this->manager->delete(new TestModel(1));
+        $this->assertCount(1, $this->manager->getPreparedToDeleteModels());
+        $this->manager->resetDeleted();
+        $this->assertCount(0, $this->manager->getPreparedToDeleteModels());
     }
 
     public function testCommit()
