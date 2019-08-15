@@ -26,4 +26,14 @@ class RedisIdGenerator implements IdGeneratorInterface
         $key = $this->prefix . ':' . $model::getModelName();
         return $this->redis->incr($key);
     }
+
+    /**
+     * @param string $modelName
+     * @param int $current
+     */
+    public function setCounterValue(string $modelName, int $current)
+    {
+        $key = $this->prefix . ':' . $modelName;
+        $this->redis->set($key, $current);
+    }
 }
