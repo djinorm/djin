@@ -243,27 +243,27 @@ Id или так и оставлять `null`. А теперь представ�
 посмотрите код этого интерфейса, и вам многое станет понятно
 
 В Djin поставляется набор типовых мапперов, которые могут конвертировать большинство распространенных типов данных:
-- [\DjinORM\Djin\Hydrator\Mappers\IdMapper](src/Hydrator/Mappers/IdMapper.php) - преобразует скалярное представление Id
+- [\DjinORM\Djin\Mappers\IdMapper](src/Mappers/IdMapper.php) - преобразует скалярное представление Id
 в объект Id и обратно
-- [\DjinORM\Djin\Hydrator\Mappers\ArrayMapper](src/Hydrator/Mappers/ArrayMapper.php) - маппер массивов
-- [\DjinORM\Djin\Hydrator\Mappers\BoolMapper](src/Hydrator/Mappers/BoolMapper.php) - маппер булевых значений
-- [\DjinORM\Djin\Hydrator\Mappers\DatetimeMapper](src/Hydrator/Mappers/DatetimeMapper.php) - маппер значений DateTime и 
+- [\DjinORM\Djin\Mappers\ArrayMapper](src/Mappers/ArrayMapper.php) - маппер массивов
+- [\DjinORM\Djin\Mappers\BoolMapper](src/Mappers/BoolMapper.php) - маппер булевых значений
+- [\DjinORM\Djin\Mappers\DatetimeMapper](src/Mappers/DatetimeMapper.php) - маппер значений DateTime и 
 DateTimeImmutable
-- [\DjinORM\Djin\Hydrator\Mappers\DeepIdentityMapper](src/Hydrator/Mappers/DeepIdentityMapper.php) - маппер сложных составных
+- [\DjinORM\Djin\Mappers\DeepIdentityMapper](src/Mappers/DeepIdentityMapper.php) - маппер сложных составных
 конструкций, который позволяет сохранять и извлекать из БД любые наборы значений. Фактически, это аналог serialize() за
 тем лишь исключением, что вместо сохранения имени класса при настройке маппера вы задаете алиасы имен классов. Такой
 подход позволяет вам безболезненно переименовывать классы и менять их пространства имен не боясь за то, что ранее репозиторий
 не сможет воссоздать модель или объект нужного класса потому, что имя класса изменилось 
-- [\DjinORM\Djin\Hydrator\Mappers\FloatMapper](src/Hydrator/Mappers/FloatMapper.php) - маппер вещественных чисел
-- [\DjinORM\Djin\Hydrator\Mappers\IntMapper](src/Hydrator/Mappers/IntMapper.php) - маппер целых чисел
-- [\DjinORM\Djin\Hydrator\Mappers\NestedMapper](src/Hydrator/Mappers/NestedMapper.php) - составной маппер, в который можено
+- [\DjinORM\Djin\Mappers\FloatMapper](src/Mappers/FloatMapper.php) - маппер вещественных чисел
+- [\DjinORM\Djin\Mappers\IntMapper](src/Mappers/IntMapper.php) - маппер целых чисел
+- [\DjinORM\Djin\Mappers\NestedMapper](src/Mappers/NestedMapper.php) - составной маппер, в который можено
 передать набор любых других мапперов с целью конвертирования сложных составных объектов
-- [\DjinORM\Djin\Hydrator\Mappers\NestedArrayMapper](src/Hydrator/Mappers/NestedArrayMapper.php) - составной маппер, в который
+- [\DjinORM\Djin\Mappers\NestedArrayMapper](src/Mappers/NestedArrayMapper.php) - составной маппер, в который
 можено передать набор любых других мапперов с целью конвертирования сложных **массивов** составных объектов
-- [\DjinORM\Djin\Hydrator\Mappers\RelationMapper](src/Hydrator/Mappers/RelationMapper.php) - маппер для реляций (о них 
+- [\DjinORM\Djin\Mappers\RelationMapper](src/Mappers/RelationMapper.php) - маппер для реляций (о них 
 читайте ниже)
-- [\DjinORM\Djin\Hydrator\Mappers\StringMapper](src/Hydrator/Mappers/StringMapper.php) - маппер строковых значений
-- [\DjinORM\Djin\Hydrator\Mappers\ValueObjectMapper](src/Hydrator/Mappers/ValueObjectMapper.php) - маппер объектов-значений,
+- [\DjinORM\Djin\Mappers\StringMapper](src/Mappers/StringMapper.php) - маппер строковых значений
+- [\DjinORM\Djin\Mappers\ValueObjectMapper](src/Mappers/ValueObjectMapper.php) - маппер объектов-значений,
 используется в тех случаях, когда какой-либо объект содержит в себе лишь одно значение, и используется просто в качестве удобной
 ООП-обертки
 
@@ -283,14 +283,14 @@ use DjinORM\Djin\Hydrator\Mappers\IdMapper;
 use DjinORM\Djin\Hydrator\Mappers\StringMapper;
 
 $userHydrator = new Hydrator(User::class, [
-    new IdMapper('id'),
-    new StringMapper('name'),
+    'id' => new IdMapper(),
+    'name' => new StringMapper(),
 ]);
 
 $commentHydrator = new Hydrator(Comment::class, [
-    new IdMapper('id'),
-    new IdMapper('userId'),
-    new StringMapper('text'),
+    'id' => new IdMapper('id'),
+    'userId' => new IdMapper('userId'),
+    'text' => new StringMapper('text'),
 ]);
 ```
 
@@ -312,8 +312,8 @@ class UserRepo implements \DjinORM\Djin\Repository\RepositoryInterface
     public function __construct() 
     {
         $this->hydrator = new Hydrator(User::class, [
-            new IdMapper('id'),
-            new StringMapper('name'),
+            'id' => new IdMapper(),
+            'name' => new StringMapper(),
         ]);
     }
     
@@ -351,9 +351,9 @@ class CommentRepo implements \DjinORM\Djin\Repository\RepositoryInterface
     public function __construct() 
     {
         $this->hydrator = new Hydrator(Comment::class, [
-            new IdMapper('id'),
-            new IdMapper('userId'),
-            new StringMapper('text'),
+            'id' => new IdMapper(),
+            'userId' => new IdMapper(),
+            'text' => new StringMapper(),
         ]);
     }
     

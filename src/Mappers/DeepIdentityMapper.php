@@ -12,8 +12,7 @@ use DjinORM\Djin\Exceptions\ExtractorException;
 use DjinORM\Djin\Exceptions\HydratorException;
 use DjinORM\Djin\Exceptions\InvalidArgumentException;
 use DjinORM\Djin\Exceptions\LogicException;
-use DjinORM\Djin\Helpers\RepoHelper;
-use DjinORM\Djin\Id\Id;
+use DjinORM\Djin\Mappers\MapperInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
@@ -26,7 +25,7 @@ use ReflectionProperty;
  * identities for class names, than can be hydrated and extracted. This mapper support multi level nested arrays
  * and objects, that can be fully serialized
  */
-class DeepIdentityMapper extends AbstractMapper implements ArrayMapperInterface
+class DeepIdentityMapper implements MapperInterface
 {
 
     protected const IDENTITY_KEY = '___{identity}___';
@@ -50,27 +49,21 @@ class DeepIdentityMapper extends AbstractMapper implements ArrayMapperInterface
 
     /**
      * DeepIdentityMapper constructor.
-     * @param string $property
-     * @param array $map
+     * @param array $classMap
      * @param array $reflectionProperties
      * @param bool $allowNull
      * @throws InvalidArgumentException
      */
     public function __construct(
-        string $property,
-        array $map,
+        array $classMap,
         array $reflectionProperties = [
             ReflectionProperty::IS_PUBLIC,
             ReflectionProperty::IS_PROTECTED,
             ReflectionProperty::IS_PRIVATE,
-        ],
-        bool $allowNull = false
+        ]
     )
     {
-        $this->property = $property;
-        $this->allowNull = $allowNull;
-
-        foreach ($map as $className => $callableOrIdentity) {
+        foreach ($classMap as $className => $callableOrIdentity) {
             $value = is_callable($callableOrIdentity) ? $callableOrIdentity($className) : $callableOrIdentity;
             $this->classMap[$className] = $value;
         }
@@ -90,28 +83,15 @@ class DeepIdentityMapper extends AbstractMapper implements ArrayMapperInterface
 
     /**
      * @param array $data
-     * @param object $object
      * @return mixed
      * @throws HydratorException
      * @throws InvalidArgumentException
      * @throws LogicException
      * @throws ReflectionException
      */
-    public function hydrate(array $data, object $object)
+    public function hydrate($data)
     {
-        $property = $this->getProperty();
-
-        if (!isset($data[$property])) {
-            if ($this->isNullAllowed()) {
-                RepoHelper::setProperty($object, $this->getProperty(), null);
-                return null;
-            }
-            throw $this->nullHydratorException("{$property} value", $object);
-        }
-
-        $value = $this->hydrateRecursive($data[$property]);
-        RepoHelper::setProperty($object, $this->getProperty(), $value);
-        return $value;
+        return $this->hydrateRecursive($data);
     }
 
     /**
@@ -162,28 +142,14 @@ class DeepIdentityMapper extends AbstractMapper implements ArrayMapperInterface
     }
 
     /**
-     * @param object $object
+     * @param object $complex
      * @return array
      * @throws ExtractorException
      * @throws ReflectionException
      */
-    public function extract(object $object): array
+    public function extract($complex)
     {
-        /** @var int $value */
-        $value = RepoHelper::getProperty($object, $this->getProperty());
-
-        if ($value === null) {
-            if ($this->isNullAllowed() == false) {
-                throw $this->nullExtractorException("{$this->getProperty()} type", $object);
-            }
-            return [
-                $this->getProperty() => null
-            ];
-        }
-
-        return [
-            $this->getProperty() => $this->extractRecursive($value),
-        ];
+        return $this->extractRecursive($complex);
     }
 
     /**
