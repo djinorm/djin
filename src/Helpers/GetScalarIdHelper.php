@@ -39,7 +39,7 @@ class GetScalarIdHelper
                 );
             }
 
-            return $modelOrId->getId()->toScalar();
+            return $modelOrId->getId()->toString();
         }
 
         if ($modelOrId instanceof Id) {
@@ -50,7 +50,7 @@ class GetScalarIdHelper
                 );
             }
 
-            return $modelOrId->toScalar();
+            return $modelOrId->toString();
         }
 
         if (is_scalar($modelOrId)) {

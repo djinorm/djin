@@ -49,7 +49,7 @@ class GetModelByAnyTypeIdHelper
         }
 
         if ($modelObjectOrAnyId instanceof Id) {
-            $id = $modelObjectOrAnyId->toScalar();
+            $id = $modelObjectOrAnyId->toString();
             $model = $repo->findById($id);
             if ($model === null) {
                 self::throwNotFoundException($id);

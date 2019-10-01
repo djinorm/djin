@@ -15,6 +15,7 @@ use JsonSerializable;
 class Id implements JsonSerializable
 {
 
+    /** @var string|null */
     private $permanentId;
 
     /**
@@ -30,7 +31,11 @@ class Id implements JsonSerializable
         }
     }
 
-    public function getPermanentOrNull()
+    /**
+     * @return string|null
+     * @deprecated
+     */
+    public function getPermanentOrNull(): ?string
     {
         if ($this->isPermanent()) {
             return $this->permanentId;
@@ -62,30 +67,39 @@ class Id implements JsonSerializable
     public function isEqual($modelOrId): bool
     {
         if ($modelOrId instanceof self) {
-            return $modelOrId === $this || $modelOrId->toScalar() == $this->toScalar();
+            return $modelOrId === $this || $modelOrId->toString() == $this->toString();
         }
 
         if ($modelOrId instanceof ModelInterface) {
             /** @var Id $id */
             $id = $modelOrId->getId();
-            return $id === $this || $id->toScalar() == $this->toScalar();
+            return $id === $this || $id->toString() == $this->toString();
         }
 
         if (is_scalar($modelOrId)) {
-            return $modelOrId == $this->toScalar();
+            return $modelOrId == $this->toString();
         }
 
         return false;
     }
 
-    public function toScalar()
+    /**
+     * @return string|null
+     * @deprecated
+     */
+    public function toScalar(): ?string
+    {
+        return $this->permanentId;
+    }
+
+    public function toString(): ?string
     {
         return $this->permanentId;
     }
 
     public function __toString()
     {
-        return (string) $this->toScalar();
+        return (string) $this->toString();
     }
 
     /**

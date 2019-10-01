@@ -7,8 +7,14 @@
 namespace DjinORM\Djin\Helpers;
 
 
+use ArrayAccess;
+use DateTime;
+use DateTimeImmutable;
+use DjinORM\Djin\Exceptions\InvalidArgumentException;
+use DjinORM\Djin\Exceptions\LogicException;
 use DjinORM\Djin\Id\Id;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionProperty;
 
 class RepoHelper
@@ -23,7 +29,7 @@ class RepoHelper
     /**
      * @param string $class
      * @return object
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public static function newWithoutConstructor(string $class)
     {
@@ -37,7 +43,7 @@ class RepoHelper
      * @param $object
      * @param string $property
      * @return mixed
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public static function getProperty($object, string $property)
     {
@@ -46,9 +52,9 @@ class RepoHelper
         try {
             $refProperty = self::getReflectionProperty($className, $property);
             return $refProperty->getValue($object);
-        } catch (\ReflectionException $reflectionException) {
+        } catch (ReflectionException $reflectionException) {
 
-            if ($object instanceof \ArrayAccess) {
+            if ($object instanceof ArrayAccess) {
                 return $object[$property];
             } else {
                 throw $reflectionException;
@@ -60,7 +66,7 @@ class RepoHelper
      * @param $object
      * @param string $property
      * @param $value
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public static function setProperty($object, string $property, $value)
     {
@@ -68,8 +74,8 @@ class RepoHelper
         try {
             $refProperty = self::getReflectionProperty($className, $property);
             $refProperty->setValue($object, $value);
-        } catch (\ReflectionException $reflectionException) {
-            if ($object instanceof \ArrayAccess) {
+        } catch (ReflectionException $reflectionException) {
+            if ($object instanceof ArrayAccess) {
                 $object[$property] = $value;
             } else {
                 throw $reflectionException;
@@ -81,9 +87,9 @@ class RepoHelper
      * @param $object
      * @param string $property
      * @param array|string|int $data
-     * @throws \DjinORM\Djin\Exceptions\InvalidArgumentException
-     * @throws \DjinORM\Djin\Exceptions\LogicException
-     * @throws \ReflectionException
+     * @throws InvalidArgumentException
+     * @throws LogicException
+     * @throws ReflectionException
      */
     public static function setIdFromScalar($object, string $property, $data)
     {
@@ -96,11 +102,11 @@ class RepoHelper
      * @param string $property
      * @param array|string $data
      * @param bool $immutable
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public static function setDateTime($object, string $property, $data, $immutable = true)
     {
-        $class = $immutable ? \DateTimeImmutable::class : \DateTime::class;
+        $class = $immutable ? DateTimeImmutable::class : DateTime::class;
         $datetime = is_array($data) ? $data[$property] : $data;
         self::setProperty($object, $property, new $class($datetime));
     }
@@ -109,7 +115,7 @@ class RepoHelper
      * @param $object
      * @param string $property
      * @param array|string $data
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public static function setString($object, string $property, $data)
     {
@@ -121,7 +127,7 @@ class RepoHelper
      * @param $object
      * @param string $property
      * @param array|string|int $data
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public static function setInt($object, string $property, $data)
     {
@@ -133,7 +139,7 @@ class RepoHelper
      * @param $object
      * @param string $property
      * @param array|string|int|float $data
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public static function setFloat($object, string $property, $data)
     {
@@ -145,7 +151,7 @@ class RepoHelper
      * @param $object
      * @param string $property
      * @param array|string|int|bool $data
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public static function setBool($object, string $property, $data)
     {
@@ -157,7 +163,7 @@ class RepoHelper
      * @param $className
      * @param string $property
      * @return ReflectionProperty
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private static function getReflectionProperty($className, string $property)
     {

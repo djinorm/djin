@@ -29,7 +29,7 @@ class ModelTest extends TestCase
         $model = new TestModel(2,1);
         self::assertInstanceOf(Id::class, $model->getId());
         self::assertInstanceOf(Id::class, $model->getOtherId());
-        $this->assertEquals(2, $model->getId()->toScalar());
+        $this->assertEquals(2, $model->getId()->toString());
         self::assertTrue($model->getId()->isPermanent());
         self::assertTrue($model->getOtherId()->isPermanent());
         return $model;

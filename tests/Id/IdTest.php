@@ -88,16 +88,16 @@ class IdTest extends TestCase
         $this->assertFalse($this->permanent->isEqual([]));
     }
     
-    public function testToScalar()
-    {
-        $this->assertEquals(1, $this->permanent->toScalar());
-        $this->assertNull($this->temp->toScalar());
-    }
-
     public function testToString()
     {
+        $this->assertEquals(1, $this->permanent->toString());
+        $this->assertNull($this->temp->toString());
+    }
+
+    public function testAsString()
+    {
         $this->assertEquals(1, (string) $this->permanent);
-        $this->assertEquals($this->temp->toScalar(), '');
+        $this->assertEquals($this->temp->toString(), '');
     }
 
     public function testNonStrictCompare()

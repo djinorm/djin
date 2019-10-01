@@ -60,7 +60,7 @@ class Relation implements JsonSerializable
     {
         return [
             'model' => $this->model,
-            'id' => $this->id->toScalar(),
+            'id' => $this->id->toString(),
         ];
     }
 

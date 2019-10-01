@@ -10,6 +10,7 @@ namespace DjinORM\Djin\Helpers;
 use DjinORM\Djin\Exceptions\InvalidArgumentException;
 use DjinORM\Djin\Exceptions\LogicException;
 use DjinORM\Djin\Exceptions\MismatchModelException;
+use DjinORM\Djin\Exceptions\NotFoundException;
 use DjinORM\Djin\Exceptions\NotPermanentIdException;
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Model\ModelInterface;
@@ -24,7 +25,7 @@ class DjinHelper
      * @return ModelInterface
      * @throws InvalidArgumentException
      * @throws LogicException
-     * @throws \DjinORM\Djin\Exceptions\NotFoundException
+     * @throws NotFoundException
      */
     public static function getModelByAnyTypeIdArgument(
         $modelObjectOrAnyId,
@@ -87,7 +88,7 @@ class DjinHelper
     {
         $indexedModels = [];
         foreach ($models as $model) {
-            $indexedModels[$model->getId()->toScalar()] = $model;
+            $indexedModels[$model->getId()->toString()] = $model;
         }
         return $indexedModels;
     }

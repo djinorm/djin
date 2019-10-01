@@ -10,7 +10,7 @@ namespace DjinORM\Djin\Mappers;
 use DjinORM\Djin\Exceptions\ExtractorException;
 use DjinORM\Djin\Exceptions\HydratorException;
 
-class NullMapper implements MapperInterface
+class NullOrMapper implements MapperInterface
 {
 
     /**

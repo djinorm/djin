@@ -74,7 +74,7 @@ class RepoHelperTest extends TestCase
     public function testSetIdFromScalar()
     {
         RepoHelper::setIdFromScalar($this->model, 'otherId', ['otherId' => 7]);
-        $this->assertEquals(7, $this->model->getOtherId()->toScalar());
+        $this->assertEquals(7, $this->model->getOtherId()->toString());
         $this->assertInstanceOf(Id::class, $this->model->getOtherId());
     }
 

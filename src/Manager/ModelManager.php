@@ -53,11 +53,6 @@ class ModelManager
         $this->onCommitException = $onCommitException;
     }
 
-    public function getConfig(): array
-    {
-        return $this->modelRepositories;
-    }
-
     /**
      * @param $modelClassOrObject
      * @return RepositoryInterface

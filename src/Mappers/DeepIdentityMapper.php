@@ -12,6 +12,7 @@ use DjinORM\Djin\Exceptions\ExtractorException;
 use DjinORM\Djin\Exceptions\HydratorException;
 use DjinORM\Djin\Exceptions\InvalidArgumentException;
 use DjinORM\Djin\Exceptions\LogicException;
+use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Mappers\MapperInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -51,7 +52,6 @@ class DeepIdentityMapper implements MapperInterface
      * DeepIdentityMapper constructor.
      * @param array $classMap
      * @param array $reflectionProperties
-     * @param bool $allowNull
      * @throws InvalidArgumentException
      */
     public function __construct(

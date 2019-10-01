@@ -52,7 +52,7 @@ class TestModelRepository implements RepositoryInterface
     public function insert(ModelInterface $model)
     {
         $this->setPermanentId($model);
-        $this->repository[$model->getId()->toScalar()] = [
+        $this->repository[$model->getId()->toString()] = [
             'id' => $model->getId()->getPermanentOrNull(),
             'otherId' => $model->getOtherId()->getPermanentOrNull(),
         ];
@@ -64,7 +64,7 @@ class TestModelRepository implements RepositoryInterface
      */
     public function update(ModelInterface $model)
     {
-        $this->repository[$model->getId()->toScalar()] = [
+        $this->repository[$model->getId()->toString()] = [
             'id' => $model->getId()->getPermanentOrNull(),
             'otherId' => $model->getOtherId()->getPermanentOrNull(),
         ];
@@ -72,7 +72,7 @@ class TestModelRepository implements RepositoryInterface
 
     public function delete(ModelInterface $model)
     {
-        unset($this->repository[$model->getId()->toScalar()]);
+        unset($this->repository[$model->getId()->toString()]);
     }
 
     private function getIdGenerator(): IdGeneratorInterface
@@ -94,7 +94,7 @@ class TestModelRepository implements RepositoryInterface
 
     public function save(ModelInterface $model)
     {
-        if (isset($this->repository[$model->getId()->toScalar()])) {
+        if (isset($this->repository[$model->getId()->toString()])) {
             $this->update($model);
         } else {
             $this->insert($model);

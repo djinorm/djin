@@ -38,7 +38,7 @@ class RelationTest extends TestCase
     {
         $relation = new Relation(TestModel::getModelName(), new Id(1));
         $this->assertInstanceOf(Id::class, $relation->getId());
-        $this->assertEquals(1, $relation->getId()->toScalar());
+        $this->assertEquals(1, $relation->getId()->toString());
     }
 
     public function testGetId()
@@ -55,7 +55,7 @@ class RelationTest extends TestCase
     {
         $expected = json_encode([
             'model' => $this->model::getModelName(),
-            'id' => $this->model->getId()->toScalar(),
+            'id' => $this->model->getId()->toString(),
         ]);
         $this->assertEquals($expected, json_encode($this->relation));
     }

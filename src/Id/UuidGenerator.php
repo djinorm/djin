@@ -8,6 +8,7 @@
 namespace DjinORM\Djin\Id;
 
 use DjinORM\Djin\Model\ModelInterface;
+use Exception;
 
 class UuidGenerator implements IdGeneratorInterface
 {
@@ -15,7 +16,7 @@ class UuidGenerator implements IdGeneratorInterface
     /**
      * @param ModelInterface $model
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     public function getNextId(ModelInterface $model)
     {
@@ -40,7 +41,7 @@ class UuidGenerator implements IdGeneratorInterface
      * @ref https://paragonie.com/b/JvICXzh_jhLyt4y3
      *
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     public static function generate(): string
     {

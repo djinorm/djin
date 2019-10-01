@@ -73,7 +73,7 @@ class DjinHelperTest extends TestCase
         ];
 
         $this->assertEquals([10 => $model_1, 20 => $model_2, 30 => $model_3], DjinHelper::indexModelsArrayCallback($models, function (ModelInterface $model) {
-            return $model->getId()->toScalar();
+            return $model->getId()->toString();
         }));
     }
 

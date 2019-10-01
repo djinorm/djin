@@ -13,10 +13,13 @@ use DjinORM\Djin\Id\Id;
 class IdMapper extends ValueObjectMapper
 {
 
-    public function __construct(bool $asInteger = true)
+    public function __construct()
     {
-        $mapper = $asInteger ? new IntMapper() : new StringMapper();
-        parent::__construct(Id::class, $mapper, 'permanentId');
+        parent::__construct(
+            Id::class,
+            new StringMapper(),
+            'permanentId'
+        );
     }
 
 }
