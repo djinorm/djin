@@ -18,7 +18,7 @@ class UuidGenerator implements IdGeneratorInterface
      * @return string
      * @throws Exception
      */
-    public function getNextId(ModelInterface $model)
+    public function getNextId(ModelInterface $model): string
     {
         return static::generate();
     }

@@ -20,7 +20,7 @@ class MemoryIdGenerator implements IdGeneratorInterface
         $this->startFrom = $startFrom;
     }
 
-    public function getNextId(ModelInterface $model)
+    public function getNextId(ModelInterface $model): string
     {
         if (!isset($this->ids[$model::getModelName()])) {
             $this->ids[$model::getModelName()] = $this->startFrom;

@@ -21,7 +21,7 @@ class RedisIdGenerator implements IdGeneratorInterface
         $this->redis = $redis;
     }
 
-    public function getNextId(ModelInterface $model)
+    public function getNextId(ModelInterface $model): string
     {
         $key = $this->prefix . ':' . $model::getModelName();
         return $this->redis->incr($key);
