@@ -8,8 +8,7 @@
 namespace DjinORM\Djin\Mappers;
 
 
-use DjinORM\Djin\Exceptions\ExtractorException;
-use DjinORM\Djin\Exceptions\HydratorException;
+use DjinORM\Djin\Exceptions\SerializerException;
 use Exception;
 
 class CallableMapper implements MapperInterface
@@ -18,30 +17,30 @@ class CallableMapper implements MapperInterface
     /**
      * @var callable
      */
-    private $hydrate;
+    private $serialize;
     /**
      * @var callable
      */
-    private $extract;
+    private $deserialize;
 
-    public function __construct(callable $hydrate, callable $extract)
+    public function __construct(callable $serialize, callable $deserialize)
     {
-        $this->hydrate = $hydrate;
-        $this->extract = $extract;
+        $this->serialize = $serialize;
+        $this->deserialize = $deserialize;
     }
 
     /**
-     * Превращает простой тип (scalar, null, array) в сложный (object)
-     * @param mixed $data
+     * Превращает сложный обект в простой тип (scalar, null, array)
+     * @param $complex
      * @return mixed
-     * @throws HydratorException
+     * @throws SerializerException
      */
-    public function hydrate($data)
+    public function serialize($complex)
     {
         try {
-            return ($this->hydrate)($data);
+            return ($this->serialize)($complex);
         } catch (Exception $exception) {
-            throw new HydratorException(
+            throw new SerializerException(
                 $exception->getMessage(),
                 $exception->getCode(),
                 $exception
@@ -50,17 +49,17 @@ class CallableMapper implements MapperInterface
     }
 
     /**
-     * Превращает сложный обект в простой тип (scalar, null, array)
-     * @param $complex
+     * Превращает простой тип (scalar, null, array) в сложный (object)
+     * @param mixed $data
      * @return mixed
-     * @throws ExtractorException
+     * @throws SerializerException
      */
-    public function extract($complex)
+    public function deserialize($data)
     {
         try {
-            return ($this->extract)($complex);
+            return ($this->deserialize)($data);
         } catch (Exception $exception) {
-            throw new ExtractorException(
+            throw new SerializerException(
                 $exception->getMessage(),
                 $exception->getCode(),
                 $exception

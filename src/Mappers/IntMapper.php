@@ -9,40 +9,39 @@
 namespace DjinORM\Djin\Mappers;
 
 
-use DjinORM\Djin\Exceptions\ExtractorException;
-use DjinORM\Djin\Exceptions\HydratorException;
+use DjinORM\Djin\Exceptions\SerializerException;
 
 class IntMapper implements MapperInterface
 {
 
     /**
-     * Превращает простой тип (scalar, null, array) в сложный (object)
-     * @param mixed $data
-     * @return int
-     * @throws HydratorException
-     */
-    public function hydrate($data)
-    {
-        if (!is_int($data) && !is_string($data)) {
-            $type = gettype($data);
-            throw new HydratorException("Integer can not be hydrated from '{$type}' type");
-        }
-
-        return (int) $data;
-    }
-
-    /**
      * Превращает сложный обект в простой тип (scalar, null, array)
      * @param $complex
      * @return int
-     * @throws ExtractorException
+     * @throws SerializerException
      */
-    public function extract($complex)
+    public function serialize($complex)
     {
         if (!is_int($complex)) {
             $type = gettype($complex);
-            throw new ExtractorException("Integer can not be extracted from '{$type}' type");
+            throw new SerializerException("Integer can not be extracted from '{$type}' type");
         }
         return (int) $complex;
+    }
+
+    /**
+     * Превращает простой тип (scalar, null, array) в сложный (object)
+     * @param mixed $data
+     * @return int
+     * @throws SerializerException
+     */
+    public function deserialize($data)
+    {
+        if (!is_int($data) && !is_string($data)) {
+            $type = gettype($data);
+            throw new SerializerException("Integer can not be hydrated from '{$type}' type");
+        }
+
+        return (int) $data;
     }
 }

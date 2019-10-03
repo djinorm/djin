@@ -7,8 +7,7 @@
 namespace DjinORM\Djin\Mappers;
 
 
-use DjinORM\Djin\Exceptions\ExtractorException;
-use DjinORM\Djin\Exceptions\HydratorException;
+use DjinORM\Djin\Exceptions\SerializerException;
 
 class NullOrMapper implements MapperInterface
 {
@@ -24,30 +23,30 @@ class NullOrMapper implements MapperInterface
     }
 
     /**
-     * Превращает простой тип (scalar, null, array) в сложный (object)
-     * @param mixed $data
-     * @return mixed
-     * @throws HydratorException
-     */
-    public function hydrate($data)
-    {
-        if ($data === null) {
-            return null;
-        }
-        return $this->mapper->hydrate($data);
-    }
-
-    /**
      * Превращает сложный обект в простой тип (scalar, null, array)
      * @param $complex
      * @return mixed
-     * @throws ExtractorException
+     * @throws SerializerException
      */
-    public function extract($complex)
+    public function serialize($complex)
     {
         if (is_null($complex)) {
             return $complex;
         }
-        return $this->mapper->extract($complex);
+        return $this->mapper->serialize($complex);
+    }
+
+    /**
+     * Превращает простой тип (scalar, null, array) в сложный (object)
+     * @param mixed $data
+     * @return mixed
+     * @throws SerializerException
+     */
+    public function deserialize($data)
+    {
+        if ($data === null) {
+            return null;
+        }
+        return $this->mapper->deserialize($data);
     }
 }

@@ -9,26 +9,25 @@
 namespace DjinORM\Djin\Mappers;
 
 
-use DjinORM\Djin\Exceptions\ExtractorException;
-use DjinORM\Djin\Exceptions\HydratorException;
+use DjinORM\Djin\Exceptions\SerializerException;
 
 interface MapperInterface
 {
 
     /**
-     * Превращает простой тип (scalar, null, array) в сложный (object)
-     * @param mixed $data
-     * @return mixed
-     * @throws HydratorException
-     */
-    public function hydrate($data);
-
-    /**
      * Превращает сложный обект в простой тип (scalar, null, array)
      * @param $complex
      * @return mixed
-     * @throws ExtractorException
+     * @throws SerializerException
      */
-    public function extract($complex);
+    public function serialize($complex);
+
+    /**
+     * Превращает простой тип (scalar, null, array) в сложный (object)
+     * @param mixed $data
+     * @return mixed
+     * @throws SerializerException
+     */
+    public function deserialize($data);
 
 }

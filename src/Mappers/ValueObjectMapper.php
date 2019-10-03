@@ -8,8 +8,7 @@
 namespace DjinORM\Djin\Mappers;
 
 
-use DjinORM\Djin\Exceptions\ExtractorException;
-use DjinORM\Djin\Exceptions\HydratorException;
+use DjinORM\Djin\Exceptions\SerializerException;
 use DjinORM\Djin\Exceptions\LogicException;
 use DjinORM\Djin\Helpers\RepoHelper;
 use ReflectionClass;
@@ -55,40 +54,40 @@ class ValueObjectMapper implements MapperInterface
 
 
     /**
+     * Превращает сложный обект в простой тип (scalar, null, array)
+     * @param $complex
+     * @return object
+     * @throws SerializerException
+     * @throws ReflectionException
+     */
+    public function serialize($complex)
+    {
+        if (!is_object($complex)) {
+            $type = gettype($complex);
+            throw new SerializerException("Can not serialize '{$this->classname}' ValueObject value from type '{$type}'");
+        }
+
+        $value = RepoHelper::getProperty($complex, $this->property);
+        return $this->mapper->serialize($value);
+    }
+
+    /**
      * Превращает простой тип (scalar, null, array) в сложный (object)
      * @param mixed $data
      * @return object
-     * @throws HydratorException
+     * @throws SerializerException
      */
-    public function hydrate($data)
+    public function deserialize($data)
     {
         try {
-            $value = $this->mapper->hydrate($data);
-        } catch (HydratorException $exception) {
-            throw new HydratorException(
+            $value = $this->mapper->deserialize($data);
+        } catch (SerializerException $exception) {
+            throw new SerializerException(
                 "ValueObject '{$this->classname}': {$exception->getMessage()}",
                 $exception->getCode()
             );
         }
 
         return new ($this->classname)($value);
-    }
-
-    /**
-     * Превращает сложный обект в простой тип (scalar, null, array)
-     * @param $complex
-     * @return object
-     * @throws ExtractorException
-     * @throws ReflectionException
-     */
-    public function extract($complex)
-    {
-        if (!is_object($complex)) {
-            $type = gettype($complex);
-            throw new ExtractorException("Can not extract '{$this->classname}' ValueObject value from type '{$type}'");
-        }
-
-        $value = RepoHelper::getProperty($complex, $this->property);
-        return $this->mapper->extract($value);
     }
 }

@@ -16,7 +16,7 @@ class RelationMapper extends ObjectMapper
     public function __construct()
     {
         parent::__construct(Relation::class, [
-            'id' => new IdMapper(false),
+            'id' => new IdMapper(),
             'model' => new StringMapper()
         ]);
     }

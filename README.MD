@@ -299,7 +299,7 @@ class UserRepo implements \DjinORM\Djin\Repository\RepositoryInterface
         $data = some_function_that_fetch_data($sql);
         
         //Здесь простой массив из базы будет превращен в объект User
-        $model = $this->mapper->hydrate($data);
+        $model = $this->mapper->deserialize($data);
         return $model;
     }
     
@@ -308,7 +308,7 @@ class UserRepo implements \DjinORM\Djin\Repository\RepositoryInterface
     public function insert(ModelInterface $model)
     {
         //Здесь модель будет превращена в обычный массив
-        $data = $this->mapper->extract($model); //
+        $data = $this->mapper->serialize($model); //
         some_function_make_insert_sql($data);
     }
     
@@ -339,7 +339,7 @@ class CommentRepo implements \DjinORM\Djin\Repository\RepositoryInterface
         $data = some_function_that_fetch_data($sql);
         
         //Здесь простой массив из базы будет превращен в объект Comment
-        $model = $this->mapper->hydrate($data);
+        $model = $this->mapper->deserialize($data);
         return $model;
     }
     
@@ -348,7 +348,7 @@ class CommentRepo implements \DjinORM\Djin\Repository\RepositoryInterface
     public function insert(ModelInterface $model)
     {
         //Здесь модель будет превращена в обычный массив
-        $data = $this->mapper->extract($model); //
+        $data = $this->mapper->serialize($model); //
         some_function_make_insert_sql($data);
     }
     

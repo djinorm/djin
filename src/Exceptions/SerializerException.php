@@ -10,7 +10,9 @@
 namespace DjinORM\Djin\Exceptions;
 
 
-class HydratorException extends \Exception implements DjinExceptionInterface
+use Exception;
+
+class SerializerException extends Exception implements DjinExceptionInterface
 {
 
 }

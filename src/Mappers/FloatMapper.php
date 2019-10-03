@@ -9,40 +9,39 @@
 namespace DjinORM\Djin\Mappers;
 
 
-use DjinORM\Djin\Exceptions\ExtractorException;
-use DjinORM\Djin\Exceptions\HydratorException;
+use DjinORM\Djin\Exceptions\SerializerException;
 
 class FloatMapper implements MapperInterface
 {
 
     /**
-     * Превращает простой тип (scalar, null, array) в сложный (object)
-     * @param mixed $data
-     * @return float
-     * @throws HydratorException
-     */
-    public function hydrate($data)
-    {
-        if (!is_numeric($data) && !is_string($data)) {
-            $type = gettype($data);
-            throw new HydratorException("Float can not be hydrated from '{$type}' type");
-        }
-
-        return (float) $data;
-    }
-
-    /**
      * Превращает сложный обект в простой тип (scalar, null, array)
      * @param $complex
      * @return float
-     * @throws ExtractorException
+     * @throws SerializerException
      */
-    public function extract($complex)
+    public function serialize($complex)
     {
         if (!is_numeric($complex)) {
             $type = gettype($complex);
-            throw new ExtractorException("Float can not be extracted from '{$type}' type");
+            throw new SerializerException("Float can not be extracted from '{$type}' type");
         }
         return (float) $complex;
+    }
+
+    /**
+     * Превращает простой тип (scalar, null, array) в сложный (object)
+     * @param mixed $data
+     * @return float
+     * @throws SerializerException
+     */
+    public function deserialize($data)
+    {
+        if (!is_numeric($data) && !is_string($data)) {
+            $type = gettype($data);
+            throw new SerializerException("Float can not be hydrated from '{$type}' type");
+        }
+
+        return (float) $data;
     }
 }

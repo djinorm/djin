@@ -8,8 +8,7 @@
 namespace DjinORM\Djin\Mappers;
 
 
-use DjinORM\Djin\Exceptions\ExtractorException;
-use DjinORM\Djin\Exceptions\HydratorException;
+use DjinORM\Djin\Exceptions\SerializerException;
 use DjinORM\Djin\Helpers\RepoHelper;
 use ReflectionException;
 
@@ -37,48 +36,21 @@ class ObjectMapper implements MapperInterface
     }
 
     /**
-     * Превращает простой тип (scalar, null, array) в сложный (object)
-     * @param mixed $data
-     * @return object
-     * @throws HydratorException
-     * @throws ReflectionException
-     */
-    public function hydrate($data)
-    {
-        if (!is_array($data)) {
-            $type = gettype($data);
-            throw new HydratorException("Class {$this->classname} can not be hydrated from '{$type}' type");
-        }
-
-        $object = RepoHelper::newWithoutConstructor($this->classname);
-        foreach ($this->mappers as $property => $mapper) {
-            $value = $data[$property] ?? null;
-            RepoHelper::setProperty(
-                $object,
-                $property,
-                $mapper->hydrate($value)
-            );
-        }
-
-        return $object;
-    }
-
-    /**
      * Превращает сложный обект в простой тип (scalar, null, array)
      * @param $complex
      * @return array
-     * @throws ExtractorException
+     * @throws SerializerException
      * @throws ReflectionException
      */
-    public function extract($complex)
+    public function serialize($complex)
     {
         if (!is_object($complex)) {
             $type = gettype($complex);
-            throw new ExtractorException("Class {$this->classname} can not be extracted from '{$type}' type");
+            throw new SerializerException("Class {$this->classname} can not be extracted from '{$type}' type");
         }
         $data = [];
         foreach ($this->mappers as $property => $mapper) {
-            $data[$property] = $mapper->extract(
+            $data[$property] = $mapper->serialize(
                 RepoHelper::getProperty(
                     $complex,
                     $property
@@ -87,6 +59,33 @@ class ObjectMapper implements MapperInterface
         }
 
         return $data;
+    }
+
+    /**
+     * Превращает простой тип (scalar, null, array) в сложный (object)
+     * @param mixed $data
+     * @return object
+     * @throws SerializerException
+     * @throws ReflectionException
+     */
+    public function deserialize($data)
+    {
+        if (!is_array($data)) {
+            $type = gettype($data);
+            throw new SerializerException("Class {$this->classname} can not be hydrated from '{$type}' type");
+        }
+
+        $object = RepoHelper::newWithoutConstructor($this->classname);
+        foreach ($this->mappers as $property => $mapper) {
+            $value = $data[$property] ?? null;
+            RepoHelper::setProperty(
+                $object,
+                $property,
+                $mapper->deserialize($value)
+            );
+        }
+
+        return $object;
     }
 
 }

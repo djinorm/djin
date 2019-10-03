@@ -9,40 +9,39 @@
 namespace DjinORM\Djin\Mappers;
 
 
-use DjinORM\Djin\Exceptions\ExtractorException;
-use DjinORM\Djin\Exceptions\HydratorException;
+use DjinORM\Djin\Exceptions\SerializerException;
 
 class StringMapper  implements MapperInterface
 {
 
     /**
-     * Превращает простой тип (scalar, null, array) в сложный (object)
-     * @param mixed $data
-     * @return string
-     * @throws HydratorException
-     */
-    public function hydrate($data)
-    {
-        if (!is_scalar($data)) {
-            $type = gettype($data);
-            throw new HydratorException("String can not be hydrated from '{$type}' type");
-        }
-
-        return (string) $data;
-    }
-
-    /**
      * Превращает сложный обект в простой тип (scalar, null, array)
      * @param $complex
      * @return string
-     * @throws ExtractorException
+     * @throws SerializerException
      */
-    public function extract($complex)
+    public function serialize($complex)
     {
         if (!is_scalar($complex)) {
             $type = gettype($complex);
-            throw new ExtractorException("String can not be extracted from '{$type}' type");
+            throw new SerializerException("String can not be extracted from '{$type}' type");
         }
         return (string) $complex;
+    }
+
+    /**
+     * Превращает простой тип (scalar, null, array) в сложный (object)
+     * @param mixed $data
+     * @return string
+     * @throws SerializerException
+     */
+    public function deserialize($data)
+    {
+        if (!is_scalar($data)) {
+            $type = gettype($data);
+            throw new SerializerException("String can not be hydrated from '{$type}' type");
+        }
+
+        return (string) $data;
     }
 }

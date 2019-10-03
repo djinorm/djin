@@ -10,8 +10,7 @@ namespace DjinORM\Djin\Mappers;
 
 use DateTime;
 use DateTimeInterface;
-use DjinORM\Djin\Exceptions\ExtractorException;
-use DjinORM\Djin\Exceptions\HydratorException;
+use DjinORM\Djin\Exceptions\SerializerException;
 
 class DateTimeMapper implements MapperInterface
 {
@@ -26,41 +25,41 @@ class DateTimeMapper implements MapperInterface
     }
 
     /**
+     * Превращает сложный обект в простой тип (scalar, null, array)
+     * @param DateTimeInterface $complex
+     * @return string|null
+     * @throws SerializerException
+     */
+    public function serialize($complex)
+    {
+        if (!($complex instanceof DateTimeInterface)) {
+            $type = gettype($complex);
+            throw new SerializerException("Can not serialize {$this->classname()} from '{$type}' type");
+        }
+        return $complex->format($this->format);
+    }
+
+    /**
      * Превращает простой тип (scalar, null, array) в сложный (object)
      * @param string|null $data
      * @return DateTimeInterface
-     * @throws HydratorException
+     * @throws SerializerException
      */
-    public function hydrate($data)
+    public function deserialize($data)
     {
         if (!is_string($data)) {
             $type = gettype($data);
-            throw new HydratorException("{$this->classname()} can not be hydrated from '{$type}' type");
+            throw new SerializerException("{$this->classname()} can not be hydrated from '{$type}' type");
         }
 
         /** @var DateTime $classname */
         $classname = $this->classname();
         $datetime = $classname::createFromFormat($this->format, $data);
         if (!$datetime) {
-            throw new HydratorException("{$this->classname()} can not be hydrated from string '{$data}'");
+            throw new SerializerException("{$this->classname()} can not be hydrated from string '{$data}'");
         }
 
         return $datetime;
-    }
-
-    /**
-     * Превращает сложный обект в простой тип (scalar, null, array)
-     * @param DateTimeInterface $complex
-     * @return string|null
-     * @throws ExtractorException
-     */
-    public function extract($complex)
-    {
-        if (!($complex instanceof DateTimeInterface)) {
-            $type = gettype($complex);
-            throw new ExtractorException("Can not extract {$this->classname()} from '{$type}' type");
-        }
-        return $complex->format($this->format);
     }
 
     /**

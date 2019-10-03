@@ -8,8 +8,7 @@
 namespace DjinORM\Djin\Hydrator\Mappers;
 
 
-use DjinORM\Djin\Exceptions\ExtractorException;
-use DjinORM\Djin\Exceptions\HydratorException;
+use DjinORM\Djin\Exceptions\SerializerException;
 use DjinORM\Djin\Exceptions\InvalidArgumentException;
 use DjinORM\Djin\Exceptions\LogicException;
 use DjinORM\Djin\Id\Id;
@@ -22,7 +21,7 @@ use ReflectionProperty;
  * Class DeepIdentityMapper
  * @package DjinORM\Djin\Mappers
  *
- * This mapper can hydrate and extract any types of data by Reflection. All that you need - pass unique string
+ * This mapper can deserialize and serialize any types of data by Reflection. All that you need - pass unique string
  * identities for class names, than can be hydrated and extracted. This mapper support multi level nested arrays
  * and objects, that can be fully serialized
  */
@@ -84,31 +83,31 @@ class DeepIdentityMapper implements MapperInterface
     /**
      * @param array $data
      * @return mixed
-     * @throws HydratorException
+     * @throws SerializerException
      * @throws InvalidArgumentException
      * @throws LogicException
      * @throws ReflectionException
      */
-    public function hydrate($data)
+    public function deserialize($data)
     {
-        return $this->hydrateRecursive($data);
+        return $this->deserializeRecursive($data);
     }
 
     /**
      * @param $data
      * @return array|object
-     * @throws HydratorException
+     * @throws SerializerException
      * @throws InvalidArgumentException
      * @throws LogicException
      * @throws ReflectionException
      */
-    protected function hydrateRecursive($data)
+    protected function deserializeRecursive($data)
     {
         if (is_array($data)) {
             if (!isset($data[static::IDENTITY_KEY])) {
                 $array = [];
                 foreach ($data as $key => $value) {
-                    $array[$key] = $this->hydrateRecursive($value);
+                    $array[$key] = $this->deserializeRecursive($value);
                 }
                 return $array;
             }
@@ -120,7 +119,7 @@ class DeepIdentityMapper implements MapperInterface
                     return new Id($data['data']['id']);
                 }
 
-                $reflection = $this->getReflectionClass($class, HydratorException::class);
+                $reflection = $this->getReflectionClass($class, SerializerException::class);
                 $object = $reflection->newInstanceWithoutConstructor();
 
                 $reflectionProperties = $reflection->getProperties($this->reflectionProperties);
@@ -128,13 +127,13 @@ class DeepIdentityMapper implements MapperInterface
                     if (isset($data['data'][$reflectionProperty->getName()])) {
                         $reflectionProperty->setAccessible(true);
                         $value = $data['data'][$reflectionProperty->getName()];
-                        $reflectionProperty->setValue($object, $this->hydrateRecursive($value));
+                        $reflectionProperty->setValue($object, $this->deserializeRecursive($value));
                     }
                 }
                 return $object;
 
             } else {
-                throw new HydratorException("Trying to hydrate corrupted data. Invalid identity key '{$data[static::IDENTITY_KEY]}'");
+                throw new SerializerException("Trying to deserialize corrupted data. Invalid identity key '{$data[static::IDENTITY_KEY]}'");
             }
         }
 
@@ -144,33 +143,33 @@ class DeepIdentityMapper implements MapperInterface
     /**
      * @param object $complex
      * @return array
-     * @throws ExtractorException
+     * @throws SerializerException
      * @throws ReflectionException
      */
-    public function extract($complex)
+    public function serialize($complex)
     {
-        return $this->extractRecursive($complex);
+        return $this->serializeRecursive($complex);
     }
 
     /**
      * @param $something
      * @return array|mixed
-     * @throws ExtractorException
+     * @throws SerializerException
      * @throws ReflectionException
      */
-    protected function extractRecursive($something)
+    protected function serializeRecursive($something)
     {
         if (is_array($something)) {
             $data = [];
             foreach ($something as $key => $value) {
-                $data[$key] = $this->extractRecursive($value);
+                $data[$key] = $this->serializeRecursive($value);
             }
 
             return $data;
 
         } elseif (is_object($something)) {
             $class = get_class($something);
-            $reflection = $this->getReflectionClass($class, ExtractorException::class);
+            $reflection = $this->getReflectionClass($class, SerializerException::class);
 
             $data = [
                 static::IDENTITY_KEY => $this->classMap[$class],
@@ -186,7 +185,7 @@ class DeepIdentityMapper implements MapperInterface
             foreach ($reflectionProperties as $reflectionProperty) {
                 $reflectionProperty->setAccessible(true);
                 $value = $reflectionProperty->getValue($something);
-                $data['data'][$reflectionProperty->getName()] = $this->extractRecursive($value);
+                $data['data'][$reflectionProperty->getName()] = $this->serializeRecursive($value);
             }
 
             return $data;
@@ -196,7 +195,7 @@ class DeepIdentityMapper implements MapperInterface
         }
 
         $type = gettype($something);
-        throw new ExtractorException("Non-extractable type {$type}");
+        throw new SerializerException("Non-extractable type {$type}");
     }
 
     /**
