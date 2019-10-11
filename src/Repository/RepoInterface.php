@@ -9,7 +9,7 @@ namespace DjinORM\Djin\Repository;
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Model\ModelInterface;
 
-interface RepositoryInterface
+interface RepoInterface
 {
 
     /**

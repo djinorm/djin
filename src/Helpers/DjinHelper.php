@@ -14,14 +14,14 @@ use DjinORM\Djin\Exceptions\NotFoundException;
 use DjinORM\Djin\Exceptions\NotPermanentIdException;
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Model\ModelInterface;
-use DjinORM\Djin\Repository\RepositoryInterface;
+use DjinORM\Djin\Repository\RepoInterface;
 
 class DjinHelper
 {
 
     /**
      * @param $modelObjectOrAnyId ModelInterface|Id|int|string
-     * @param RepositoryInterface|null $repo
+     * @param RepoInterface|null $repo
      * @return ModelInterface
      * @throws InvalidArgumentException
      * @throws LogicException
@@ -29,7 +29,7 @@ class DjinHelper
      */
     public static function getModelByAnyTypeIdArgument(
         $modelObjectOrAnyId,
-        RepositoryInterface $repo = null
+        RepoInterface $repo = null
     ): ModelInterface
     {
         return GetModelByAnyTypeIdHelper::get($modelObjectOrAnyId, $repo);

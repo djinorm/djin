@@ -11,7 +11,7 @@ use DjinORM\Djin\Model\ModelInterface;
 use DjinORM\Djin\Model\Relation;
 use DjinORM\Djin\Model\StubModelInterface;
 use DjinORM\Djin\Exceptions\NotModelInterfaceException;
-use DjinORM\Djin\Repository\RepositoryInterface;
+use DjinORM\Djin\Repository\RepoInterface;
 use Exception;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -55,12 +55,12 @@ class ModelManager
 
     /**
      * @param $modelClassOrObject
-     * @return RepositoryInterface
+     * @return RepoInterface
      * @throws UnknownModelException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function getModelRepository($modelClassOrObject): RepositoryInterface
+    public function getModelRepository($modelClassOrObject): RepoInterface
     {
         $class = is_object($modelClassOrObject) ? get_class($modelClassOrObject) : $modelClassOrObject;
         if (!isset($this->modelRepositories[$class])) {
@@ -71,10 +71,10 @@ class ModelManager
 
     /**
      * @param string $modelName
-     * @return RepositoryInterface
+     * @return RepoInterface
      * @throws UnknownModelException
      */
-    public function getRepositoryByModelName($modelName): RepositoryInterface
+    public function getRepositoryByModelName($modelName): RepoInterface
     {
         foreach ($this->modelRepositories as $modelClass => $modelRepoClass) {
             if (call_user_func([$modelClass, 'getModelName']) == $modelName) {

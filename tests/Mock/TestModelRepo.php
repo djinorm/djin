@@ -12,9 +12,9 @@ use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Id\IdGeneratorInterface;
 use DjinORM\Djin\Id\MemoryIdGenerator;
 use DjinORM\Djin\Model\ModelInterface;
-use DjinORM\Djin\Repository\RepositoryInterface;
+use DjinORM\Djin\Repository\RepoInterface;
 
-class TestModelRepository implements RepositoryInterface
+class TestModelRepo implements RepoInterface
 {
 
     /** @var int */

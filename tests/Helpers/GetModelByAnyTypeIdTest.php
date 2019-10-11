@@ -11,7 +11,7 @@ use DjinORM\Djin\Exceptions\LogicException;
 use DjinORM\Djin\Exceptions\NotFoundException;
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Model\ModelInterface;
-use DjinORM\Djin\Repository\RepositoryInterface;
+use DjinORM\Djin\Repository\RepoInterface;
 use PHPUnit\Framework\TestCase;
 
 class GetModelByAnyTypeIdTest extends TestCase
@@ -20,7 +20,7 @@ class GetModelByAnyTypeIdTest extends TestCase
     /** @var ModelInterface */
     private $model;
 
-    /** @var RepositoryInterface */
+    /** @var RepoInterface */
     private $repo;
 
     public function setUp()
@@ -28,7 +28,7 @@ class GetModelByAnyTypeIdTest extends TestCase
         $this->model = $this->createMock(ModelInterface::class);
         $this->model->method('getId')->willReturn(new Id(1));
 
-        $this->repo = $this->createMock(RepositoryInterface::class);
+        $this->repo = $this->createMock(RepoInterface::class);
         $this->repo->method('findById')->willReturnCallback(function ($id) {
             if ($id == 1) {
                 return $this->model;

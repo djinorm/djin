@@ -15,7 +15,7 @@ use DjinORM\Djin\Mock\TestModel;
 use DjinORM\Djin\Mock\TestModelSecondRepository;
 use DjinORM\Djin\Mock\TestSecondModel;
 use DjinORM\Djin\Mock\TestStubModel;
-use DjinORM\Djin\Mock\TestModelRepository;
+use DjinORM\Djin\Mock\TestModelRepo;
 use DjinORM\Djin\Model\Relation;
 use Exception;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +27,7 @@ class ModelManagerTest extends TestCase
     /** @var ModelManager */
     public $manager;
 
-    /** @var TestModelRepository */
+    /** @var TestModelRepo */
     public $repository;
 
     public $container;
@@ -58,7 +58,7 @@ class ModelManagerTest extends TestCase
                 $this->callbacks['errorCommitDeleted'] = $deleted;
             }
         );
-        $this->manager->setModelRepository(TestModelRepository::class);
+        $this->manager->setModelRepository(TestModelRepo::class);
         $this->manager->setModelRepository(TestModelSecondRepository::class);
         $this->repository = $this->manager->getModelRepository(TestModel::class);
     }
@@ -66,16 +66,16 @@ class ModelManagerTest extends TestCase
     public function testSetModelConfigModelsArray()
     {
         $manager = new ModelManager($this->container);
-        $manager->setModelRepository(TestModelRepository::class, [TestModel::class, TestSecondModel::class]);
+        $manager->setModelRepository(TestModelRepo::class, [TestModel::class, TestSecondModel::class]);
 
-        $this->assertInstanceOf(TestModelRepository::class, $manager->getModelRepository(TestModel::class));
-        $this->assertInstanceOf(TestModelRepository::class, $manager->getModelRepository(TestSecondModel::class));
+        $this->assertInstanceOf(TestModelRepo::class, $manager->getModelRepository(TestModel::class));
+        $this->assertInstanceOf(TestModelRepo::class, $manager->getModelRepository(TestSecondModel::class));
     }
 
     public function testGetModelRepositoryByClassName()
     {
         $repository = $this->manager->getModelRepository(TestModel::class);
-        $this->assertInstanceOf(TestModelRepository::class, $repository);
+        $this->assertInstanceOf(TestModelRepo::class, $repository);
         return $repository;
     }
 
@@ -83,7 +83,7 @@ class ModelManagerTest extends TestCase
     {
         $model = new TestModel();
         $repository = $this->manager->getModelRepository($model);
-        $this->assertInstanceOf(TestModelRepository::class, $repository);
+        $this->assertInstanceOf(TestModelRepo::class, $repository);
         return $repository;
     }
 

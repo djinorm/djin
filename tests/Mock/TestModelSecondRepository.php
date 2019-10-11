@@ -9,7 +9,7 @@ namespace DjinORM\Djin\Mock;
 
 use DjinORM\Djin\Model\ModelInterface;
 
-class TestModelSecondRepository extends TestModelRepository
+class TestModelSecondRepository extends TestModelRepo
 {
 
     protected $throwException = false;
