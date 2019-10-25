@@ -24,7 +24,7 @@ class IntMapper implements MapperInterface
     {
         if (!is_int($complex)) {
             $type = gettype($complex);
-            throw new SerializerException("Integer can not be extracted from '{$type}' type");
+            throw new SerializerException("Integer expected, but '{$type}' type passed");
         }
         return (int) $complex;
     }
@@ -37,11 +37,16 @@ class IntMapper implements MapperInterface
      */
     public function deserialize($data)
     {
-        if (!is_int($data) && !is_string($data)) {
+        if (!is_scalar($data)) {
             $type = gettype($data);
-            throw new SerializerException("Integer can not be hydrated from '{$type}' type");
+            throw new SerializerException("Integer expected, but '{$type}' type passed");
+        }
+
+        if (!preg_match('~^((0$)|(-?[1-9][\d]*$))~u', $data)) {
+            throw new SerializerException("Integer expected, but '{$data}' passed");
         }
 
         return (int) $data;
     }
+
 }
