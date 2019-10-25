@@ -10,15 +10,18 @@ namespace DjinORM\Djin\Mappers;
 
 use DjinORM\Djin\Id\Id;
 
-class IdMapper extends ValueObjectMapper
+class IdMapper extends CallableMapper
 {
 
     public function __construct()
     {
         parent::__construct(
-            Id::class,
-            new StringMapper(),
-            'permanentId'
+            function (Id $id) {
+                return $id->toString();
+            },
+            function ($id) {
+                return new Id($id);
+            }
         );
     }
 
