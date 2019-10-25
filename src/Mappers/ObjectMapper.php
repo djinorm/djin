@@ -44,10 +44,10 @@ class ObjectMapper implements MapperInterface
      */
     public function serialize($complex)
     {
-        if (!is_object($complex)) {
-            $type = gettype($complex);
-            throw new SerializerException("Class {$this->classname} can not be extracted from '{$type}' type");
+        if (!is_object($complex) || !is_a($complex, $this->classname)) {
+            throw new SerializerException("Mapper can serialize only {$this->classname}");
         }
+
         $data = [];
         foreach ($this->mappers as $property => $mapper) {
             $data[$property] = $mapper->serialize(
@@ -72,7 +72,7 @@ class ObjectMapper implements MapperInterface
     {
         if (!is_array($data)) {
             $type = gettype($data);
-            throw new SerializerException("Class {$this->classname} can not be hydrated from '{$type}' type");
+            throw new SerializerException("Serialized data of {$this->classname} should be array, but '{$type}' type passed");
         }
 
         $object = RepoHelper::newWithoutConstructor($this->classname);
