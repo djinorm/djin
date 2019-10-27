@@ -24,7 +24,7 @@ class StringMapper  implements MapperInterface
     {
         if (!is_scalar($complex)) {
             $type = gettype($complex);
-            throw new SerializerException("String can not be extracted from '{$type}' type");
+            throw new SerializerException("String expected, but '{$type}' type passed");
         }
         return (string) $complex;
     }
@@ -39,7 +39,7 @@ class StringMapper  implements MapperInterface
     {
         if (!is_scalar($data)) {
             $type = gettype($data);
-            throw new SerializerException("String can not be hydrated from '{$type}' type");
+            throw new SerializerException("String expected, but '{$type}' type passed");
         }
 
         return (string) $data;
