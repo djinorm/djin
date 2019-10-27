@@ -32,9 +32,9 @@ class DateTimeMapper implements MapperInterface
      */
     public function serialize($complex)
     {
-        if (!($complex instanceof DateTimeInterface)) {
+        if (!is_a($complex, $this->classname())) {
             $type = gettype($complex);
-            throw new SerializerException("Can not serialize {$this->classname()} from '{$type}' type");
+            throw new SerializerException("'{$this->classname()}' expected, but '{$type}' type passed");
         }
         return $complex->format($this->format);
     }
@@ -49,14 +49,14 @@ class DateTimeMapper implements MapperInterface
     {
         if (!is_string($data)) {
             $type = gettype($data);
-            throw new SerializerException("{$this->classname()} can not be hydrated from '{$type}' type");
+            throw new SerializerException("'{$this->classname()}' string expected, but '{$type}' type passed");
         }
 
         /** @var DateTime $classname */
         $classname = $this->classname();
         $datetime = $classname::createFromFormat($this->format, $data);
         if (!$datetime) {
-            throw new SerializerException("{$this->classname()} can not be hydrated from string '{$data}'");
+            throw new SerializerException("Invalid format '{$data}' for restoring '{$this->classname()}'");
         }
 
         return $datetime;
