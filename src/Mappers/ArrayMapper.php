@@ -14,11 +14,11 @@ class ArrayMapper implements MapperInterface
 {
 
     /**
-     * @var MapperInterface|null
+     * @var MapperInterface
      */
     private $mapper;
 
-    public function __construct(?MapperInterface $mapper = null)
+    public function __construct(MapperInterface $mapper)
     {
         $this->mapper = $mapper;
     }
@@ -32,16 +32,12 @@ class ArrayMapper implements MapperInterface
     {
         if (!is_array($complex)) {
             $type = gettype($complex);
-            throw new SerializerException("Array can not be extracted from '{$type}' type");
+            throw new SerializerException("Array expected, but '{$type}' type passed");
         }
 
-        if ($this->mapper) {
-            return array_map(function ($data) {
-                return $this->mapper->serialize($data);
-            }, $complex);
-        }
-
-        return $complex;
+        return array_map(function ($data) {
+            return $this->mapper->serialize($data);
+        }, $complex);
     }
 
     /**
@@ -53,15 +49,11 @@ class ArrayMapper implements MapperInterface
     {
         if (!is_array($data)) {
             $type = gettype($data);
-            throw new SerializerException("Array can not be hydrated from '{$type}' type");
+            throw new SerializerException("Array expected, but '{$type}' type passed");
         }
 
-        if ($this->mapper) {
-            return array_map(function ($data) {
-                return $this->mapper->deserialize($data);
-            }, $data);
-        }
-
-        return $data;
+        return array_map(function ($data) {
+            return $this->mapper->deserialize($data);
+        }, $data);
     }
 }
