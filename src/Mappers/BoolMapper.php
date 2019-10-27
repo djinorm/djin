@@ -23,7 +23,7 @@ class BoolMapper implements MapperInterface
     {
         if (!is_bool($complex)) {
             $type = gettype($complex);
-            throw new SerializerException("Can not serialize bool from '{$type}' type");
+            throw new SerializerException("Bool expected, but '{$type}' type passed");
         }
         return (bool) $complex;
     }
@@ -38,7 +38,7 @@ class BoolMapper implements MapperInterface
     {
         if (!is_scalar($data)) {
             $type = gettype($data);
-            throw new SerializerException("Bool can not be hydrated from '{$type}' type");
+            throw new SerializerException("Bool expected, but '{$type}' type passed");
         }
 
         return (bool) $data;
