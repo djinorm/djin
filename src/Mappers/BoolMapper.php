@@ -14,7 +14,7 @@ class BoolMapper implements MapperInterface
 {
 
     /**
-     * Превращает сложный обект в простой тип (scalar, null, array)
+     * Превращает сложный объект в простой тип (scalar, null, array)
      * @param $complex
      * @return bool
      * @throws SerializerException
