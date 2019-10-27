@@ -8,6 +8,7 @@
 namespace DjinORM\Djin\Mappers;
 
 
+use DjinORM\Djin\Exceptions\SerializerException;
 use DjinORM\Djin\Id\Id;
 
 class IdMapper extends CallableMapper
@@ -20,6 +21,9 @@ class IdMapper extends CallableMapper
                 return $id->toString();
             },
             function ($id) {
+                if (is_null($id)) {
+                    throw new SerializerException("Id expected, but null passed");
+                }
                 return new Id($id);
             }
         );
