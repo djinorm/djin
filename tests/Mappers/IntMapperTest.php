@@ -30,6 +30,8 @@ class IntMapperTest extends MapperTestCase
             ['-0'],
             ['qwerty'],
             ['+1'],
+            [[]],
+            [null],
         ];
     }
 
@@ -56,6 +58,8 @@ class IntMapperTest extends MapperTestCase
             ['-0'],
             ['qwerty'],
             ['+1'],
+            [[]],
+            [null],
         ];
     }
 

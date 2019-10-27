@@ -39,6 +39,8 @@ class FloatMapperTest extends MapperTestCase
             ['-002.00'],
             ['2.'],
             ['.2'],
+            [[]],
+            [null],
         ];
     }
 
