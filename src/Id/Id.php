@@ -83,15 +83,6 @@ class Id implements JsonSerializable
         return false;
     }
 
-    /**
-     * @return string|null
-     * @deprecated
-     */
-    public function toScalar(): ?string
-    {
-        return $this->permanentId;
-    }
-
     public function toString(): ?string
     {
         return $this->permanentId;
