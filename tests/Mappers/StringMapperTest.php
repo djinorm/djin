@@ -6,16 +6,11 @@
 
 namespace DjinORM\Djin\Mappers;
 
-use DjinORM\Djin\Exceptions\SerializerException;
-use PHPUnit\Framework\TestCase;
 
-class StringMapperTest extends TestCase
+class StringMapperTest extends MapperTestCase
 {
 
-    /** @var StringMapper */
-    private $mapper;
-
-    public function dataProvider(): array
+    public function serializeDataProvider(): array
     {
         return [
             'string' => ['string', 'string'],
@@ -27,7 +22,7 @@ class StringMapperTest extends TestCase
         ];
     }
 
-    public function invalidDataProvider(): array
+    public function serializeInvalidDataProvider(): array
     {
         return [
             [null],
@@ -36,57 +31,20 @@ class StringMapperTest extends TestCase
         ];
     }
 
-    /**
-     * @param $input
-     * @param $output
-     * @dataProvider dataProvider
-     */
-    public function testSerialize($input, $output)
+
+
+    public function deserializeDataProvider(): array
     {
-        $this->assertSame(
-            $output,
-            $this->mapper->serialize($input)
-        );
+        return $this->serializeDataProvider();
     }
 
-    /**
-     * @param $input
-     * @throws SerializerException
-     * @dataProvider invalidDataProvider
-     */
-    public function testInvalidSerialize($input)
+    public function deserializeInvalidDataProvider(): array
     {
-        $this->expectException(SerializerException::class);
-        $this->mapper->serialize($input);
+        return $this->serializeInvalidDataProvider();
     }
 
-    /**
-     * @param $input
-     * @param $output
-     * @dataProvider dataProvider
-     */
-    public function testDeserialize($input, $output)
+    protected function getMapper(): MapperInterface
     {
-        $this->assertSame(
-            $output,
-            $this->mapper->deserialize($input)
-        );
-    }
-
-    /**
-     * @param $input
-     * @throws SerializerException
-     * @dataProvider invalidDataProvider
-     */
-    public function testInvalidDeserialize($input)
-    {
-        $this->expectException(SerializerException::class);
-        $this->mapper->deserialize($input);
-    }
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->mapper = new StringMapper();
+        return new StringMapper();
     }
 }

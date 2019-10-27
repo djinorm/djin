@@ -6,37 +6,26 @@
 
 namespace DjinORM\Djin\Mappers;
 
-use DjinORM\Djin\Exceptions\SerializerException;
-use PHPUnit\Framework\TestCase;
 
-class IntMapperTest extends TestCase
+class IntMapperTest extends MapperTestCase
 {
 
-    private $mapper;
-
-    public function integerDataProvider(): array
+    public function serializeDataProvider(): array
     {
         return [
-            [0],
-            [1],
-            [-1],
-            [100],
+            [0, 0],
+            [1, 1],
+            [-1, -1],
+            [100, 100],
         ];
     }
 
-    public function stringDataProvider(): array
+    public function serializeInvalidDataProvider(): array
     {
         return [
-            ['0'],
-            ['1'],
-            ['-1'],
-            ['100'],
-        ];
-    }
-
-    public function invalidDataProvider(): array
-    {
-        return [
+            [0.1],
+            [1.0],
+            ['0.1'],
             ['000'],
             ['-0'],
             ['qwerty'],
@@ -44,50 +33,34 @@ class IntMapperTest extends TestCase
         ];
     }
 
-    /**
-     * @param $data
-     * @dataProvider integerDataProvider
-     */
-    public function testSerialize($data)
+    public function deserializeDataProvider(): array
     {
-        $this->assertSame($this->mapper->serialize($data), $data);
+        return [
+            [0, 0],
+            [1, 1],
+            [-1, -1],
+            [100, 100],
+            ['0', 0],
+            ['1', 1],
+            ['-1', -1],
+            ['100', 100],
+        ];
     }
 
-    /**
-     * @param $data
-     * @throws SerializerException
-     * @dataProvider stringDataProvider
-     * @dataProvider invalidDataProvider
-     */
-    public function testInvalidSerializeData($data)
+    public function deserializeInvalidDataProvider(): array
     {
-        $this->expectException(SerializerException::class);
-        $this->mapper->serialize($data);
+        return [
+            [0.1],
+            ['0.1'],
+            ['000'],
+            ['-0'],
+            ['qwerty'],
+            ['+1'],
+        ];
     }
 
-    /**
-     * @param $data
-     * @dataProvider integerDataProvider
-     * @dataProvider stringDataProvider
-     */
-    public function testDeserialize($data)
+    protected function getMapper(): MapperInterface
     {
-        $this->assertSame($this->mapper->deserialize($data), (int) $data);
-    }
-
-    /**
-     * @param $data
-     * @dataProvider invalidDataProvider
-     */
-    public function testInvalidDeserialize($data)
-    {
-        $this->expectException(SerializerException::class);
-        $this->mapper->deserialize($data);
-    }
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->mapper = new IntMapper();
+        return new IntMapper();
     }
 }

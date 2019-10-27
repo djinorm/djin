@@ -6,44 +6,25 @@
 
 namespace DjinORM\Djin\Mappers;
 
-use DjinORM\Djin\Exceptions\SerializerException;
-use PHPUnit\Framework\TestCase;
 
-class FloatMapperTest extends TestCase
+class FloatMapperTest extends MapperTestCase
 {
 
-    private $mapper;
-
-    public function floatDataProvider(): array
+    public function serializeDataProvider(): array
     {
         return [
-            [0],
-            [1],
-            [-1],
-            [100],
-            [0.1],
-            [1.1],
-            [-1.1],
-            [100.001],
+            [0, 0.0],
+            [1, 1.0],
+            [-1, -1.0],
+            [100, 100.0],
+            [0.1, 0.1],
+            [1.1, 1.1],
+            [-1.1, -1.1],
+            [100.001, 100.001],
         ];
     }
 
-    public function stringDataProvider(): array
-    {
-        return [
-            ['0'],
-            ['1'],
-            ['-1'],
-            ['100'],
-            ['0'],
-            ['0.1'],
-            ['1.1'],
-            ['-1.1'],
-            ['100.001'],
-        ];
-    }
-
-    public function invalidDataProvider(): array
+    public function serializeInvalidDataProvider(): array
     {
         return [
             ['000'],
@@ -61,49 +42,27 @@ class FloatMapperTest extends TestCase
         ];
     }
 
-    /**
-     * @param $data
-     * @dataProvider floatDataProvider
-     */
-    public function testSerialize($data)
+    public function deserializeDataProvider(): array
     {
-        $this->assertEquals($this->mapper->serialize($data), $data);
+        return [
+            ['0', 0.0],
+            ['1', 1.0],
+            ['-1', -1.0],
+            ['100', 100.0],
+            ['0.1', 0.1],
+            ['1.1', 1.1],
+            ['-1.1', -1.1],
+            ['100.001', 100.001],
+        ];
     }
 
-    /**
-     * @param $data
-     * @throws SerializerException
-     * @dataProvider invalidDataProvider
-     */
-    public function testInvalidSerializeData($data)
+    public function deserializeInvalidDataProvider(): array
     {
-        $this->expectException(SerializerException::class);
-        $this->mapper->serialize($data);
+        return $this->serializeInvalidDataProvider();
     }
 
-    /**
-     * @param $data
-     * @dataProvider floatDataProvider
-     * @dataProvider stringDataProvider
-     */
-    public function testDeserialize($data)
+    protected function getMapper(): MapperInterface
     {
-        $this->assertEquals($this->mapper->deserialize($data), (float) $data);
-    }
-
-    /**
-     * @param $data
-     * @dataProvider invalidDataProvider
-     */
-    public function testInvalidDeserialize($data)
-    {
-        $this->expectException(SerializerException::class);
-        $this->mapper->deserialize($data);
-    }
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->mapper = new FloatMapper();
+        return new FloatMapper();
     }
 }
