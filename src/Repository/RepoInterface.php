@@ -6,14 +6,13 @@
 
 namespace DjinORM\Djin\Repository;
 
-use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Model\ModelInterface;
 
 interface RepoInterface
 {
 
     /**
-     * @param $id
+     * @param mixed $id
      * @return ModelInterface|null
      */
     public function findById($id): ?ModelInterface;
@@ -28,25 +27,7 @@ interface RepoInterface
      * @param ModelInterface $model
      * @return mixed|void
      */
-    public function insert(ModelInterface $model);
-
-    /**
-     * @param ModelInterface $model
-     * @return mixed|void
-     */
-    public function update(ModelInterface $model);
-
-    /**
-     * @param ModelInterface $model
-     * @return mixed|void
-     */
     public function delete(ModelInterface $model);
-
-    /**
-     * @param ModelInterface $model
-     * @return Id
-     */
-    public function setPermanentId(ModelInterface $model): Id;
 
     /**
      * Освобождает из памяти загруженные модели.
