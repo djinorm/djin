@@ -14,11 +14,6 @@ class StringMapperTest extends MapperTestCase
     {
         return [
             'string' => ['string', 'string'],
-            '0' => [0, '0'],
-            '1' => [1, '1'],
-            '1.1' => [1.1, '1.1'],
-            'true' => [true, '1'],
-            'false' => [false, ''],
         ];
     }
 
@@ -31,11 +26,16 @@ class StringMapperTest extends MapperTestCase
         ];
     }
 
-
-
     public function deserializeDataProvider(): array
     {
-        return $this->serializeDataProvider();
+        return [
+            'string' => ['string', 'string'],
+            '0' => [0, '0'],
+            '1' => [1, '1'],
+            '1.1' => [1.1, '1.1'],
+            'true' => [true, '1'],
+            'false' => [false, ''],
+        ];
     }
 
     public function deserializeInvalidDataProvider(): array

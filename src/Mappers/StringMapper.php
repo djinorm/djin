@@ -11,7 +11,7 @@ namespace DjinORM\Djin\Mappers;
 
 use DjinORM\Djin\Exceptions\SerializerException;
 
-class StringMapper  implements MapperInterface
+class StringMapper implements MapperInterface
 {
 
     /**
@@ -22,7 +22,7 @@ class StringMapper  implements MapperInterface
      */
     public function serialize($complex)
     {
-        if (!is_scalar($complex)) {
+        if (!is_string($complex)) {
             $type = gettype($complex);
             throw new SerializerException("String expected, but '{$type}' type passed");
         }

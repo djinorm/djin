@@ -87,11 +87,7 @@ class UnionMapperTest extends MapperTestCase
         $string = new UnionRule(
             new StringMapper(),
             function ($complex, $serialized) {
-                if (is_string($complex)) {
-                    return $serialized;
-                }
-
-                throw new SerializerException('Only string serialization');
+                return $serialized;
             },
             function ($serialized) {
                 if (is_string($serialized)) {
