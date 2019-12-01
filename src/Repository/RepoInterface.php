@@ -6,6 +6,7 @@
 
 namespace DjinORM\Djin\Repository;
 
+use DjinORM\Djin\Manager\Commit;
 use DjinORM\Djin\Model\ModelInterface;
 
 interface RepoInterface
@@ -18,27 +19,21 @@ interface RepoInterface
     public function findById($id): ?ModelInterface;
 
     /**
-     * @param ModelInterface $model
-     * @return mixed|void
+     * @param array $ids
+     * @return ModelInterface[]
      */
-    public function save(ModelInterface $model);
+    public function findByIds($ids): array;
 
     /**
-     * @param ModelInterface $model
-     * @return mixed|void
+     * @param Commit $commit
      */
-    public function delete(ModelInterface $model);
+    public function commit(Commit $commit): void;
 
     /**
      * Освобождает из памяти загруженные модели.
      * ВНИМАНИЕ: после освобождения памяти в случае сохранения существующей модели через self::save()
      * в БД будет вставлена новая запись вместо обновления существующей
-     * @return mixed|void
      */
-    public function freeUpMemory();
+    public function freeUpMemory(): void;
 
-    /**
-     * @return string
-     */
-    public static function getModelClass(): string;
 }

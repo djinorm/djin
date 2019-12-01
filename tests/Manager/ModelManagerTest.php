@@ -11,6 +11,7 @@ use DI\ContainerBuilder;
 use DjinORM\Djin\Exceptions\UnknownModelException;
 use DjinORM\Djin\Exceptions\NotModelInterfaceException;
 use DjinORM\Djin\Id\Id;
+use DjinORM\Djin\Id\UuidGenerator;
 use DjinORM\Djin\Mock\TestModel;
 use DjinORM\Djin\Mock\TestModelSecondRepository;
 use DjinORM\Djin\Mock\TestSecondModel;
@@ -39,6 +40,7 @@ class ModelManagerTest extends TestCase
         $this->container = $container = ContainerBuilder::buildDevContainer();
         $this->manager = new ModelManager(
             $this->container,
+            new UuidGenerator(),
             function (ModelManager $manager, array $saved, array $deleted) {
                 $this->callbacks['beforeCommit'] = true;
                 $this->callbacks['beforeCommitManager'] = $manager;
@@ -58,15 +60,15 @@ class ModelManagerTest extends TestCase
                 $this->callbacks['errorCommitDeleted'] = $deleted;
             }
         );
-        $this->manager->setModelRepository(TestModelRepo::class);
-        $this->manager->setModelRepository(TestModelSecondRepository::class);
+        $this->manager->setModelConfig(TestModelRepo::class, [TestModel::class]);
+        $this->manager->setModelConfig(TestModelSecondRepository::class, [TestSecondModel::class]);
         $this->repository = $this->manager->getModelRepository(TestModel::class);
     }
 
     public function testSetModelConfigModelsArray()
     {
         $manager = new ModelManager($this->container);
-        $manager->setModelRepository(TestModelRepo::class, [TestModel::class, TestSecondModel::class]);
+        $manager->setModelConfig(TestModelRepo::class, [TestModel::class, TestSecondModel::class]);
 
         $this->assertInstanceOf(TestModelRepo::class, $manager->getModelRepository(TestModel::class));
         $this->assertInstanceOf(TestModelRepo::class, $manager->getModelRepository(TestSecondModel::class));
@@ -190,7 +192,7 @@ class ModelManagerTest extends TestCase
     public function testDeletePermanentModel()
     {
         $model = new TestModel();
-        $model->getId()->setPermanentId(1);
+        $model->getId()->assign(1);
         $this->assertEquals(1, $this->manager->delete($model));
     }
 
@@ -211,7 +213,7 @@ class ModelManagerTest extends TestCase
     public function testDeletePermanentPersistedModel()
     {
         $model = new TestModel();
-        $model->getId()->setPermanentId(1);
+        $model->getId()->assign(1);
         $this->manager->persists($model);
         $this->assertEquals(1, $this->manager->delete($model));
     }
@@ -274,7 +276,7 @@ class ModelManagerTest extends TestCase
     public function testCommit()
     {
         $permanentModel = new TestModel();
-        $permanentModel->getId()->setPermanentId(1);
+        $permanentModel->getId()->assign(1);
         $this->manager->delete($permanentModel);
 
         $newModel_1 = new TestModel();
@@ -326,7 +328,7 @@ class ModelManagerTest extends TestCase
     public function testCommitErrorException()
     {
         $permanentModel = new TestModel();
-        $permanentModel->getId()->setPermanentId(1);
+        $permanentModel->getId()->assign(1);
         $this->manager->delete($permanentModel);
 
         $model = new TestSecondModel();
@@ -365,14 +367,14 @@ class ModelManagerTest extends TestCase
         $this->assertTrue($this->manager::isNewModel($isNew));
 
         $notNew = new TestModel();
-        $notNew->getId()->setPermanentId(1);
+        $notNew->getId()->assign(1);
         $this->assertFalse($this->manager::isNewModel($notNew));
     }
 
     public function testFreeUpMemory()
     {
         $manager = $this->manager;
-        $manager->setModelRepository(TestModelSecondRepository::class, TestSecondModel::class);
+        $manager->setModelConfig(TestModelSecondRepository::class, TestSecondModel::class);
         $repo_1 = $manager->getModelRepository(TestModel::class);
         $repo_2 = $manager->getModelRepository(TestSecondModel::class);
         $repo_1->findById(1);

@@ -37,34 +37,20 @@ class IdTest extends TestCase
         $this->assertTrue($this->permanent->isPermanent());
     }
 
-    public function testConstructWrongPermanentType()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        new Id([]);
-    }
-
     public function testGetPermanentOrNull()
     {
         $this->assertEquals(1, $this->permanent->getPermanentOrNull());
         $this->assertNull($this->temp->getPermanentOrNull());
     }
 
-    public function testSetPermanentIdInvalidType()
+    public function testSetAlreadyAssignedPermanentId()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->temp->setPermanentId([]);
-    }
-
-    public function testSetAlreadySettedPermanentId()
-    {
-        $this->expectException(LogicException::class);
-        $this->permanent->setPermanentId(1);
+        $this->assertFalse($this->permanent->assign(1));
     }
 
     public function testSetPermanentId()
     {
-        $this->temp->setPermanentId(1);
-        $this->assertTrue($this->temp->isPermanent());
+        $this->assertTrue($this->temp->assign(1));
     }
 
     public function testIsEqual()
@@ -104,7 +90,7 @@ class IdTest extends TestCase
     {
         $id1 = new Id(10);
         $id2 = new Id();
-        $id2->setPermanentId(10);
+        $id2->assign(10);
         $this->assertTrue($id1 == $id2);
 
         $id1 = new Id();
@@ -117,7 +103,7 @@ class IdTest extends TestCase
 
         $id1 = new Id();
         $id2 = new Id();
-        $id2->setPermanentId(2);
+        $id2->assign(2);
         $this->assertFalse($id1 == $id2);
 
         $id1 = new Id();

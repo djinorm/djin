@@ -87,7 +87,7 @@ class TestModelRepo implements RepoInterface
     {
         if ($model->getId()->isPermanent() === false) {
             $nextId = $this->getIdGenerator()->getNextId($model);
-            $model->getId()->setPermanentId($nextId);
+            $model->getId()->assign($nextId);
         }
         return $model->getId();
     }
@@ -106,9 +106,9 @@ class TestModelRepo implements RepoInterface
      * ВНИМАНИЕ: после освобождения памяти в случае сохранения существующей модели через self::save()
      * в БД будет вставлена новая запись вместо обновления существующей
      */
-    public function freeUpMemory()
+    public function freeUpMemory(): void
     {
-        return $this->clear++;
+        $this->clear++;
     }
 
     public static function getModelClass(): string

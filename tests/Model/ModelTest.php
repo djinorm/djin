@@ -49,7 +49,7 @@ class ModelTest extends TestCase
         self::assertFalse($model->getOtherId()->isPermanent());
         self::assertEquals($other->getId(), $model->getOtherId());
 
-        $other->getId()->setPermanentId(7);
+        $other->getId()->assign(7);
         self::assertTrue($model->getOtherId()->isPermanent());
     }
 

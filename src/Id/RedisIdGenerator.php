@@ -21,10 +21,16 @@ class RedisIdGenerator implements IdGeneratorInterface
         $this->redis = $redis;
     }
 
-    public function getNextId(ModelInterface $model): string
+    /**
+     * @inheritDoc
+     */
+    public function __invoke(ModelInterface $model): Id
     {
-        $key = $this->prefix . ':' . $model::getModelName();
-        return $this->redis->incr($key);
+        if (!$model->getId()->isPermanent()) {
+            $key = $this->prefix . ':' . $model::getModelName();
+            $model->getId()->assign($this->redis->incr($key));
+        }
+        return $model->getId();
     }
 
     /**
@@ -36,4 +42,5 @@ class RedisIdGenerator implements IdGeneratorInterface
         $key = $this->prefix . ':' . $modelName;
         $this->redis->set($key, $current);
     }
+
 }

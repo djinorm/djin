@@ -15,12 +15,15 @@ class UuidGenerator implements IdGeneratorInterface
 
     /**
      * @param ModelInterface $model
-     * @return string
+     * @return Id
      * @throws Exception
      */
-    public function getNextId(ModelInterface $model): string
+    public function __invoke(ModelInterface $model): Id
     {
-        return static::generate();
+        if (!$model->getId()->isPermanent()) {
+            $model->getId()->assign($this->generate());
+        }
+        return $model->getId();
     }
 
     /**
@@ -43,7 +46,7 @@ class UuidGenerator implements IdGeneratorInterface
      * @return string
      * @throws Exception
      */
-    public static function generate(): string
+    protected function generate(): string
     {
         return implode('-', [
             bin2hex(random_bytes(4)),

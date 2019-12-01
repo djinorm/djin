@@ -7,8 +7,6 @@
 namespace DjinORM\Djin\Id;
 
 
-use DjinORM\Djin\Exceptions\InvalidArgumentException;
-use DjinORM\Djin\Exceptions\LogicException;
 use DjinORM\Djin\Model\ModelInterface;
 use JsonSerializable;
 
@@ -20,14 +18,12 @@ class Id implements JsonSerializable
 
     /**
      * Id constructor.
-     * @param null $permanentId
-     * @throws InvalidArgumentException
-     * @throws LogicException
+     * @param string $permanentId
      */
-    public function __construct($permanentId = null)
+    public function __construct(string $permanentId = null)
     {
         if (is_null($permanentId) === false) {
-            $this->setPermanentId($permanentId);
+            $this->assign($permanentId);
         }
     }
 
@@ -49,15 +45,26 @@ class Id implements JsonSerializable
     }
 
     /**
-     * @param $id
-     * @throws InvalidArgumentException
-     * @throws LogicException
+     * @param string $id
+     * @return bool
      */
-    public function setPermanentId($id)
+    public function assign(string $id): bool
     {
-        $this->guardWrongIdType($id);
-        $this->guardAlreadyPermanent();
-        $this->permanentId = $id;
+        if (!$this->isPermanent()) {
+            $this->permanentId = $id;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param string|null $permanentId
+     * @return bool
+     * @deprecated
+     */
+    public function setPermanentId($permanentId): bool
+    {
+        return $this->assign($permanentId);
     }
 
     /**
@@ -91,28 +98,6 @@ class Id implements JsonSerializable
     public function __toString()
     {
         return (string) $this->toString();
-    }
-
-    /**
-     * @param $id
-     * @throws InvalidArgumentException
-     */
-    private function guardWrongIdType($id)
-    {
-        $isWrong = !is_scalar($id) || is_null($id) || is_bool($id);
-        if ($isWrong) {
-            throw new InvalidArgumentException('Incorrect permanent Id type');
-        }
-    }
-
-    /**
-     * @throws LogicException
-     */
-    private function guardAlreadyPermanent()
-    {
-        if ($this->isPermanent()) {
-            throw new LogicException('Id already set');
-        }
     }
 
     /**

@@ -10,9 +10,15 @@ namespace DjinORM\Djin\Exceptions;
 class NotModelInterfaceException extends \Exception implements DjinExceptionInterface
 {
 
-    public function __construct()
+    public function __construct($value)
     {
-        parent::__construct('Object should be instance of ModelInterface', 0);
+        if (is_object($value)) {
+            $type = get_class($value);
+        } else {
+            $type = gettype($value);
+        }
+
+        parent::__construct("Object should be instance of ModelInterface, but '{$type}' passed", 0);
     }
 
 }

@@ -12,10 +12,9 @@ interface IdGeneratorInterface
 {
 
     /**
-     * Важное замечание: метод НЕ ДОЛЖЕН проставлять Id для модели
-     * @param ModelInterface $model - модель, которой нужно проставить Id
-     * @return string должен вернуть СТРОКУ Id
+     * @param ModelInterface $model
+     * @return Id
      */
-    public function getNextId(ModelInterface $model): string;
+    public function __invoke(ModelInterface $model): Id;
 
 }
