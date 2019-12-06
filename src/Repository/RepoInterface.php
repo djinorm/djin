@@ -6,6 +6,7 @@
 
 namespace DjinORM\Djin\Repository;
 
+use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Manager\Commit;
 use DjinORM\Djin\Model\ModelInterface;
 
@@ -26,8 +27,9 @@ interface RepoInterface
 
     /**
      * @param Commit $commit
+     * @return Id|null return some commit/transaction Id. Usable for cross-database transactions or two-phase commits
      */
-    public function commit(Commit $commit): void;
+    public function commit(Commit $commit): ?Id;
 
     /**
      * Освобождает из памяти загруженные модели.
