@@ -16,7 +16,6 @@ use DjinORM\Djin\Exceptions\NotModelInterfaceException;
 use DjinORM\Djin\Repository\RepoInterface;
 use Exception;
 use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 class ModelManager
@@ -30,29 +29,17 @@ class ModelManager
      */
     protected $deleted = [];
     /**
-     * @var array
+     * @var RepositoryManager
      */
-    protected $modelRepositories = [];
+    private $repositoryManager;
+    /**
+     * @var RepoInterface[]
+     */
+    private $repositories;
     /**
      * @var IdGeneratorInterface
      */
-    private $modelIdGenerators;
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-    /**
-     * @var callable
-     */
-    protected $onBeforeCommit;
-    /**
-     * @var callable
-     */
-    protected $onAfterCommit;
-    /**
-     * @var callable
-     */
-    private $onCommitException;
+    private $IdGenerators;
     /**
      * @var IdGeneratorInterface
      */
@@ -61,9 +48,20 @@ class ModelManager
      * @var LockerInterface
      */
     private $locker;
+    /**
+     * @var callable
+     */
+    private $onBeforeCommit;
+    /**
+     * @var callable
+     */
+    private $onAfterCommit;
+    /**
+     * @var callable
+     */
+    private $onCommitException;
 
     public function __construct(
-        ContainerInterface $container,
         IdGeneratorInterface $idGenerator,
         LockerInterface $locker,
         callable $onBeforeCommit = null,
@@ -71,7 +69,7 @@ class ModelManager
         callable $onCommitException = null
     )
     {
-        $this->container = $container;
+        $this->repositoryManager = new RepositoryManager();
         $this->idGenerator = $idGenerator;
         $this->locker = $locker;
 
@@ -81,46 +79,29 @@ class ModelManager
     }
 
     /**
-     * @param $modelClassOrObject
+     * @param $modelObjectOrClassOrName
      * @return RepoInterface
      * @throws UnknownModelException
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function getModelRepository($modelClassOrObject): RepoInterface
+    public function getModelRepository($modelObjectOrClassOrName): RepoInterface
     {
-        $class = is_object($modelClassOrObject) ? get_class($modelClassOrObject) : $modelClassOrObject;
-        if (!isset($this->modelRepositories[$class])) {
-            throw new UnknownModelException('No repository for model ' . $class);
-        }
-        return $this->container->get($this->modelRepositories[$class]);
+        $repo = $this->repositoryManager->getRepository($modelObjectOrClassOrName);
+        $this->repositories[get_class($repo)] = $repo;
+        return $repo;
     }
 
     /**
-     * @param string $modelName
-     * @return RepoInterface
-     * @throws UnknownModelException
-     */
-    public function getRepositoryByModelName($modelName): RepoInterface
-    {
-        foreach ($this->modelRepositories as $modelClass => $modelRepoClass) {
-            if (call_user_func([$modelClass, 'getModelName']) == $modelName) {
-                return $this->container->get($modelRepoClass);
-            }
-        }
-        throw new UnknownModelException('No repository for model with name ' . $modelName);
-    }
-
-    /**
-     * @param string $repositoryClass
+     * @param RepoInterface|callable $repoOrCallable
      * @param array $modelClasses
      * @param IdGeneratorInterface|null $idGenerator
      */
-    public function setModelConfig(string $repositoryClass, array $modelClasses, IdGeneratorInterface $idGenerator = null)
+    public function setModelConfig($repoOrCallable, array $modelClasses, IdGeneratorInterface $idGenerator = null)
     {
-        foreach ($modelClasses as $class) {
-            $this->modelRepositories[$class] = $repositoryClass;
-            $this->modelIdGenerators[$class] = $idGenerator ?? $this->idGenerator;
+        foreach ($modelClasses as $modelClass) {
+            $this->repositoryManager->add($repoOrCallable, $modelClass);
+            $this->IdGenerators[$modelClass] = $idGenerator ?? $this->idGenerator;
         }
     }
 
@@ -136,7 +117,7 @@ class ModelManager
      */
     public function findByLink(Link $link): ?ModelInterface
     {
-        $repo = $this->getRepositoryByModelName($link->getModelName());
+        $repo = $this->getModelRepository($link->getModelName());
         return $repo->findById($link->getId());
     }
 
@@ -192,6 +173,7 @@ class ModelManager
      * @param ModelInterface|null $locker
      * @return Commit
      * @throws NotModelInterfaceException
+     * @throws Exception
      */
     public function commit(ModelInterface $locker = null): Commit
     {
@@ -231,14 +213,11 @@ class ModelManager
      * ВНИМАНИЕ: после освобождения памяти в случае сохранения существующей модели через self::save()
      * в БД будет вставлена новая запись вместо обновления существующей
      *
-     * @throws UnknownModelException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     public function freeUpMemory()
     {
-        foreach (array_keys($this->modelRepositories) as $modelClass) {
-            $this->getModelRepository($modelClass)->freeUpMemory();
+        foreach ($this->repositories as $repository) {
+            $repository->freeUpMemory();
         }
     }
 
@@ -284,11 +263,6 @@ class ModelManager
         if (!$model instanceof ModelInterface) {
             throw new NotModelInterfaceException($model);
         }
-    }
-
-    public static function isNewModel(ModelInterface $model)
-    {
-        return !$model->getId()->isPermanent();
     }
 
 }

@@ -16,12 +16,10 @@
   "require": {
     "php": ">=7.2.0",
     "ext-mbstring": "*",
-    "ext-json": "*",
-    "psr/container": "^1.0"
+    "ext-json": "*"
   },
   "require-dev": {
     "sebastian/comparator": "^2.0",
-    "php-di/php-di": "^5.4",
     "phpunit/phpunit": "^7.1"
   },
   "autoload": {
@@ -29,8 +27,5 @@
   },
   "autoload-dev": {
     "psr-4": {"DjinORM\\Djin\\": "tests/"}
-  },
-  "suggest": {
-    "php-di/php-di": "Dependency injection container"
   }
 }
