@@ -17,7 +17,7 @@ use DjinORM\Djin\Mock\TestModelSecondRepository;
 use DjinORM\Djin\Mock\TestSecondModel;
 use DjinORM\Djin\Mock\TestStubModel;
 use DjinORM\Djin\Mock\TestModelRepo;
-use DjinORM\Djin\Model\Relation;
+use DjinORM\Djin\Model\Link;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -112,11 +112,11 @@ class ModelManagerTest extends TestCase
         $this->assertEquals($this->repository, $this->manager->getRepositoryByModelName('qwerty'));
     }
 
-    public function testFindRelation()
+    public function testFindByLink()
     {
-        $relation = new Relation(TestModel::getModelName(), new Id(2));
-        $model = $this->manager->findRelation($relation);
-        $this->assertEquals($relation, Relation::link($model));
+        $link = new Link(TestModel::getModelName(), new Id(2));
+        $model = $this->manager->findByLink($link);
+        $this->assertEquals($link, Link::link($model));
     }
 
     public function testPersistsAsArray()

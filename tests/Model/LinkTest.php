@@ -11,11 +11,11 @@ use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Mock\TestModel;
 use PHPUnit\Framework\TestCase;
 
-class RelationTest extends TestCase
+class LinkTest extends TestCase
 {
 
-    /** @var Relation */
-    private $relation;
+    /** @var Link */
+    private $link;
 
     /** @var ModelInterface */
     private $model;
@@ -24,31 +24,31 @@ class RelationTest extends TestCase
     {
         parent::setUp();
         $this->model = new TestModel(1);
-        $this->relation = Relation::link($this->model);
+        $this->link = Link::link($this->model);
     }
 
     public function testConstructFromNameAndId()
     {
         $id = new Id(1);
-        $pointer = new Relation(TestModel::getModelName(), $id);
+        $pointer = new Link(TestModel::getModelName(), $id);
         $this->assertSame($id, $pointer->getId());
     }
 
     public function testConstructFromNameAndScalarId()
     {
-        $relation = new Relation(TestModel::getModelName(), new Id(1));
+        $relation = new Link(TestModel::getModelName(), new Id(1));
         $this->assertInstanceOf(Id::class, $relation->getId());
         $this->assertEquals(1, $relation->getId()->toString());
     }
 
     public function testGetId()
     {
-        $this->assertSame($this->model->getId(), $this->relation->getId());
+        $this->assertSame($this->model->getId(), $this->link->getId());
     }
 
     public function testGetModelName()
     {
-        $this->assertEquals($this->model::getModelName(), $this->relation->getModelName());
+        $this->assertEquals($this->model::getModelName(), $this->link->getModelName());
     }
 
     public function testToJson()
@@ -57,24 +57,24 @@ class RelationTest extends TestCase
             'model' => $this->model::getModelName(),
             'id' => $this->model->getId()->toString(),
         ]);
-        $this->assertEquals($expected, json_encode($this->relation));
+        $this->assertEquals($expected, json_encode($this->link));
     }
 
     public function testFromJson()
     {
-        $json = json_encode($this->relation);
-        $relation = Relation::fromJson($json);
-        $this->assertEquals($this->relation, $relation);
+        $json = json_encode($this->link);
+        $link = Link::fromJson($json);
+        $this->assertEquals($this->link, $link);
     }
 
     public function testFromJsonNullOrFail()
     {
-        $this->assertNull(Relation::fromJson(''));
-        $this->assertNull(Relation::fromJson('null'));
-        $this->assertNull(Relation::fromJson('[]'));
-        $this->assertNull(Relation::fromJson('{}'));
-        $this->assertNull(Relation::fromJson('{"model": "name"}'));
-        $this->assertNull(Relation::fromJson('{"id": 123}'));
+        $this->assertNull(Link::fromJson(''));
+        $this->assertNull(Link::fromJson('null'));
+        $this->assertNull(Link::fromJson('[]'));
+        $this->assertNull(Link::fromJson('{}'));
+        $this->assertNull(Link::fromJson('{"model": "name"}'));
+        $this->assertNull(Link::fromJson('{"id": 123}'));
     }
 
 }

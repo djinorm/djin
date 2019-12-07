@@ -13,7 +13,7 @@ use DjinORM\Djin\Exceptions\LogicException;
 use DjinORM\Djin\Id\Id;
 use JsonSerializable;
 
-class Relation implements JsonSerializable
+class Link implements JsonSerializable
 {
 
     /** @var Id */
@@ -71,7 +71,7 @@ class Relation implements JsonSerializable
 
     /**
      * @param string $json
-     * @return Relation|null
+     * @return Link|null
      * @throws InvalidArgumentException
      * @throws LogicException
      */

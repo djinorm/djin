@@ -262,7 +262,7 @@ Id или так и оставлять `null`. А теперь представ�
 вместо какого-либо маппера 
 - [\DjinORM\Djin\Mappers\ObjectMapper](src/Mappers/ObjectMapper.php) - составной маппер, в который можено
 передать набор любых других мапперов с целью конвертирования сложных составных объектов
-- [\DjinORM\Djin\Mappers\RelationMapper](src/Mappers/RelationMapper.php) - маппер для реляций (о них 
+- [\DjinORM\Djin\Mappers\RelationMapper](src/Mappers/LinkMapper.php) - маппер для реляций (о них 
 читайте ниже)
 - [\DjinORM\Djin\Mappers\StringMapper](src/Mappers/StringMapper.php) - маппер строковых значений
 
@@ -456,21 +456,21 @@ $manager->commit();
 создает проблем, т.к. значение самого Id изменить нельзя. Но Id сам по себе никак не связан с моделью. Например, в ситуации,
 когда автором комментария может быть не только User, но и Bot, то как нам определить кто именно является автором комментария?
 
-Именно для решения подобных задач существует [\DjinORM\Djin\Model\Relation](src/Model/Relation.php). Давайте перепишем наш 
+Именно для решения подобных задач существует [\DjinORM\Djin\Model\Relation](src/Model/Link.php). Давайте перепишем наш 
 Comment так, чтобы он в качестве автора мог принимать кого угодно
 
 ```php
 <?php
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Model\ModelInterface;
-use DjinORM\Djin\Model\Relation;
+use DjinORM\Djin\Model\Link;
 
 class Comment implements ModelInterface {
     
     /** @var Id */
     private $id;
     
-    /** @var Relation */
+    /** @var Link */
     private $author;
     
     /** @var string */
@@ -479,7 +479,7 @@ class Comment implements ModelInterface {
     public function __construct(ModelInterface $author, string $text) 
     {
         $this->id = new Id();
-        $this->author = Relation::link($author);
+        $this->author = Link::link($author);
         $this->text = $text;
     }
     
@@ -492,7 +492,7 @@ class Comment implements ModelInterface {
         return $this->id;
     }
     
-    public  function getAuthor(): Relation
+    public  function getAuthor(): Link
     {
         return $this->author;
     }
@@ -525,5 +525,5 @@ $manager = new \DjinORM\Djin\Manager\ModelManager($container);
 $commentRepo = $manager->getModelRepository(Comment::class);
 $comment = $commentRepo->findById(10);
 
-$author = $manager->findRelation($comment->getAuthor());
+$author = $manager->findByLink($comment->getAuthor());
 ```

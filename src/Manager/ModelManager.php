@@ -9,7 +9,7 @@ namespace DjinORM\Djin\Manager;
 use DjinORM\Djin\Exceptions\UnknownModelException;
 use DjinORM\Djin\Id\IdGeneratorInterface;
 use DjinORM\Djin\Model\ModelInterface;
-use DjinORM\Djin\Model\Relation;
+use DjinORM\Djin\Model\Link;
 use DjinORM\Djin\Exceptions\NotModelInterfaceException;
 use DjinORM\Djin\Repository\RepoInterface;
 use Exception;
@@ -117,14 +117,14 @@ class ModelManager
     }
 
     /**
-     * @param Relation $relation
+     * @param Link $link
      * @return ModelInterface|null
      * @throws UnknownModelException
      */
-    public function findRelation(Relation $relation): ?ModelInterface
+    public function findByLink(Link $link): ?ModelInterface
     {
-        $repo = $this->getRepositoryByModelName($relation->getModelName());
-        return $repo->findById($relation->getId());
+        $repo = $this->getRepositoryByModelName($link->getModelName());
+        return $repo->findById($link->getId());
     }
 
     /**

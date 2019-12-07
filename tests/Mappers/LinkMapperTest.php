@@ -7,16 +7,16 @@
 namespace DjinORM\Djin\Mappers;
 
 use DjinORM\Djin\Id\Id;
-use DjinORM\Djin\Model\Relation;
+use DjinORM\Djin\Model\Link;
 
-class RelationMapperTest extends MapperTestCase
+class LinkMapperTest extends MapperTestCase
 {
 
     public function serializeDataProvider(): array
     {
         return [
             [
-                new Relation('model', new Id(1)),
+                new Link('model', new Id(1)),
                 ['id' => '1', 'model' => 'model']
             ],
         ];
@@ -30,7 +30,7 @@ class RelationMapperTest extends MapperTestCase
             [null],
             [true],
             [[]],
-            [new RelationMapper()]
+            [new LinkMapper()]
         ];
     }
 
@@ -39,7 +39,7 @@ class RelationMapperTest extends MapperTestCase
         return [
             [
                 ['id' => '1', 'model' => 'model'],
-                new Relation('model', new Id(1))
+                new Link('model', new Id(1))
             ],
         ];
     }
@@ -57,12 +57,12 @@ class RelationMapperTest extends MapperTestCase
             [null],
             [true],
             [[]],
-            [new RelationMapper()]
+            [new LinkMapper()]
         ];
     }
 
     protected function getMapper(): MapperInterface
     {
-        return new RelationMapper();
+        return new LinkMapper();
     }
 }

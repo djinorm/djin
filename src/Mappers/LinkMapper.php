@@ -8,14 +8,14 @@
 namespace DjinORM\Djin\Mappers;
 
 
-use DjinORM\Djin\Model\Relation;
+use DjinORM\Djin\Model\Link;
 
-class RelationMapper extends ObjectMapper
+class LinkMapper extends ObjectMapper
 {
 
     public function __construct()
     {
-        parent::__construct(Relation::class, [
+        parent::__construct(Link::class, [
             'id' => new IdMapper(),
             'model' => new StringMapper()
         ]);
