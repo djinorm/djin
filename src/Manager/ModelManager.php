@@ -6,8 +6,10 @@
 
 namespace DjinORM\Djin\Manager;
 
+use DjinORM\Djin\Exceptions\LockedModelException;
 use DjinORM\Djin\Exceptions\UnknownModelException;
 use DjinORM\Djin\Id\IdGeneratorInterface;
+use DjinORM\Djin\Locker\LockerInterface;
 use DjinORM\Djin\Model\ModelInterface;
 use DjinORM\Djin\Model\Link;
 use DjinORM\Djin\Exceptions\NotModelInterfaceException;
@@ -55,10 +57,15 @@ class ModelManager
      * @var IdGeneratorInterface
      */
     private $idGenerator;
+    /**
+     * @var LockerInterface
+     */
+    private $locker;
 
     public function __construct(
         ContainerInterface $container,
         IdGeneratorInterface $idGenerator,
+        LockerInterface $locker,
         callable $onBeforeCommit = null,
         callable $onAfterCommit = null,
         callable $onCommitException = null
@@ -66,6 +73,7 @@ class ModelManager
     {
         $this->container = $container;
         $this->idGenerator = $idGenerator;
+        $this->locker = $locker;
 
         $this->onBeforeCommit = $onBeforeCommit ?? function () {};
         $this->onAfterCommit = $onAfterCommit ?? function () {};
@@ -114,6 +122,11 @@ class ModelManager
             $this->modelRepositories[$class] = $repositoryClass;
             $this->modelIdGenerators[$class] = $idGenerator ?? $this->idGenerator;
         }
+    }
+
+    public function getLocker(): LockerInterface
+    {
+        return $this->locker;
     }
 
     /**
@@ -176,9 +189,11 @@ class ModelManager
     }
 
     /**
-     * @throws Exception
+     * @param ModelInterface|null $locker
+     * @return Commit
+     * @throws NotModelInterfaceException
      */
-    public function commit(): Commit
+    public function commit(ModelInterface $locker = null): Commit
     {
         $commit = new Commit($this->persisted, $this->deleted);
 
@@ -188,21 +203,22 @@ class ModelManager
         }
 
         ($this->onBeforeCommit)($this, $commit);
+        $models = array_merge($commit->getPersisted(), $commit->getDeleted());
 
         try {
+            $this->lock($models, $locker);
 
-            $modelClasses = array_unique(array_map(
-                'get_class',
-                array_merge($commit->getPersisted(), $commit->getDeleted())
-            ));
-
+            $modelClasses = array_unique(array_map('get_class',$models));
             foreach ($modelClasses as $modelClass) {
                 $this->getModelRepository($modelClass)->commit($commit);
             }
 
             ($this->onAfterCommit)($this, $commit);
 
+            $this->unlock($models, $locker);
+
         } catch (Exception $exception) {
+            $this->unlock($models, $locker);
             ($this->onCommitException)($this, $commit);
             throw $exception;
         }
@@ -223,6 +239,39 @@ class ModelManager
     {
         foreach (array_keys($this->modelRepositories) as $modelClass) {
             $this->getModelRepository($modelClass)->freeUpMemory();
+        }
+    }
+
+    /**
+     * @param ModelInterface[] $models
+     * @param ModelInterface|null $locker
+     * @throws LockedModelException
+     */
+    protected function lock(array $models, ?ModelInterface $locker)
+    {
+        if ($locker) {
+            foreach ($models as $model) {
+                if ($this->getLocker()->isLockedFor($model, $locker)) {
+                    throw new LockedModelException();
+                }
+
+                if ($locker) {
+                    $this->getLocker()->lock($model, $locker);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param ModelInterface[] $models
+     * @param ModelInterface|null $locker
+     */
+    protected function unlock(array $models, ?ModelInterface $locker)
+    {
+        if ($locker) {
+            foreach ($models as $model) {
+                $this->getLocker()->unlock($model, $locker);
+            }
         }
     }
 
