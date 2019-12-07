@@ -5,10 +5,16 @@ namespace DjinORM\Djin\Manager;
 
 
 use DjinORM\Djin\Exceptions\NotModelInterfaceException;
+use DjinORM\Djin\Id\Id;
+use DjinORM\Djin\Id\UuidGenerator;
 use DjinORM\Djin\Model\ModelInterface;
 
 class Commit
 {
+    /**
+     * @var Id $id
+     */
+    private $id;
     /**
      * @var ModelInterface[]
      */
@@ -26,11 +32,20 @@ class Commit
      */
     public function __construct(array $persisted, array $deleted)
     {
+        $this->id = new Id(UuidGenerator::generate());
         $this->guardNotModelInterface($persisted);
         $this->guardNotModelInterface($deleted);
 
         $this->persisted = array_values($persisted);
         $this->deleted = array_values($deleted);
+    }
+
+    /**
+     * @return Id
+     */
+    public function getId(): Id
+    {
+        return $this->id;
     }
 
     /**

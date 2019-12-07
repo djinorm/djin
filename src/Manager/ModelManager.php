@@ -178,7 +178,7 @@ class ModelManager
     /**
      * @throws Exception
      */
-    public function commit(): void
+    public function commit(): Commit
     {
         $commit = new Commit($this->persisted, $this->deleted);
 
@@ -206,6 +206,8 @@ class ModelManager
             ($this->onCommitException)($this, $commit);
             throw $exception;
         }
+
+        return $commit;
     }
 
     /**

@@ -46,7 +46,7 @@ class UuidGenerator implements IdGeneratorInterface
      * @return string
      * @throws Exception
      */
-    protected function generate(): string
+    public static function generate(): string
     {
         return implode('-', [
             bin2hex(random_bytes(4)),
