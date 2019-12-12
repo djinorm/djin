@@ -6,6 +6,7 @@
 
 namespace DjinORM\Djin\Repository;
 
+use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Manager\Commit;
 use DjinORM\Djin\Model\ModelInterface;
 
@@ -13,13 +14,13 @@ interface RepoInterface
 {
 
     /**
-     * @param mixed $id
+     * @param Id|int|string $id
      * @return ModelInterface|null
      */
     public function findById($id): ?ModelInterface;
 
     /**
-     * @param array $ids
+     * @param Id[]|array $ids
      * @return ModelInterface[]
      */
     public function findByIds($ids): array;
