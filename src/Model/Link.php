@@ -49,6 +49,11 @@ class Link implements JsonSerializable
         return $this->model;
     }
 
+    public function isFor(ModelInterface $model): bool
+    {
+        return $this->getModelName() === $model::getModelName() && $this->id->isEqual($model);
+    }
+
     /**
      * Specify data which should be serialized to JSON
      * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
