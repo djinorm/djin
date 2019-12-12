@@ -9,15 +9,17 @@ namespace DjinORM\Djin\Repository;
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Manager\Commit;
 use DjinORM\Djin\Model\ModelInterface;
+use Throwable;
 
 interface RepoInterface
 {
 
     /**
      * @param Id|int|string $id
+     * @param Throwable|null $exception
      * @return ModelInterface|null
      */
-    public function findById($id): ?ModelInterface;
+    public function findById($id, Throwable $exception = null): ?ModelInterface;
 
     /**
      * @param Id[]|array $ids
