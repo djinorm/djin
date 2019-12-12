@@ -6,6 +6,7 @@
 
 namespace DjinORM\Djin\Manager;
 
+use DjinORM\Djin\Exceptions\InvalidArgumentException;
 use DjinORM\Djin\Exceptions\LockedModelException;
 use DjinORM\Djin\Exceptions\UnknownModelException;
 use DjinORM\Djin\Id\IdGeneratorInterface;
@@ -17,6 +18,7 @@ use DjinORM\Djin\Repository\RepoInterface;
 use Exception;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use SplObjectStorage;
 
 class ModelManager
 {
@@ -119,6 +121,39 @@ class ModelManager
     {
         $repo = $this->getModelRepository($link->getModelName());
         return $repo->findById($link->getId());
+    }
+
+    /**
+     * @param Link[] $links
+     * @return SplObjectStorage
+     * @throws InvalidArgumentException
+     * @throws UnknownModelException
+     */
+    public function findByLinks(array $links): SplObjectStorage
+    {
+        $groups = [];
+        foreach ($links as $link) {
+            if (!($link instanceof Link)) {
+                throw new InvalidArgumentException("Every link should be instance of " . Link::class);
+            }
+            $name = $link->getModelName();
+            $id = (string) $link->getId();
+            $groups[$name][$id] = $link;
+        }
+
+        $result = new SplObjectStorage();
+        foreach ($groups as $modelName => $indexedLinks) {
+            $repo = $this->getModelRepository($modelName);
+            $models = $repo->findByIds(array_keys($indexedLinks));
+            foreach ($models as $model) {
+                foreach ($indexedLinks as $link) {
+                    if ($link->isFor($model)) {
+                        $result[$link] = $model;
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
     /**
