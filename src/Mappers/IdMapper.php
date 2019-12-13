@@ -21,8 +21,8 @@ class IdMapper extends CallableMapper
                 return $id->toString();
             },
             function ($id) {
-                if (is_null($id)) {
-                    throw new SerializerException("Id expected, but null passed");
+                if (!is_string($id) && !is_int($id) && !is_float($id)) {
+                    throw new SerializerException("Id expected, but '" . gettype($id) . "' passed");
                 }
                 return new Id($id);
             }
