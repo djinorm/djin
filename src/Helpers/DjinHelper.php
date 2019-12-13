@@ -7,78 +7,10 @@
 namespace DjinORM\Djin\Helpers;
 
 
-use DjinORM\Djin\Exceptions\InvalidArgumentException;
-use DjinORM\Djin\Exceptions\LogicException;
-use DjinORM\Djin\Exceptions\MismatchModelException;
-use DjinORM\Djin\Exceptions\NotFoundException;
-use DjinORM\Djin\Exceptions\NotPermanentIdException;
-use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Model\ModelInterface;
-use DjinORM\Djin\Repository\RepoInterface;
 
 class DjinHelper
 {
-
-    /**
-     * @param $modelObjectOrAnyId ModelInterface|Id|int|string
-     * @param RepoInterface|null $repo
-     * @return ModelInterface
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     * @throws NotFoundException
-     */
-    public static function getModelByAnyTypeIdArgument(
-        $modelObjectOrAnyId,
-        RepoInterface $repo = null
-    ): ModelInterface
-    {
-        return GetModelByAnyTypeIdHelper::get($modelObjectOrAnyId, $repo);
-    }
-
-    /**
-     * @param ModelInterface|Id|int|string $modelOrId
-     * @param string|null $checkThatModelClassIs
-     * @return int|string
-     * @throws MismatchModelException
-     * @throws InvalidArgumentException
-     * @throws NotPermanentIdException
-     */
-    public static function getScalarId($modelOrId, string $checkThatModelClassIs = null)
-    {
-        return GetScalarIdHelper::get($modelOrId, $checkThatModelClassIs);
-    }
-
-    /**
-     * @param array $modelsOrIds
-     * @param string|null $checkThatModelClassIs
-     * @return array
-     * @throws InvalidArgumentException
-     * @throws MismatchModelException
-     * @throws NotPermanentIdException
-     */
-    public static function getScalarIds(array $modelsOrIds, string $checkThatModelClassIs = null): array
-    {
-        $ids = [];
-        foreach ($modelsOrIds as $modelsOrId) {
-            $ids[] = self::getScalarId($modelsOrId, $checkThatModelClassIs);
-        }
-        return $ids;
-    }
-
-    /**
-     * @param $modelOrId
-     * @param string|null $checkThatModelClassIs
-     * @return int|null|string
-     * @throws MismatchModelException
-     */
-    public static function getScalarIdOrNull($modelOrId, string $checkThatModelClassIs = null)
-    {
-        try {
-            return self::getScalarId($modelOrId, $checkThatModelClassIs);
-        } catch (InvalidArgumentException | NotPermanentIdException $exception) {
-            return null;
-        }
-    }
 
     /**
      * @param ModelInterface[] $models
