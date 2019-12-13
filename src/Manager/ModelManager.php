@@ -206,11 +206,11 @@ class ModelManager
 
     /**
      * @param ModelInterface|null $locker
+     * @param int|null $lockTimeout
      * @return Commit
      * @throws NotModelInterfaceException
-     * @throws Exception
      */
-    public function commit(ModelInterface $locker = null): Commit
+    public function commit(ModelInterface $locker = null, int $lockTimeout = null): Commit
     {
         $commit = new Commit($this->persisted, $this->deleted);
 
@@ -223,7 +223,7 @@ class ModelManager
         $models = array_merge($commit->getPersisted(), $commit->getDeleted());
 
         try {
-            $this->lock($models, $locker);
+            $this->lock($models, $locker, $lockTimeout);
 
             $modelClasses = array_unique(array_map('get_class',$models));
             foreach ($modelClasses as $modelClass) {
@@ -259,9 +259,10 @@ class ModelManager
     /**
      * @param ModelInterface[] $models
      * @param ModelInterface|null $locker
+     * @param int $timeout
      * @throws LockedModelException
      */
-    protected function lock(array $models, ?ModelInterface $locker)
+    protected function lock(array $models, ?ModelInterface $locker, int $timeout)
     {
         if ($locker) {
             foreach ($models as $model) {
@@ -270,7 +271,7 @@ class ModelManager
                 }
 
                 if ($locker) {
-                    $this->getLocker()->lock($model, $locker);
+                    $this->getLocker()->lock($model, $locker, $timeout);
                 }
             }
         }
