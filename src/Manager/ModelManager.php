@@ -9,16 +9,17 @@ namespace DjinORM\Djin\Manager;
 use DjinORM\Djin\Exceptions\InvalidArgumentException;
 use DjinORM\Djin\Exceptions\LockedModelException;
 use DjinORM\Djin\Exceptions\UnknownModelException;
+use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Id\IdGeneratorInterface;
 use DjinORM\Djin\Locker\LockerInterface;
 use DjinORM\Djin\Model\ModelInterface;
 use DjinORM\Djin\Model\Link;
 use DjinORM\Djin\Exceptions\NotModelInterfaceException;
 use DjinORM\Djin\Repository\RepoInterface;
-use Exception;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use SplObjectStorage;
+use Throwable;
 
 class ModelManager
 {
@@ -157,6 +158,26 @@ class ModelManager
     }
 
     /**
+     * @param ModelInterface|Link|Id|string|int $argument
+     * @param string|null $modelNameOrClass
+     * @return ModelInterface|null
+     * @throws UnknownModelException
+     */
+    public function findByAnyTypeId($argument, string $modelNameOrClass = null): ?ModelInterface
+    {
+        if ($argument instanceof ModelInterface) {
+            return $argument;
+        }
+
+        if ($argument instanceof Link) {
+            return $this->findByLink($argument);
+        }
+
+        $repo = $this->getModelRepository($modelNameOrClass);
+        return $repo->findById($argument);
+    }
+
+    /**
      * Подготавливает модели для будущего сохранения в базу
      * @param ModelInterface|ModelInterface[] $models
      * @throws NotModelInterfaceException
@@ -209,6 +230,7 @@ class ModelManager
      * @param int|null $lockTimeout
      * @return Commit
      * @throws NotModelInterfaceException
+     * @throws Throwable
      */
     public function commit(ModelInterface $locker = null, int $lockTimeout = null): Commit
     {
@@ -234,7 +256,7 @@ class ModelManager
 
             $this->unlock($models, $locker);
 
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             $this->unlock($models, $locker);
             ($this->onCommitException)($this, $commit);
             throw $exception;
