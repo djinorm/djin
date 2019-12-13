@@ -1,12 +1,12 @@
 <?php
 
 
-namespace DjinORM\Djin\Repository;
+namespace DjinORM\Djin\Repository\Components;
 
 
 use DjinORM\Djin\Exceptions\InvalidArgumentException;
 
-class Sort
+class Sorting
 {
 
     const SORT_ASC = 'ASC';
