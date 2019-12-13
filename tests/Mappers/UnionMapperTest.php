@@ -126,7 +126,7 @@ class UnionMapperTest extends MapperTestCase
                 return $serialized;
             },
             function ($serialized) {
-                if ($serialized['model'] === 'TestModel') {
+                if (isset($serialized['model']) && $serialized['model'] === 'TestModel') {
                     return $serialized;
                 }
 
@@ -148,7 +148,7 @@ class UnionMapperTest extends MapperTestCase
                 return $serialized;
             },
             function ($serialized) {
-                if ($serialized['model'] === 'TestSecondModel') {
+                if (isset($serialized['model']) && $serialized['model'] === 'TestSecondModel') {
                     return $serialized;
                 }
 
