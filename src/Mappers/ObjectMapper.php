@@ -9,7 +9,7 @@ namespace DjinORM\Djin\Mappers;
 
 
 use DjinORM\Djin\Exceptions\SerializerException;
-use DjinORM\Djin\Helpers\RepoHelper;
+use DjinORM\Djin\Helpers\ReflectionHelper;
 use ReflectionException;
 
 class ObjectMapper implements MapperInterface
@@ -51,7 +51,7 @@ class ObjectMapper implements MapperInterface
         $data = [];
         foreach ($this->mappers as $property => $mapper) {
             $data[$property] = $mapper->serialize(
-                RepoHelper::getProperty(
+                ReflectionHelper::getProperty(
                     $complex,
                     $property
                 )
@@ -75,10 +75,10 @@ class ObjectMapper implements MapperInterface
             throw new SerializerException("Serialized data of {$this->classname} should be array, but '{$type}' type passed");
         }
 
-        $object = RepoHelper::newWithoutConstructor($this->classname);
+        $object = ReflectionHelper::newWithoutConstructor($this->classname);
         foreach ($this->mappers as $property => $mapper) {
             $value = $data[$property] ?? null;
-            RepoHelper::setProperty(
+            ReflectionHelper::setProperty(
                 $object,
                 $property,
                 $mapper->deserialize($value)

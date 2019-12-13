@@ -184,27 +184,27 @@ _ для каждой генерации (хотя так делать не на
 Подразумевается, что для этих целей используется [рефлексия](https://www.php.net/manual/ru/intro.reflection.php), при помощи
 которой вы можете обращаться к приватным свойствам класса, получать и изменять их значения, создавать объекты без вызова
 их конструктора и т.д. Чтобы упростить работу с моделями через рефлексию в DjinORM существует специальный хелпер
-[\DjinORM\Djin\Helpers\RepoHelper](src/Helpers/RepoHelper.php).
+[\DjinORM\Djin\Helpers\RepoHelper](src/Helpers/ReflectionHelper.php).
  
 С его помощью мы легко можем превратить нашу модель Comment в обычный массив
 ```php
 <?php
-use \DjinORM\Djin\Helpers\RepoHelper;
+use \DjinORM\Djin\Helpers\ReflectionHelper;
 
 $user = new User('Timur');
 $comment = new Comment($user, 'Hello world!');
 
 $data = [
-    'id' => RepoHelper::getProperty($comment, 'id')->toString(),
-    'userId' => RepoHelper::getProperty($comment, 'userId')->toString(),
-    'text' => RepoHelper::getProperty($comment, 'text'),
+    'id' => ReflectionHelper::getProperty($comment, 'id')->toString(),
+    'userId' => ReflectionHelper::getProperty($comment, 'userId')->toString(),
+    'text' => ReflectionHelper::getProperty($comment, 'text'),
 ];
 ```
 
 И обратно превратить массив, извлеченный из базы в модель
 ```php
 <?php
-use \DjinORM\Djin\Helpers\RepoHelper;
+use \DjinORM\Djin\Helpers\ReflectionHelper;
 use \DjinORM\Djin\Id\Id;
 
 $data = [
@@ -213,10 +213,10 @@ $data = [
     'text' => 'Hello world!',
 ];
 
-$comment = RepoHelper::newWithoutConstructor(Comment::class);
-RepoHelper::setProperty($comment, 'id', new Id($data['id']));
-RepoHelper::setProperty($comment, 'userId', new Id($data['userId']));
-RepoHelper::setProperty($comment, 'text', $data['text']);
+$comment = ReflectionHelper::newWithoutConstructor(Comment::class);
+ReflectionHelper::setProperty($comment, 'id', new Id($data['id']));
+ReflectionHelper::setProperty($comment, 'userId', new Id($data['userId']));
+ReflectionHelper::setProperty($comment, 'text', $data['text']);
 ```
 
 Подобный подход дает полный контроль над хранением данных: вы можете извлекать объекты любого уровня вложенности, как угодно
