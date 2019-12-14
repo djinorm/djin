@@ -34,11 +34,10 @@ class LinkTest extends TestCase
         $this->assertSame($id, $pointer->getId());
     }
 
-    public function testConstructFromNameAndScalarId()
+    public function testConstructFromClassAndId()
     {
-        $relation = new Link(TestModel_1::getModelName(), new Id(1));
-        $this->assertInstanceOf(Id::class, $relation->getId());
-        $this->assertEquals(1, $relation->getId()->toString());
+        $link = new Link(TestModel_1::class, new Id(1));
+        $this->assertEquals(TestModel_1::getModelName(), $link->getModelName());
     }
 
     public function testGetId()

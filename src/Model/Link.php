@@ -8,8 +8,6 @@
 namespace DjinORM\Djin\Model;
 
 
-use DjinORM\Djin\Exceptions\InvalidArgumentException;
-use DjinORM\Djin\Exceptions\LogicException;
 use DjinORM\Djin\Id\Id;
 use JsonSerializable;
 
@@ -24,12 +22,19 @@ class Link implements JsonSerializable
 
     /**
      * ModelPointer constructor.
-     * @param string $modelName
+     * @param string $modelClassOrName
      * @param Id|int|string $id
      */
-    public function __construct(string $modelName, Id $id)
+    public function __construct(string $modelClassOrName, Id $id)
     {
-        $this->model = $modelName;
+        if (is_a($modelClassOrName, ModelInterface::class, true)) {
+            /** @var ModelInterface $modelClassOrName */
+            $this->model = $modelClassOrName::getModelName();
+        } else {
+            /** @var string $modelClassOrName */
+            $this->model = $modelClassOrName;
+        }
+
         $this->id = $id;
     }
 
@@ -77,8 +82,6 @@ class Link implements JsonSerializable
     /**
      * @param string $json
      * @return Link|null
-     * @throws InvalidArgumentException
-     * @throws LogicException
      */
     public static function fromJson(string $json): ?self
     {
