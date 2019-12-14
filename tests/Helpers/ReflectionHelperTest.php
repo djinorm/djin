@@ -21,7 +21,7 @@ class ReflectionHelperTest extends TestCase
     /** @var ArrayObject */
     private $arrayAccess;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->model = new TestModel_1(1, 2);
         $this->arrayAccess = new ArrayObject(['key' => 'value']);

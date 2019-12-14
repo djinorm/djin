@@ -7,31 +7,46 @@
 namespace DjinORM\Djin\Manager;
 
 
-use DI\ContainerBuilder;
-use DjinORM\Djin\Exceptions\UnknownModelException;
-use DjinORM\Djin\Exceptions\NotModelInterfaceException;
-use DjinORM\Djin\Id\Id;
+use DjinORM\Djin\Id\IdGeneratorInterface;
 use DjinORM\Djin\Id\UuidGenerator;
-use DjinORM\Djin\Mock\TestModel_1;
-use DjinORM\Djin\Mock\TestModelSecondRepository;
-use DjinORM\Djin\Mock\TestModel_2;
-use DjinORM\Djin\Mock\TestStubModel;
-use DjinORM\Djin\Mock\TestModelRepo;
-use DjinORM\Djin\Model\Link;
-use Exception;
+use DjinORM\Djin\Locker\DummyLocker;
+use DjinORM\Djin\Locker\LockerInterface;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 class ModelManagerTest extends TestCase
 {
 
+    /** @var LockerInterface */
+    private $locker;
+
+    /** @var IdGeneratorInterface */
+    private $idGenerator;
+
+    private $configManager;
+
     /** @var ModelManager */
     private $manager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->manager = new ModelManager();
+        $this->locker = new DummyLocker();
+        $this->idGenerator = new UuidGenerator();
+
+        $this->configManager = new ConfigManager();
+
+        $this->manager = new ModelManager(
+            $this->configManager,
+            $this->locker,
+            function (Commit $commit) {},
+            function (Commit $commit) {},
+            function (Commit $commit) {}
+        );
+    }
+
+    public function testGetLocker()
+    {
+        $this->assertSame($this->locker, $this->manager->getLocker());
     }
 
 }

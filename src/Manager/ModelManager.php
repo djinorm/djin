@@ -10,14 +10,11 @@ use DjinORM\Djin\Exceptions\InvalidArgumentException;
 use DjinORM\Djin\Exceptions\LockedModelException;
 use DjinORM\Djin\Exceptions\UnknownModelException;
 use DjinORM\Djin\Id\Id;
-use DjinORM\Djin\Id\IdGeneratorInterface;
 use DjinORM\Djin\Locker\LockerInterface;
 use DjinORM\Djin\Model\ModelInterface;
 use DjinORM\Djin\Model\Link;
 use DjinORM\Djin\Exceptions\NotModelInterfaceException;
-use DjinORM\Djin\Repository\RepoInterface;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
+use DjinORM\Djin\Repository\Repository;
 use SplObjectStorage;
 use Throwable;
 
@@ -32,21 +29,13 @@ class ModelManager
      */
     protected $deleted = [];
     /**
-     * @var RepositoryManager
+     * @var ConfigManager
      */
-    private $repositoryManager;
+    private $configManager;
     /**
-     * @var RepoInterface[]
+     * @var Repository[]
      */
     private $repositories;
-    /**
-     * @var IdGeneratorInterface
-     */
-    private $IdGenerators;
-    /**
-     * @var IdGeneratorInterface
-     */
-    private $idGenerator;
     /**
      * @var LockerInterface
      */
@@ -65,47 +54,19 @@ class ModelManager
     private $onCommitException;
 
     public function __construct(
-        IdGeneratorInterface $idGenerator,
+        ConfigManager $configManager,
         LockerInterface $locker,
         callable $onBeforeCommit = null,
         callable $onAfterCommit = null,
         callable $onCommitException = null
     )
     {
-        $this->repositoryManager = new RepositoryManager();
-        $this->idGenerator = $idGenerator;
+        $this->configManager = $configManager;
         $this->locker = $locker;
 
         $this->onBeforeCommit = $onBeforeCommit ?? function () {};
         $this->onAfterCommit = $onAfterCommit ?? function () {};
         $this->onCommitException = $onCommitException ?? function () {};
-    }
-
-    /**
-     * @param RepoInterface|callable $repoOrCallable
-     * @param array $modelClasses
-     * @param IdGeneratorInterface|null $idGenerator
-     */
-    public function setModelConfig($repoOrCallable, array $modelClasses, IdGeneratorInterface $idGenerator = null)
-    {
-        foreach ($modelClasses as $modelClass) {
-            $this->repositoryManager->add($repoOrCallable, $modelClass);
-            $this->IdGenerators[$modelClass] = $idGenerator ?? $this->idGenerator;
-        }
-    }
-
-    /**
-     * @param $modelObjectOrClassOrName
-     * @return RepoInterface
-     * @throws UnknownModelException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
-    public function getModelRepository($modelObjectOrClassOrName): RepoInterface
-    {
-        $repo = $this->repositoryManager->getRepository($modelObjectOrClassOrName);
-        $this->repositories[get_class($repo)] = $repo;
-        return $repo;
     }
 
     public function getLocker(): LockerInterface
@@ -114,8 +75,22 @@ class ModelManager
     }
 
     /**
+     * @param $modelObjectOrClassOrName
+     * @return Repository
+     * @throws InvalidArgumentException
+     * @throws UnknownModelException
+     */
+    public function getModelRepository($modelObjectOrClassOrName): Repository
+    {
+        $repo = $this->configManager->getRepository($modelObjectOrClassOrName);
+        $this->repositories[get_class($repo)] = $repo;
+        return $repo;
+    }
+
+    /**
      * @param Link $link
      * @return ModelInterface|null
+     * @throws InvalidArgumentException
      * @throws UnknownModelException
      */
     public function findByLink(Link $link): ?ModelInterface
@@ -161,6 +136,7 @@ class ModelManager
      * @param ModelInterface|Link|Id|string|int $argument
      * @param string|null $modelNameOrClass
      * @return ModelInterface|null
+     * @throws InvalidArgumentException
      * @throws UnknownModelException
      */
     public function findByAnyTypeId($argument, string $modelNameOrClass = null): ?ModelInterface
@@ -238,7 +214,8 @@ class ModelManager
 
         //Assigns real ids
         foreach ($commit->getPersisted() as $model) {
-            ($this->idGenerator)($model);
+            $idGenerator = $this->getConfigManager()->getIdGenerator($model);
+            $idGenerator($model);
         }
 
         ($this->onBeforeCommit)($this, $commit);

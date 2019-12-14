@@ -46,6 +46,6 @@ class TestModel_1 implements ModelInterface
 
     public static function getModelName(): string
     {
-        return 'test-model';
+        return 'model_1';
     }
 }

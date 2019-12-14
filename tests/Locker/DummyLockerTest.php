@@ -32,7 +32,7 @@ class DummyLockerTest extends TestCase
     /** @var ModelInterface */
     private $model_3;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->dummy = new DummyLocker();

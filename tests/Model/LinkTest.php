@@ -20,7 +20,7 @@ class LinkTest extends TestCase
     /** @var ModelInterface */
     private $model;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->model = new TestModel_1(1);

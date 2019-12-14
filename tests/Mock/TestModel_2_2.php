@@ -7,12 +7,12 @@
 namespace DjinORM\Djin\Mock;
 
 
-class TestModel_2 extends TestModel_1
+class TestModel_2_2 extends TestModel_1
 {
 
     public static function getModelName(): string
     {
-        return 'model_2';
+        return 'model_2_2';
     }
 
 }

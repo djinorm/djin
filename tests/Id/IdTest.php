@@ -7,8 +7,6 @@
 namespace DjinORM\Djin\Id;
 
 
-use DjinORM\Djin\Exceptions\InvalidArgumentException;
-use DjinORM\Djin\Exceptions\LogicException;
 use DjinORM\Djin\Model\ModelInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -21,7 +19,7 @@ class IdTest extends TestCase
     /** @var Id */
     private $temp;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->permanent = new Id(1);
         $this->temp = new Id();
