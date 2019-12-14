@@ -11,7 +11,7 @@ use DjinORM\Djin\Manager\Commit;
 use DjinORM\Djin\Model\ModelInterface;
 use Throwable;
 
-interface RepoInterface
+abstract class Repository
 {
 
     /**
@@ -19,24 +19,24 @@ interface RepoInterface
      * @param Throwable|null $exception
      * @return ModelInterface|null
      */
-    public function findById($id, Throwable $exception = null): ?ModelInterface;
+    abstract public function findById($id, Throwable $exception = null): ?ModelInterface;
 
     /**
      * @param Id[]|array $ids
      * @return ModelInterface[]
      */
-    public function findByIds($ids): array;
+    abstract public function findByIds($ids): array;
 
     /**
      * @param Commit $commit
      */
-    public function commit(Commit $commit): void;
+    abstract public function commit(Commit $commit): void;
 
     /**
      * Освобождает из памяти загруженные модели.
      * ВНИМАНИЕ: после освобождения памяти в случае сохранения существующей модели через self::save()
      * в БД будет вставлена новая запись вместо обновления существующей
      */
-    public function freeUpMemory(): void;
+    abstract public function freeUpMemory(): void;
 
 }

@@ -275,7 +275,7 @@ use DjinORM\Djin\Mappers\ObjectMapper;
 use DjinORM\Djin\Mappers\IdMapper;
 use DjinORM\Djin\Mappers\StringMapper;
 
-class UserRepo implements \DjinORM\Djin\Repository\RepoInterface 
+class UserRepo implements \DjinORM\Djin\Repository\Repository 
 {
     
     const TABLE_NAME = 'users';
@@ -314,7 +314,7 @@ class UserRepo implements \DjinORM\Djin\Repository\RepoInterface
     
 }
 
-class CommentRepo implements \DjinORM\Djin\Repository\RepoInterface 
+class CommentRepo implements \DjinORM\Djin\Repository\Repository 
 {
     
     const TABLE_NAME = 'comments';
