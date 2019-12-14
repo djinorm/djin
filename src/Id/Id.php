@@ -27,18 +27,6 @@ class Id implements JsonSerializable
         }
     }
 
-    /**
-     * @return string|null
-     * @deprecated
-     */
-    public function getPermanentOrNull(): ?string
-    {
-        if ($this->isPermanent()) {
-            return $this->permanentId;
-        }
-        return null;
-    }
-
     public function isPermanent(): bool
     {
         return $this->permanentId !== null;
@@ -55,16 +43,6 @@ class Id implements JsonSerializable
             return true;
         }
         return false;
-    }
-
-    /**
-     * @param string|null $permanentId
-     * @return bool
-     * @deprecated
-     */
-    public function setPermanentId($permanentId): bool
-    {
-        return $this->assign($permanentId);
     }
 
     /**

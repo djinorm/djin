@@ -35,12 +35,6 @@ class IdTest extends TestCase
         $this->assertTrue($this->permanent->isPermanent());
     }
 
-    public function testGetPermanentOrNull()
-    {
-        $this->assertEquals(1, $this->permanent->getPermanentOrNull());
-        $this->assertNull($this->temp->getPermanentOrNull());
-    }
-
     public function testSetAlreadyAssignedPermanentId()
     {
         $this->assertFalse($this->permanent->assign(1));
@@ -76,6 +70,19 @@ class IdTest extends TestCase
     {
         $this->assertEquals(1, $this->permanent->toString());
         $this->assertNull($this->temp->toString());
+    }
+
+    public function testJsonSerialize()
+    {
+        $this->assertEquals(
+            '"1"',
+            json_encode(new Id(1))
+        );
+
+        $this->assertEquals(
+            '"hello"',
+            json_encode(new Id('hello'))
+        );
     }
 
     public function testAsString()
