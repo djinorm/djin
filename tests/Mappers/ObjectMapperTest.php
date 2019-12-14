@@ -6,7 +6,7 @@
 
 namespace DjinORM\Djin\Mappers;
 
-use DjinORM\Djin\Mock\TestModel;
+use DjinORM\Djin\Mock\TestModel_1;
 
 class ObjectMapperTest extends MapperTestCase
 {
@@ -14,8 +14,8 @@ class ObjectMapperTest extends MapperTestCase
     public function serializeDataProvider(): array
     {
         return [
-            [new TestModel(1, 2, '3'), ['id' => '1', 'otherId' => '2', 'custom' => '3']],
-            [new TestModel(1, 2, null), ['id' => '1', 'otherId' => '2', 'custom' => null]],
+            [new TestModel_1(1, 2, '3'), ['id' => '1', 'otherId' => '2', 'custom' => '3']],
+            [new TestModel_1(1, 2, null), ['id' => '1', 'otherId' => '2', 'custom' => null]],
         ];
     }
 
@@ -33,9 +33,9 @@ class ObjectMapperTest extends MapperTestCase
     public function deserializeDataProvider(): array
     {
         return [
-            [['id' => '1', 'otherId' => '2', 'custom' => '3'], new TestModel(1, 2, '3')],
-            [['id' => '1', 'otherId' => '2', 'custom' => null], new TestModel(1, 2, null)],
-            [['id' => '1', 'otherId' => '2'], new TestModel(1, 2, null)],
+            [['id' => '1', 'otherId' => '2', 'custom' => '3'], new TestModel_1(1, 2, '3')],
+            [['id' => '1', 'otherId' => '2', 'custom' => null], new TestModel_1(1, 2, null)],
+            [['id' => '1', 'otherId' => '2'], new TestModel_1(1, 2, null)],
         ];
     }
 
@@ -55,7 +55,7 @@ class ObjectMapperTest extends MapperTestCase
     protected function getMapper(): MapperInterface
     {
         return new ObjectMapper(
-            TestModel::class,
+            TestModel_1::class,
             [
                 'id' => new IdMapper(),
                 'otherId' => new IdMapper(),

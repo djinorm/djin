@@ -8,7 +8,7 @@
 namespace DjinORM\Djin\Model;
 
 use DjinORM\Djin\Id\Id;
-use DjinORM\Djin\Mock\TestModel;
+use DjinORM\Djin\Mock\TestModel_1;
 use PHPUnit\Framework\TestCase;
 
 class LinkTest extends TestCase
@@ -23,20 +23,20 @@ class LinkTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->model = new TestModel(1);
-        $this->link = Link::link($this->model);
+        $this->model = new TestModel_1(1);
+        $this->link = Link::to($this->model);
     }
 
     public function testConstructFromNameAndId()
     {
         $id = new Id(1);
-        $pointer = new Link(TestModel::getModelName(), $id);
+        $pointer = new Link(TestModel_1::getModelName(), $id);
         $this->assertSame($id, $pointer->getId());
     }
 
     public function testConstructFromNameAndScalarId()
     {
-        $relation = new Link(TestModel::getModelName(), new Id(1));
+        $relation = new Link(TestModel_1::getModelName(), new Id(1));
         $this->assertInstanceOf(Id::class, $relation->getId());
         $this->assertEquals(1, $relation->getId()->toString());
     }

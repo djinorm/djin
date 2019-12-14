@@ -7,7 +7,7 @@
 namespace DjinORM\Djin\Mock;
 
 
-class TestSecondModel extends TestModel
+class TestModel_2 extends TestModel_1
 {
 
 }

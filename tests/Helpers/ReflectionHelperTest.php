@@ -9,13 +9,13 @@ namespace DjinORM\Djin\Helpers;
 
 use ArrayObject;
 use DjinORM\Djin\Id\Id;
-use DjinORM\Djin\Mock\TestModel;
+use DjinORM\Djin\Mock\TestModel_1;
 use PHPUnit\Framework\TestCase;
 
 class ReflectionHelperTest extends TestCase
 {
 
-    /** @var TestModel */
+    /** @var TestModel_1 */
     private $model;
 
     /** @var ArrayObject */
@@ -23,15 +23,15 @@ class ReflectionHelperTest extends TestCase
 
     public function setUp()
     {
-        $this->model = new TestModel(1, 2);
+        $this->model = new TestModel_1(1, 2);
         $this->arrayAccess = new ArrayObject(['key' => 'value']);
     }
 
     public function testNewWithoutConstructor()
     {
-        /** @var TestModel $model */
-        $model = ReflectionHelper::newWithoutConstructor(TestModel::class);
-        $this->assertInstanceOf(TestModel::class, $model);
+        /** @var TestModel_1 $model */
+        $model = ReflectionHelper::newWithoutConstructor(TestModel_1::class);
+        $this->assertInstanceOf(TestModel_1::class, $model);
         $this->assertEquals(null, $model->getOtherId());
     }
 

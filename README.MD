@@ -479,7 +479,7 @@ class Comment implements ModelInterface {
     public function __construct(ModelInterface $author, string $text) 
     {
         $this->id = new Id();
-        $this->author = Link::link($author);
+        $this->author = Link::to($author);
         $this->text = $text;
     }
     

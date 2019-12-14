@@ -9,8 +9,8 @@ namespace DjinORM\Djin\Mappers;
 use DjinORM\Djin\Exceptions\SerializerException;
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Mappers\Components\UnionRule;
-use DjinORM\Djin\Mock\TestModel;
-use DjinORM\Djin\Mock\TestSecondModel;
+use DjinORM\Djin\Mock\TestModel_1;
+use DjinORM\Djin\Mock\TestModel_2;
 use Throwable;
 
 class UnionMapperTest extends MapperTestCase
@@ -22,11 +22,11 @@ class UnionMapperTest extends MapperTestCase
             ['string', 'string'],
             [1, 1],
             [
-                new TestModel(1, 2, 3),
+                new TestModel_1(1, 2, 3),
                 ['id' => '1', 'otherId' => '2', 'custom' => 3, 'model' => 'TestModel'],
             ],
             [
-                new TestSecondModel(1, 2, 'three'),
+                new TestModel_2(1, 2, 'three'),
                 ['id' => '1', 'otherId' => '2', 'custom' => 'three', 'model' => 'TestSecondModel'],
             ],
         ];
@@ -50,11 +50,11 @@ class UnionMapperTest extends MapperTestCase
             [1, 1],
             [
                 ['id' => '1', 'otherId' => '2', 'custom' => 3, 'model' => 'TestModel'],
-                new TestModel(1, 2, 3),
+                new TestModel_1(1, 2, 3),
             ],
             [
                 ['id' => '1', 'otherId' => '2', 'custom' => 'three', 'model' => 'TestSecondModel'],
-                new TestSecondModel(1, 2, 'three'),
+                new TestModel_2(1, 2, 'three'),
             ],
         ];
     }
@@ -114,7 +114,7 @@ class UnionMapperTest extends MapperTestCase
 
         $testModel = new UnionRule(
             new ObjectMapper(
-                TestModel::class,
+                TestModel_1::class,
                 [
                     'id' => new IdMapper(),
                     'otherId' => new IdMapper(),
@@ -136,7 +136,7 @@ class UnionMapperTest extends MapperTestCase
 
         $testSecondModel = new UnionRule(
             new ObjectMapper(
-                TestSecondModel::class,
+                TestModel_2::class,
                 [
                     'id' => new IdMapper(),
                     'otherId' => new IdMapper(),

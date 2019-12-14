@@ -82,6 +82,19 @@ class ModelManager
     }
 
     /**
+     * @param RepoInterface|callable $repoOrCallable
+     * @param array $modelClasses
+     * @param IdGeneratorInterface|null $idGenerator
+     */
+    public function setModelConfig($repoOrCallable, array $modelClasses, IdGeneratorInterface $idGenerator = null)
+    {
+        foreach ($modelClasses as $modelClass) {
+            $this->repositoryManager->add($repoOrCallable, $modelClass);
+            $this->IdGenerators[$modelClass] = $idGenerator ?? $this->idGenerator;
+        }
+    }
+
+    /**
      * @param $modelObjectOrClassOrName
      * @return RepoInterface
      * @throws UnknownModelException
@@ -93,19 +106,6 @@ class ModelManager
         $repo = $this->repositoryManager->getRepository($modelObjectOrClassOrName);
         $this->repositories[get_class($repo)] = $repo;
         return $repo;
-    }
-
-    /**
-     * @param RepoInterface|callable $repoOrCallable
-     * @param array $modelClasses
-     * @param IdGeneratorInterface|null $idGenerator
-     */
-    public function setModelConfig($repoOrCallable, array $modelClasses, IdGeneratorInterface $idGenerator = null)
-    {
-        foreach ($modelClasses as $modelClass) {
-            $this->repositoryManager->add($repoOrCallable, $modelClass);
-            $this->IdGenerators[$modelClass] = $idGenerator ?? $this->idGenerator;
-        }
     }
 
     public function getLocker(): LockerInterface

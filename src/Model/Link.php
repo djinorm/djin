@@ -69,7 +69,7 @@ class Link implements JsonSerializable
         ];
     }
 
-    public static function link(ModelInterface $model): self
+    public static function to(ModelInterface $model): self
     {
         return new static($model::getModelName(), $model->getId());
     }

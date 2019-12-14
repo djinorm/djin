@@ -8,7 +8,7 @@ namespace DjinORM\Djin\Model;
 
 
 use DjinORM\Djin\Id\Id;
-use DjinORM\Djin\Mock\TestModel;
+use DjinORM\Djin\Mock\TestModel_1;
 use PHPUnit\Framework\TestCase;
 
 class ModelTest extends TestCase
@@ -16,7 +16,7 @@ class ModelTest extends TestCase
 
     public function testEmptyModelConstruct()
     {
-        $model = new TestModel();
+        $model = new TestModel_1();
         self::assertInstanceOf(Id::class, $model->getId());
         self::assertInstanceOf(Id::class, $model->getOtherId());
         self::assertFalse($model->getId()->isPermanent());
@@ -26,7 +26,7 @@ class ModelTest extends TestCase
 
     public function testFilledModelConstruct()
     {
-        $model = new TestModel(2,1);
+        $model = new TestModel_1(2,1);
         self::assertInstanceOf(Id::class, $model->getId());
         self::assertInstanceOf(Id::class, $model->getOtherId());
         $this->assertEquals(2, $model->getId()->toString());
@@ -37,13 +37,13 @@ class ModelTest extends TestCase
 
     /**
      * @depends testEmptyModelConstruct
-     * @param TestModel $model
+     * @param TestModel_1 $model
      * @throws \DjinORM\Djin\Exceptions\InvalidArgumentException
      * @throws \DjinORM\Djin\Exceptions\LogicException
      */
-    public function testSetOther(TestModel $model)
+    public function testSetOther(TestModel_1 $model)
     {
-        $other = new TestModel();
+        $other = new TestModel_1();
         $model->setOtherModel($other);
 
         self::assertFalse($model->getOtherId()->isPermanent());

@@ -10,7 +10,7 @@ namespace DjinORM\Djin\Mock;
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Model\ModelInterface;
 
-class TestModel implements ModelInterface
+class TestModel_1 implements ModelInterface
 {
 
     public $id;
@@ -34,7 +34,7 @@ class TestModel implements ModelInterface
         return $this->otherId;
     }
 
-    public function setOtherModel(TestModel $model)
+    public function setOtherModel(TestModel_1 $model)
     {
         $this->otherId = $model->getId();
     }
