@@ -14,7 +14,7 @@ class Repository extends \DjinORM\Djin\Repository\Repository
     /**
      * @inheritDoc
      */
-    public function findById($id, Throwable $exception = null): ?ModelInterface
+    public function findById($id, Throwable $notFoundException = null): ?ModelInterface
     {
         // TODO: Implement findById() method.
     }

@@ -6,6 +6,8 @@
 
 namespace DjinORM\Djin\Repository;
 
+use DjinORM\Djin\Exceptions\DuplicateModelException;
+use DjinORM\Djin\Exceptions\NotPermanentIdException;
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Manager\Commit;
 use DjinORM\Djin\Model\ModelInterface;
@@ -14,12 +16,15 @@ use Throwable;
 abstract class Repository
 {
 
+    /** @var ModelInterface[] */
+    protected $permanent;
+
     /**
      * @param Id|int|string $id
-     * @param Throwable|null $exception
+     * @param Throwable|null $notFoundException
      * @return ModelInterface|null
      */
-    abstract public function findById($id, Throwable $exception = null): ?ModelInterface;
+    abstract public function findById($id, Throwable $notFoundException = null): ?ModelInterface;
 
     /**
      * @param Id[]|array $ids
@@ -37,6 +42,37 @@ abstract class Repository
      * ВНИМАНИЕ: после освобождения памяти в случае сохранения существующей модели через self::save()
      * в БД будет вставлена новая запись вместо обновления существующей
      */
-    abstract public function freeUpMemory(): void;
+    public function freeUpMemory(): void
+    {
+        $this->permanent = [];
+    }
+
+    /**
+     * @param ModelInterface $model
+     * @throws DuplicateModelException
+     * @throws NotPermanentIdException
+     */
+    protected function register(ModelInterface $model): void
+    {
+        if (!$model->getId()->isPermanent()) {
+            throw new NotPermanentIdException('Model without permanent id can not be registered');
+        }
+
+        $class = get_class($model);
+        $id = $model->getId()->toString();
+
+        if (isset($this->permanent[$id]) && $this->permanent[$id] !== $model) {
+            throw new DuplicateModelException("Model with class '{$class}' and id '{$id}' already registered");
+        }
+
+        $this->permanent[$id] = $model;
+    }
+
+    protected function unregister(ModelInterface $model): void
+    {
+        if ($model->getId()->isPermanent()) {
+            unset($this->permanent[$model->getId()->toString()]);
+        }
+    }
 
 }
