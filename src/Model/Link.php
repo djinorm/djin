@@ -25,7 +25,7 @@ class Link implements JsonSerializable
      * @param string $modelClassOrName
      * @param Id|int|string $id
      */
-    public function __construct(string $modelClassOrName, Id $id)
+    public function __construct(string $modelClassOrName, $id)
     {
         if (is_a($modelClassOrName, ModelInterface::class, true)) {
             /** @var ModelInterface $modelClassOrName */
@@ -35,7 +35,11 @@ class Link implements JsonSerializable
             $this->model = $modelClassOrName;
         }
 
-        $this->id = $id;
+        if ($id instanceof Id) {
+            $this->id = $id;
+        } else {
+            $this->id = new Id($id);
+        }
     }
 
     /**

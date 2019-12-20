@@ -40,6 +40,12 @@ class LinkTest extends TestCase
         $this->assertEquals(TestModel_1::getModelName(), $link->getModelName());
     }
 
+    public function testConstructScalarId()
+    {
+        $link = new Link(TestModel_1::class, 1);
+        $this->assertEquals(TestModel_1::getModelName(), $link->getModelName());
+    }
+
     public function testGetId()
     {
         $this->assertSame($this->model->getId(), $this->link->getId());
