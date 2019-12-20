@@ -1,6 +1,5 @@
 <?php
 
-
 namespace DjinORM\Djin\Mock;
 
 
@@ -8,15 +7,32 @@ use DjinORM\Djin\Manager\Commit;
 use DjinORM\Djin\Model\ModelInterface;
 use Throwable;
 
-class Repository extends \DjinORM\Djin\Repository\Repository
+abstract class Repository extends \DjinORM\Djin\Repository\Repository
 {
+
+    /** @var ModelInterface */
+    private $models;
+
+    public function __construct()
+    {
+        $class = $this->getClassName();
+        $this->models = [
+            '1' => new $class(1),
+            '2' => new $class(2),
+            '3' => new $class(3),
+        ];
+    }
 
     /**
      * @inheritDoc
      */
     public function findById($id, Throwable $notFoundException = null): ?ModelInterface
     {
-        // TODO: Implement findById() method.
+        $model = $this->models[(string) $id] ?? null;
+        if (is_null($model) && $notFoundException) {
+            throw $notFoundException;
+        }
+        return $model;
     }
 
     /**
@@ -24,7 +40,13 @@ class Repository extends \DjinORM\Djin\Repository\Repository
      */
     public function findByIds($ids): array
     {
-        // TODO: Implement findByIds() method.
+        $models = [];
+        foreach ($ids as $id) {
+            if ($model = $this->findById($id)) {
+                $models[] = $model;
+            }
+        }
+        return $models;
     }
 
     /**
@@ -32,14 +54,17 @@ class Repository extends \DjinORM\Djin\Repository\Repository
      */
     public function commit(Commit $commit): void
     {
-        // TODO: Implement commit() method.
+        $persistedModels = $commit->getPersisted($this->getClassName());
+        foreach ($persistedModels as $model) {
+            $this->models[$model->getId()->toString()] = $model;
+        }
+
+        $deletedModels = $commit->getDeleted($this->getClassName());
+        foreach ($deletedModels as $model) {
+            unset($this->models[$model->getId()->toString()]);
+        }
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function freeUpMemory(): void
-    {
-        // TODO: Implement freeUpMemory() method.
-    }
+    abstract protected function getClassName(): string;
+
 }
