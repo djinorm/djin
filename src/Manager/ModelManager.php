@@ -172,6 +172,12 @@ class ModelManager
         }
     }
 
+    public function isPersisted(ModelInterface $model): bool
+    {
+        $hash = spl_object_hash($model);
+        return isset($this->persisted[$hash]);
+    }
+
     public function resetPersisted(): void
     {
         $this->persisted = [];
@@ -196,6 +202,12 @@ class ModelManager
         }
     }
 
+    public function isDeleted(ModelInterface $model): bool
+    {
+        $hash = spl_object_hash($model);
+        return isset($this->deleted[$hash]);
+    }
+
     public function resetDeleted(): void
     {
         $this->deleted = [];
@@ -214,7 +226,7 @@ class ModelManager
 
         //Assigns real ids
         foreach ($commit->getPersisted() as $model) {
-            $idGenerator = $this->getConfigManager()->getIdGenerator($model);
+            $idGenerator = $this->configManager->getIdGenerator($model);
             $idGenerator($model);
         }
 

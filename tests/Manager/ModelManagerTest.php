@@ -131,4 +131,42 @@ class ModelManagerTest extends TestCase
         $this->assertEquals('3', $model->getId()->toString());
     }
 
+    public function testPersists()
+    {
+        $model_1 = new TestModel_1(1);
+        $model_2 = new TestModel_2(2);
+
+        $this->assertFalse($this->manager->isPersisted($model_1));
+        $this->assertFalse($this->manager->isPersisted($model_2));
+
+        $this->manager->persists($model_1);
+        $this->manager->persists([$model_2]);
+
+        $this->assertTrue($this->manager->isPersisted($model_1));
+        $this->assertTrue($this->manager->isPersisted($model_2));
+
+        $this->manager->resetPersisted();
+        $this->assertFalse($this->manager->isPersisted($model_1));
+        $this->assertFalse($this->manager->isPersisted($model_2));
+    }
+
+    public function testDelete()
+    {
+        $model_1 = new TestModel_1(1);
+        $model_2 = new TestModel_2(2);
+
+        $this->assertFalse($this->manager->isDeleted($model_1));
+        $this->assertFalse($this->manager->isDeleted($model_2));
+
+        $this->manager->delete($model_1);
+        $this->manager->delete([$model_2]);
+
+        $this->assertTrue($this->manager->isDeleted($model_1));
+        $this->assertTrue($this->manager->isDeleted($model_2));
+
+        $this->manager->resetDeleted();
+        $this->assertFalse($this->manager->isDeleted($model_1));
+        $this->assertFalse($this->manager->isDeleted($model_2));
+    }
+
 }
