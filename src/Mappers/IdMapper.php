@@ -11,22 +11,30 @@ namespace DjinORM\Djin\Mappers;
 use DjinORM\Djin\Exceptions\SerializerException;
 use DjinORM\Djin\Id\Id;
 
-class IdMapper extends CallableMapper
+class IdMapper implements MapperInterface
 {
 
-    public function __construct()
+    /**
+     * @param Id $complex
+     * @return mixed
+     * @throws SerializerException
+     */
+    public function serialize($complex)
     {
-        parent::__construct(
-            function (Id $id) {
-                return $id->toString();
-            },
-            function ($id) {
-                if (!is_string($id) && !is_int($id) && !is_float($id)) {
-                    throw new SerializerException("Id expected, but '" . gettype($id) . "' passed");
-                }
-                return new Id($id);
-            }
-        );
+        if (!$complex->isPermanent()) {
+            throw new SerializerException("Id should has assigned permanent value");
+        }
+        return $complex->toString();
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function deserialize($data)
+    {
+        if (!is_string($data) && !is_int($data) && !is_float($data)) {
+            throw new SerializerException("Id expected, but '" . gettype($data) . "' passed");
+        }
+        return new Id($data);
+    }
 }
