@@ -7,17 +7,23 @@
 namespace DjinORM\Djin\Manager;
 
 
+use DjinORM\Djin\Exceptions\InvalidArgumentException;
+use DjinORM\Djin\Exceptions\LockedModelException;
+use DjinORM\Djin\Exceptions\NotModelInterfaceException;
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Id\IdGeneratorInterface;
 use DjinORM\Djin\Id\UuidGenerator;
 use DjinORM\Djin\Locker\DummyLocker;
+use DjinORM\Djin\Locker\Lock\Lock;
 use DjinORM\Djin\Locker\LockerInterface;
+use DjinORM\Djin\Locker\Lock\ServiceLock;
 use DjinORM\Djin\Mock\TestModel_1;
 use DjinORM\Djin\Mock\TestModel_2;
 use DjinORM\Djin\Mock\TestRepo_1;
 use DjinORM\Djin\Mock\TestRepo_2;
 use DjinORM\Djin\Model\Link;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
 class ModelManagerTest extends TestCase
 {
@@ -37,8 +43,12 @@ class ModelManagerTest extends TestCase
     /** @var ConfigManager */
     private $configManager;
 
+    /** @var array */
+    private $onEvents = [];
+
     /** @var ModelManager */
     private $manager;
+
 
     protected function setUp(): void
     {
@@ -63,12 +73,14 @@ class ModelManagerTest extends TestCase
             $this->idGenerator
         );
 
+        $this->onEvents = [];
+
         $this->manager = new ModelManager(
             $this->configManager,
             $this->locker,
-            function (Commit $commit) {},
-            function (Commit $commit) {},
-            function (Commit $commit) {}
+            function (Commit $commit) {$this->onEvents['before'] = $commit;},
+            function (Commit $commit) {$this->onEvents['after'] = $commit;},
+            function (Commit $commit) {$this->onEvents['exception'] = $commit;}
         );
     }
 
@@ -77,16 +89,16 @@ class ModelManagerTest extends TestCase
         $this->assertSame($this->locker, $this->manager->getLocker());
     }
 
-    public function testGetModelRepository()
+    public function testGetRepository()
     {
         $this->assertSame(
             $this->repo_1,
-            $this->manager->getModelRepository(TestModel_1::class)
+            $this->manager->getRepository(TestModel_1::class)
         );
 
         $this->assertSame(
             $this->repo_2,
-            $this->manager->getModelRepository(TestModel_2::class)
+            $this->manager->getRepository(TestModel_2::class)
         );
     }
 
@@ -105,6 +117,13 @@ class ModelManagerTest extends TestCase
         $storage = $this->manager->findByLinks([$link_1, $link_2]);
         $this->assertTrue($link_1->isFor($storage[$link_1]));
         $this->assertTrue($link_2->isFor($storage[$link_2]));
+    }
+
+    public function testFindByLinksWithNotLink()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionCode(1);
+        $this->manager->findByLinks([$this]);
     }
 
     public function testFindByAnyTypeId()
@@ -150,6 +169,12 @@ class ModelManagerTest extends TestCase
         $this->assertFalse($this->manager->isPersisted($model_2));
     }
 
+    public function testPersistsNotModelException()
+    {
+        $this->expectException(NotModelInterfaceException::class);
+        $this->manager->persists($this);
+    }
+
     public function testDelete()
     {
         $model_1 = new TestModel_1(1);
@@ -167,6 +192,125 @@ class ModelManagerTest extends TestCase
         $this->manager->resetDeleted();
         $this->assertFalse($this->manager->isDeleted($model_1));
         $this->assertFalse($this->manager->isDeleted($model_2));
+    }
+
+    public function testDeleteNotModelException()
+    {
+        $this->expectException(NotModelInterfaceException::class);
+        $this->manager->delete($this);
+    }
+
+    public function testCommitWithServiceUnlock()
+    {
+        $lockedBy = new TestModel_1(1);
+        $lock = new ServiceLock($lockedBy, 3);
+
+        $model_1 = new TestModel_1();
+        $model_2 = new TestModel_2();
+        $model_3 = $this->repo_1->findById(3);
+
+        $this->manager->persists([$model_1, $model_2]);
+        $this->manager->delete([$model_3]);
+        $commit = $this->manager->commit($lock);
+
+        $this->assertInstanceOf(Commit::class, $commit);
+        $this->assertContains($model_1, $commit->getPersisted(TestModel_1::class));
+        $this->assertContains($model_2, $commit->getPersisted(TestModel_2::class));
+        $this->assertContains($model_3, $commit->getDeleted(TestModel_1::class));
+
+        $this->assertTrue($model_1->getId()->isPermanent());
+        $this->assertTrue($model_2->getId()->isPermanent());
+
+        $this->assertSame($model_1, $this->repo_1->findById($model_1->getId()));
+        $this->assertSame($model_2, $this->repo_2->findById($model_2->getId()));
+        $this->assertNull($this->repo_1->findById(3));
+
+        $locker = $this->manager->getLocker();
+        $this->assertNull($locker->getLocker($model_1));
+        $this->assertNull($locker->getLocker($model_2));
+        $this->assertNull($locker->getLocker($model_3));
+
+        $this->assertSame($commit, $this->onEvents['before'] ?? null);
+        $this->assertSame($commit, $this->onEvents['after'] ?? null);
+        $this->assertArrayNotHasKey('exception', $this->onEvents);
+    }
+
+    public function testCommitWithServiceLockException()
+    {
+        $lockedBy = new TestModel_1(1);
+        $lock = new ServiceLock($lockedBy, 3);
+
+        $model = new TestModel_1('exception');
+
+        try {
+            $this->manager->persists($model);
+            $this->manager->commit($lock);
+        } catch (Throwable $throwable) {
+            $this->assertInstanceOf(Throwable::class, $throwable);
+        }
+
+        $locker = $this->manager->getLocker();
+        $this->assertNull($locker->getLocker($model));
+
+        $this->assertInstanceOf(Commit::class, $this->onEvents['before'] ?? null);
+        $this->assertInstanceOf(Commit::class, $this->onEvents['exception'] ?? null);
+        $this->assertArrayNotHasKey('after', $this->onEvents);
+    }
+
+    public function testCommitWithLock()
+    {
+        $lockedBy = new TestModel_1(1);
+        $lock = new Lock($lockedBy, 2);
+
+        $model = new TestModel_1();
+
+        $this->manager->persists([$model]);
+        $this->manager->commit($lock);
+
+        $locker = $this->manager->getLocker();
+        $this->assertTrue($locker->getLocker($model)->isFor($lockedBy));
+    }
+
+    public function testCommitWithLockException()
+    {
+        $lockedBy = new TestModel_1(1);
+        $lock = new Lock($lockedBy, 2);
+
+        $model = new TestModel_1('exception');
+
+        try {
+            $this->manager->persists($model);
+            $this->manager->commit($lock);
+        } catch (Throwable $throwable) {
+            $this->assertInstanceOf(Throwable::class, $throwable);
+        }
+
+        $locker = $this->manager->getLocker();
+        $this->assertTrue($locker->getLocker($model)->isFor($lockedBy));
+    }
+
+    public function testCommitWithLockedModelException()
+    {
+        $this->expectException(LockedModelException::class);
+
+        $lockedBy = new TestModel_1(1);
+        $lock = new Lock($lockedBy, 2);
+
+        $model = new TestModel_2(2);
+        $this->manager->persists($model);
+
+        $this->manager->getLocker()->lock($model, new TestModel_1(11));
+
+        $this->manager->commit($lock);
+    }
+
+    public function testFreeUpMemory()
+    {
+        $repo = $this->manager->getRepository(TestModel_1::class);
+        $repo->findById(1);
+        $this->assertCount(1, $this->repo_1->getRegistered());
+        $this->manager->freeUpMemory();
+        $this->assertCount(0, $this->repo_1->getRegistered());
     }
 
 }

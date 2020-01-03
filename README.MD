@@ -423,10 +423,10 @@ $manager->commit();
 
 //Если же мы хотим найти какую-то модель, то мы можем сначала достать ее репозиторий
 // несколькими способами. Напримр так
-$userRepo = $manager->getModelRepository(User::class);
+$userRepo = $manager->getRepository(User::class);
 
 //или так
-$userRepo = $manager->getModelRepository($user);
+$userRepo = $manager->getRepository($user);
 
 //или так
 $userRepo = $manager->getRepositoryByModelName(User::getModelName());
@@ -522,7 +522,7 @@ class Comment implements ModelInterface {
 
 $manager = new \DjinORM\Djin\Manager\ModelManager($container);
 
-$commentRepo = $manager->getModelRepository(Comment::class);
+$commentRepo = $manager->getRepository(Comment::class);
 $comment = $commentRepo->findById(10);
 
 $author = $manager->findByLink($comment->getAuthor());

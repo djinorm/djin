@@ -17,7 +17,7 @@ abstract class Repository
 {
 
     /** @var ModelInterface[] */
-    protected $permanent;
+    protected $registered;
 
     /**
      * @param Id|int|string $id
@@ -44,7 +44,7 @@ abstract class Repository
      */
     public function freeUpMemory(): void
     {
-        $this->permanent = [];
+        $this->registered = [];
     }
 
     /**
@@ -61,17 +61,17 @@ abstract class Repository
         $class = get_class($model);
         $id = $model->getId()->toString();
 
-        if (isset($this->permanent[$id]) && $this->permanent[$id] !== $model) {
+        if (isset($this->registered[$id]) && $this->registered[$id] !== $model) {
             throw new DuplicateModelException("Model with class '{$class}' and id '{$id}' already registered");
         }
 
-        $this->permanent[$id] = $model;
+        $this->registered[$id] = $model;
     }
 
     protected function unregister(ModelInterface $model): void
     {
         if ($model->getId()->isPermanent()) {
-            unset($this->permanent[$model->getId()->toString()]);
+            unset($this->registered[$model->getId()->toString()]);
         }
     }
 

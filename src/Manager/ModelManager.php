@@ -10,6 +10,8 @@ use DjinORM\Djin\Exceptions\InvalidArgumentException;
 use DjinORM\Djin\Exceptions\LockedModelException;
 use DjinORM\Djin\Exceptions\UnknownModelException;
 use DjinORM\Djin\Id\Id;
+use DjinORM\Djin\Locker\Lock\ServiceLock;
+use DjinORM\Djin\Locker\Lock\Lock;
 use DjinORM\Djin\Locker\LockerInterface;
 use DjinORM\Djin\Model\ModelInterface;
 use DjinORM\Djin\Model\Link;
@@ -80,7 +82,7 @@ class ModelManager
      * @throws InvalidArgumentException
      * @throws UnknownModelException
      */
-    public function getModelRepository($modelObjectOrClassOrName): Repository
+    public function getRepository($modelObjectOrClassOrName): Repository
     {
         $repo = $this->configManager->getRepository($modelObjectOrClassOrName);
         $this->repositories[get_class($repo)] = $repo;
@@ -95,7 +97,7 @@ class ModelManager
      */
     public function findByLink(Link $link): ?ModelInterface
     {
-        $repo = $this->getModelRepository($link->getModelName());
+        $repo = $this->getRepository($link->getModelName());
         return $repo->findById($link->getId());
     }
 
@@ -110,7 +112,7 @@ class ModelManager
         $groups = [];
         foreach ($links as $link) {
             if (!($link instanceof Link)) {
-                throw new InvalidArgumentException("Every link should be instance of " . Link::class);
+                throw new InvalidArgumentException("Every link should be instance of " . Link::class, 1);
             }
             $name = $link->getModelName();
             $id = (string) $link->getId();
@@ -119,7 +121,7 @@ class ModelManager
 
         $result = new SplObjectStorage();
         foreach ($groups as $modelName => $indexedLinks) {
-            $repo = $this->getModelRepository($modelName);
+            $repo = $this->getRepository($modelName);
             $models = $repo->findByIds(array_keys($indexedLinks));
             foreach ($models as $model) {
                 foreach ($indexedLinks as $link) {
@@ -149,7 +151,7 @@ class ModelManager
             return $this->findByLink($argument);
         }
 
-        $repo = $this->getModelRepository($modelNameOrClass);
+        $repo = $this->getRepository($modelNameOrClass);
         return $repo->findById($argument);
     }
 
@@ -214,13 +216,14 @@ class ModelManager
     }
 
     /**
-     * @param ModelInterface|null $locker
-     * @param int|null $lockTimeout
+     * @param Lock $lock
      * @return Commit
+     * @throws InvalidArgumentException
      * @throws NotModelInterfaceException
      * @throws Throwable
+     * @throws UnknownModelException
      */
-    public function commit(ModelInterface $locker = null, int $lockTimeout = null): Commit
+    public function commit(Lock $lock): Commit
     {
         $commit = new Commit($this->persisted, $this->deleted);
 
@@ -230,24 +233,30 @@ class ModelManager
             $idGenerator($model);
         }
 
-        ($this->onBeforeCommit)($this, $commit);
+        ($this->onBeforeCommit)($commit);
         $models = array_merge($commit->getPersisted(), $commit->getDeleted());
 
         try {
-            $this->lock($models, $locker, $lockTimeout);
+            $this->lock($models, $lock);
 
             $modelClasses = array_unique(array_map('get_class',$models));
             foreach ($modelClasses as $modelClass) {
-                $this->getModelRepository($modelClass)->commit($commit);
+                $this->getRepository($modelClass)->commit($commit);
             }
 
-            ($this->onAfterCommit)($this, $commit);
+            ($this->onAfterCommit)($commit);
 
-            $this->unlock($models, $locker);
+            if ($lock instanceof ServiceLock) {
+                $this->unlock($models, $lock);
+            }
 
         } catch (Throwable $exception) {
-            $this->unlock($models, $locker);
-            ($this->onCommitException)($this, $commit);
+
+            if ($lock instanceof ServiceLock) {
+                $this->unlock($models, $lock);
+            }
+
+            ($this->onCommitException)($commit);
             throw $exception;
         }
 
@@ -269,20 +278,19 @@ class ModelManager
 
     /**
      * @param ModelInterface[] $models
-     * @param ModelInterface|null $locker
-     * @param int $timeout
+     * @param Lock $lock
      * @throws LockedModelException
      */
-    protected function lock(array $models, ?ModelInterface $locker, int $timeout)
+    protected function lock(array $models, ?Lock $lock)
     {
-        if ($locker) {
+        if ($lock) {
             foreach ($models as $model) {
-                if ($this->getLocker()->isLockedFor($model, $locker)) {
+                if ($this->getLocker()->isLockedFor($model, $lock->getLocker())) {
                     throw new LockedModelException();
                 }
 
-                if ($locker) {
-                    $this->getLocker()->lock($model, $locker, $timeout);
+                if ($lock) {
+                    $this->getLocker()->lock($model, $lock->getLocker(), $lock->getTimeout());
                 }
             }
         }
@@ -290,13 +298,13 @@ class ModelManager
 
     /**
      * @param ModelInterface[] $models
-     * @param ModelInterface|null $locker
+     * @param Lock|null $lock
      */
-    protected function unlock(array $models, ?ModelInterface $locker)
+    protected function unlock(array $models, ?Lock $lock)
     {
-        if ($locker) {
+        if ($lock) {
             foreach ($models as $model) {
-                $this->getLocker()->unlock($model, $locker);
+                $this->getLocker()->unlock($model, $lock->getLocker());
             }
         }
     }
