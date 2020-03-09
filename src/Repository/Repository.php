@@ -8,10 +8,13 @@ namespace DjinORM\Djin\Repository;
 
 use DjinORM\Djin\Exceptions\DuplicateModelException;
 use DjinORM\Djin\Exceptions\NotPermanentIdException;
+use DjinORM\Djin\Helpers\IdHelper;
 use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Manager\Commit;
 use DjinORM\Djin\Model\ModelInterface;
-use Throwable;
+use DjinORM\Djin\Replicator\ReplicatorInterface;
+use DjinORM\Djin\Repository\Storage\StorageInterface;
+use Exception;
 
 abstract class Repository
 {
@@ -19,18 +22,45 @@ abstract class Repository
     /** @var ModelInterface[] */
     protected $registered;
 
+    /** @var StorageInterface[] */
+    protected $storages;
+    /**
+     * @var ReplicatorInterface
+     */
+    private $replicator;
+
+    public function __construct(array $storages, ReplicatorInterface $replicator)
+    {
+        $this->storages = $storages;
+        $this->replicator = $replicator;
+    }
+
     /**
      * @param Id|int|string $id
-     * @param Throwable|null $notFoundException
+     * @param Exception|null $notFoundException
      * @return ModelInterface|null
+     * @throws Exception
      */
-    abstract public function findById($id, Throwable $notFoundException = null): ?ModelInterface;
+    public function findById($id, Exception $notFoundException = null): ?ModelInterface
+    {
+        $storage = $this->getStorage();
+        $data = $storage->findById((string) $id);
+        if (is_null($data)) {
+            throw $notFoundException;
+        }
+        return $this->populateOne($data);
+    }
 
     /**
      * @param Id[]|array $ids
      * @return ModelInterface[]
      */
-    abstract public function findByIds($ids): array;
+    public function findByIds($ids): array
+    {
+        $storage = $this->getStorage();
+        $array = $storage->findByIds(IdHelper::scalarizeMany($ids));
+        return $this->populateMany($array);
+    }
 
     /**
      * @param Commit $commit
@@ -47,6 +77,66 @@ abstract class Repository
         $this->registered = [];
     }
 
+    protected function getStorage(string $name = null): StorageInterface
+    {
+        $primary = array_key_first($this->storages);
+        if (is_null($name)) {
+            return $this->storages[$primary];
+        }
+        return $this->storages[$name];
+    }
+
+    /**
+     * @param ModelInterface $model
+     * @return array
+     */
+    abstract protected function extract(ModelInterface $model): array;
+
+    /**
+     * @param array $data
+     * @return ModelInterface
+     */
+    abstract protected function hydrate(array $data): ModelInterface;
+
+    /**
+     * @param array $data
+     * @return ModelInterface
+     */
+    protected function populateOne(array $data): ModelInterface
+    {
+        $model = $this->hydrate($data);
+
+        if ($registered = $this->registered[(string) $model->getId()] ?? null) {
+            return $registered;
+        }
+
+        $this->register($model);
+        return $model;
+    }
+
+
+    /**
+     * @param array[] $array
+     * @return ModelInterface[]
+     */
+    protected function populateMany(array $array): array
+    {
+        $models = [];
+        foreach ($array as $key => $data) {
+            $models[$key] = $this->populateOne($data);
+        }
+        return $models;
+    }
+
+    /**
+     * @param ModelInterface $model
+     * @return bool
+     */
+    protected function isRegistered(ModelInterface $model): bool
+    {
+        return isset($this->registered[(string) $model->getId()]);
+    }
+
     /**
      * @param ModelInterface $model
      * @throws DuplicateModelException
@@ -59,7 +149,7 @@ abstract class Repository
         }
 
         $class = get_class($model);
-        $id = $model->getId()->toString();
+        $id = (string) $model->getId();
 
         if (isset($this->registered[$id]) && $this->registered[$id] !== $model) {
             throw new DuplicateModelException("Model with class '{$class}' and id '{$id}' already registered");
@@ -71,7 +161,7 @@ abstract class Repository
     protected function unregister(ModelInterface $model): void
     {
         if ($model->getId()->isPermanent()) {
-            unset($this->registered[$model->getId()->toString()]);
+            unset($this->registered[(string) $model->getId()]);
         }
     }
 

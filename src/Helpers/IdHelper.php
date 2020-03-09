@@ -18,15 +18,15 @@ class IdHelper
     public static function scalarizeOne($modelOrId): ?string
     {
         if ($modelOrId instanceof ModelInterface) {
-            return $modelOrId->getId()->toString();
+            return (string) $modelOrId->getId();
         }
 
         if ($modelOrId instanceof Link) {
-            return $modelOrId->getId()->toString();
+            return (string) $modelOrId->getId();
         }
 
         if ($modelOrId instanceof Id) {
-            return $modelOrId->toString();
+            return (string) $modelOrId;
         }
 
         return $modelOrId;
