@@ -34,6 +34,12 @@ class IdMapperTest extends MapperTestCase
         ];
     }
 
+    public function testSerializeNotPermanentId()
+    {
+        $this->expectException(SerializerException::class);
+        $this->getMapper()->serialize(new Id());
+    }
+
     public function deserializeDataProvider(): array
     {
         return [

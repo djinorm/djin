@@ -52,10 +52,7 @@ class UnionRule
     public function deserialize($serialized)
     {
         $handled = ($this->deserialize)($serialized);
-        if ($handled) {
-            return $this->mapper->deserialize($handled);
-        }
-        throw new SerializerException("Union rule mismatched");
+        return $this->mapper->deserialize($handled);
     }
 
 }

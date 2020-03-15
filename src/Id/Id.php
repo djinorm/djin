@@ -68,15 +68,6 @@ class Id implements JsonSerializable
         return false;
     }
 
-    /**
-     * @deprecated
-     * @return string|null
-     */
-    public function toString()
-    {
-        return $this->permanentId;
-    }
-
     public function __toString()
     {
         return (string) $this->permanentId;

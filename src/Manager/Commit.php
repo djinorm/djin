@@ -43,7 +43,7 @@ class Commit
     /**
      * @return Id
      */
-    public function getId(): Id
+    public function id(): Id
     {
         return $this->id;
     }
@@ -78,7 +78,7 @@ class Commit
         }
 
         return array_filter($models, function (ModelInterface $model) use ($modelClass) {
-            return is_a($model, $modelClass);
+            return get_class($model) === $modelClass;
         });
     }
 
