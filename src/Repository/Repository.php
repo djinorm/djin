@@ -91,7 +91,7 @@ abstract class Repository
     {
         $model = $this->hydrate($data);
 
-        if ($registered = $this->registered[(string) $model->getId()] ?? null) {
+        if ($registered = $this->registered[(string) $model->id()] ?? null) {
             return $registered;
         }
 
@@ -119,7 +119,7 @@ abstract class Repository
      */
     protected function isRegistered(ModelInterface $model): bool
     {
-        return isset($this->registered[(string) $model->getId()]);
+        return isset($this->registered[(string) $model->id()]);
     }
 
     /**
@@ -129,12 +129,12 @@ abstract class Repository
      */
     protected function register(ModelInterface $model): void
     {
-        if (!$model->getId()->isPermanent()) {
+        if (!$model->id()->isPermanent()) {
             throw new NotPermanentIdException('Model without permanent id can not be registered');
         }
 
         $class = get_class($model);
-        $id = (string) $model->getId();
+        $id = (string) $model->id();
 
         if (isset($this->registered[$id]) && $this->registered[$id] !== $model) {
             throw new DuplicateModelException("Model with class '{$class}' and id '{$id}' already registered");
@@ -145,8 +145,8 @@ abstract class Repository
 
     protected function unregister(ModelInterface $model): void
     {
-        if ($model->getId()->isPermanent()) {
-            unset($this->registered[(string) $model->getId()]);
+        if ($model->id()->isPermanent()) {
+            unset($this->registered[(string) $model->id()]);
         }
     }
 

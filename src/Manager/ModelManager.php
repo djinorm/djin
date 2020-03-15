@@ -98,7 +98,7 @@ class ModelManager
     public function findByLink(Link $link): ?ModelInterface
     {
         $repo = $this->getRepository($link->getModelName());
-        return $repo->findById($link->getId());
+        return $repo->findById($link->id());
     }
 
     /**
@@ -115,7 +115,7 @@ class ModelManager
                 throw new InvalidArgumentException("Every link should be instance of " . Link::class, 1);
             }
             $name = $link->getModelName();
-            $id = (string) $link->getId();
+            $id = (string) $link->id();
             $groups[$name][$id] = $link;
         }
 

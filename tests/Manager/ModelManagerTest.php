@@ -137,17 +137,17 @@ class ModelManagerTest extends TestCase
         $link = new Link(TestModel_1::getModelName(), 2);
         $model = $this->manager->findByAnyTypeId($link);
         $this->assertInstanceOf(TestModel_1::class, $model);
-        $this->assertEquals('2', $model->getId()->toString());
+        $this->assertEquals('2', (string) $model->id());
 
         $id = new Id(1);
         $model = $this->manager->findByAnyTypeId($id, TestModel_1::class);
         $this->assertInstanceOf(TestModel_1::class, $model);
-        $this->assertEquals('1', $model->getId()->toString());
+        $this->assertEquals('1', (string) $model->id());
 
         $id = new Id(3);
         $model = $this->manager->findByAnyTypeId($id, TestModel_2::class);
         $this->assertInstanceOf(TestModel_2::class, $model);
-        $this->assertEquals('3', $model->getId()->toString());
+        $this->assertEquals('3', (string) $model->id());
     }
 
     public function testPersists()
@@ -218,11 +218,11 @@ class ModelManagerTest extends TestCase
         $this->assertContains($model_2, $commit->getPersisted(TestModel_2::class));
         $this->assertContains($model_3, $commit->getDeleted(TestModel_1::class));
 
-        $this->assertTrue($model_1->getId()->isPermanent());
-        $this->assertTrue($model_2->getId()->isPermanent());
+        $this->assertTrue($model_1->id()->isPermanent());
+        $this->assertTrue($model_2->id()->isPermanent());
 
-        $this->assertSame($model_1, $this->repo_1->findById($model_1->getId()));
-        $this->assertSame($model_2, $this->repo_2->findById($model_2->getId()));
+        $this->assertSame($model_1, $this->repo_1->findById($model_1->id()));
+        $this->assertSame($model_2, $this->repo_2->findById($model_2->id()));
         $this->assertNull($this->repo_1->findById(3));
 
         $locker = $this->manager->getLocker();

@@ -52,13 +52,13 @@ class Id implements JsonSerializable
     public function isEqual($modelOrId): bool
     {
         if ($modelOrId instanceof self) {
-            return $modelOrId === $this || (string) $modelOrId == (string) $this;
+            return (string) $modelOrId === (string) $this;
         }
 
         if ($modelOrId instanceof ModelInterface) {
             /** @var Id $id */
-            $id = $modelOrId->getId();
-            return $id === $this || (string) $id == (string) $this;
+            $id = $modelOrId->id();
+            return (string) $id === (string) $this;
         }
 
         if (is_scalar($modelOrId)) {
@@ -79,7 +79,7 @@ class Id implements JsonSerializable
 
     public function __toString()
     {
-        return $this->permanentId;
+        return (string) $this->permanentId;
     }
 
     /**

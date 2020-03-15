@@ -17,9 +17,9 @@ class ModelTest extends TestCase
     public function testEmptyModelConstruct()
     {
         $model = new TestModel_1();
-        self::assertInstanceOf(Id::class, $model->getId());
+        self::assertInstanceOf(Id::class, $model->id());
         self::assertInstanceOf(Id::class, $model->getOtherId());
-        self::assertFalse($model->getId()->isPermanent());
+        self::assertFalse($model->id()->isPermanent());
         self::assertFalse($model->getOtherId()->isPermanent());
         return $model;
     }
@@ -27,10 +27,10 @@ class ModelTest extends TestCase
     public function testFilledModelConstruct()
     {
         $model = new TestModel_1(2,1);
-        self::assertInstanceOf(Id::class, $model->getId());
+        self::assertInstanceOf(Id::class, $model->id());
         self::assertInstanceOf(Id::class, $model->getOtherId());
-        $this->assertEquals(2, $model->getId()->toString());
-        self::assertTrue($model->getId()->isPermanent());
+        $this->assertEquals(2, (string) $model->id());
+        self::assertTrue($model->id()->isPermanent());
         self::assertTrue($model->getOtherId()->isPermanent());
         return $model;
     }
@@ -47,9 +47,9 @@ class ModelTest extends TestCase
         $model->setOtherModel($other);
 
         self::assertFalse($model->getOtherId()->isPermanent());
-        self::assertEquals($other->getId(), $model->getOtherId());
+        self::assertEquals($other->id(), $model->getOtherId());
 
-        $other->getId()->assign(7);
+        $other->id()->assign(7);
         self::assertTrue($model->getOtherId()->isPermanent());
     }
 

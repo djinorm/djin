@@ -20,10 +20,10 @@ class UuidGenerator implements IdGeneratorInterface
      */
     public function __invoke(ModelInterface $model): Id
     {
-        if (!$model->getId()->isPermanent()) {
-            $model->getId()->assign($this->generate());
+        if (!$model->id()->isPermanent()) {
+            $model->id()->assign($this->generate());
         }
-        return $model->getId();
+        return $model->id();
     }
 
     /**

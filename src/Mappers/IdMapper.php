@@ -24,7 +24,7 @@ class IdMapper implements MapperInterface
         if (!$complex->isPermanent()) {
             throw new SerializerException("Id should has assigned permanent value");
         }
-        return $complex->toString();
+        return (string) $complex;
     }
 
     /**

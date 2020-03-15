@@ -26,11 +26,11 @@ class RedisIdGenerator implements IdGeneratorInterface
      */
     public function __invoke(ModelInterface $model): Id
     {
-        if (!$model->getId()->isPermanent()) {
+        if (!$model->id()->isPermanent()) {
             $key = $this->prefix . ':' . $model::getModelName();
-            $model->getId()->assign($this->redis->incr($key));
+            $model->id()->assign($this->redis->incr($key));
         }
-        return $model->getId();
+        return $model->id();
     }
 
     /**

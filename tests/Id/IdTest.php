@@ -48,10 +48,10 @@ class IdTest extends TestCase
     public function testIsEqual()
     {
         $modelPermanent = $this->createMock(ModelInterface::class);
-        $modelPermanent->method('getId')->willReturn($this->permanent);
+        $modelPermanent->method('id')->willReturn($this->permanent);
 
         $modelTemp = $this->createMock(ModelInterface::class);
-        $modelTemp->method('getId')->willReturn($this->temp);
+        $modelTemp->method('id')->willReturn($this->temp);
 
         $id = new Id(1);
 
@@ -68,8 +68,8 @@ class IdTest extends TestCase
     
     public function testToString()
     {
-        $this->assertEquals(1, $this->permanent->toString());
-        $this->assertNull($this->temp->toString());
+        $this->assertEquals(1, (string) $this->permanent);
+        $this->assertEquals((string) $this->temp, '');
     }
 
     public function testJsonSerialize()
@@ -88,7 +88,7 @@ class IdTest extends TestCase
     public function testAsString()
     {
         $this->assertEquals(1, (string) $this->permanent);
-        $this->assertEquals($this->temp->toString(), '');
+        $this->assertEquals((string) $this->temp, '');
     }
 
     public function testNonStrictCompare()

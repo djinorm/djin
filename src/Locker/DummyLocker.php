@@ -22,7 +22,7 @@ class DummyLocker implements LockerInterface
         }
 
         $name = $model::getModelName();
-        $id = (string) $model->getId();
+        $id = (string) $model->id();
 
         $this->locks[$name][$id] = $locker;
         return true;
@@ -36,7 +36,7 @@ class DummyLocker implements LockerInterface
         }
 
         $name = $model::getModelName();
-        $id = (string) $model->getId();
+        $id = (string) $model->id();
 
         unset($this->locks[$name][$id]);
         return true;
@@ -50,7 +50,7 @@ class DummyLocker implements LockerInterface
         }
 
         $name = $model::getModelName();
-        $id = (string) $model->getId();
+        $id = (string) $model->id();
 
         $this->locks[$name][$id] = $nextLocker;
         return true;
@@ -59,7 +59,7 @@ class DummyLocker implements LockerInterface
     public function isLockedFor(ModelInterface $model, ?ModelInterface $locker): bool
     {
         $name = $model::getModelName();
-        $id = (string) $model->getId();
+        $id = (string) $model->id();
 
         if (!isset($this->locks[$name][$id])) {
             return false;
@@ -77,12 +77,12 @@ class DummyLocker implements LockerInterface
     {
         if ($modelOrLink instanceof ModelInterface) {
             $name = $modelOrLink::getModelName();
-            $id = (string) $modelOrLink->getId();
+            $id = (string) $modelOrLink->id();
         }
 
         if ($modelOrLink instanceof Link) {
             $name = $modelOrLink->getModelName();
-            $id = (string) $modelOrLink->getId();
+            $id = (string) $modelOrLink->id();
         }
 
         if (isset($name) && isset($id)) {

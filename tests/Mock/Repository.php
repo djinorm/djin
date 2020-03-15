@@ -6,7 +6,6 @@ namespace DjinORM\Djin\Mock;
 use DjinORM\Djin\Manager\Commit;
 use DjinORM\Djin\Model\ModelInterface;
 use Exception;
-use Throwable;
 
 abstract class Repository extends \DjinORM\Djin\Repository\Repository
 {
@@ -27,7 +26,7 @@ abstract class Repository extends \DjinORM\Djin\Repository\Repository
     /**
      * @inheritDoc
      */
-    public function findById($id, Throwable $notFoundException = null): ?ModelInterface
+    public function findById($id, Exception $notFoundException = null): ?ModelInterface
     {
         $model = $this->models[(string) $id] ?? null;
         if (is_null($model) && $notFoundException) {
@@ -64,14 +63,14 @@ abstract class Repository extends \DjinORM\Djin\Repository\Repository
         $persistedModels = $commit->getPersisted($this->getClassName());
         foreach ($persistedModels as $model) {
             $this->modelException($model);
-            $this->models[$model->getId()->toString()] = $model;
+            $this->models[(string) $model->id()] = $model;
             $this->register($model);
         }
 
         $deletedModels = $commit->getDeleted($this->getClassName());
         foreach ($deletedModels as $model) {
             $this->modelException($model);
-            unset($this->models[$model->getId()->toString()]);
+            unset($this->models[(string) $model->id()]);
             $this->unregister($model);
         }
     }
@@ -87,9 +86,19 @@ abstract class Repository extends \DjinORM\Djin\Repository\Repository
      */
     protected function modelException(ModelInterface $model)
     {
-        if ($model->getId()->isEqual('exception')) {
+        if ($model->id()->isEqual('exception')) {
             throw new Exception('Some repository exception');
         }
+    }
+
+    protected function hydrate(array $data): ModelInterface
+    {
+        // TODO: Implement hydrate() method.
+    }
+
+    protected function extract(ModelInterface $model): array
+    {
+        // TODO: Implement extract() method.
     }
 
     abstract protected function getClassName(): string;

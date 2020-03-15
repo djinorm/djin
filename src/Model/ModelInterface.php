@@ -11,7 +11,7 @@ use DjinORM\Djin\Id\Id;
 interface ModelInterface
 {
 
-    public function getId(): Id;
+    public function id(): Id;
 
     public static function getModelName():string;
 

@@ -45,7 +45,7 @@ class Link implements JsonSerializable
     /**
      * @return Id
      */
-    public function getId(): Id
+    public function id(): Id
     {
         return $this->id;
     }
@@ -74,13 +74,13 @@ class Link implements JsonSerializable
     {
         return [
             'model' => $this->model,
-            'id' => $this->id->toString(),
+            'id' => (string) $this->id,
         ];
     }
 
     public static function to(ModelInterface $model): self
     {
-        return new static($model::getModelName(), $model->getId());
+        return new static($model::getModelName(), $model->id());
     }
 
     /**

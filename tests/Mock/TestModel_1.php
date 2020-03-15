@@ -24,7 +24,7 @@ class TestModel_1 implements ModelInterface
         $this->custom = $custom;
     }
 
-    public function getId(): Id
+    public function id(): Id
     {
         return $this->id;
     }
@@ -36,7 +36,7 @@ class TestModel_1 implements ModelInterface
 
     public function setOtherModel(TestModel_1 $model)
     {
-        $this->otherId = $model->getId();
+        $this->otherId = $model->id();
     }
 
     public function getCustom()

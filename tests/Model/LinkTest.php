@@ -31,7 +31,7 @@ class LinkTest extends TestCase
     {
         $id = new Id(1);
         $pointer = new Link(TestModel_1::getModelName(), $id);
-        $this->assertSame($id, $pointer->getId());
+        $this->assertSame($id, $pointer->id());
     }
 
     public function testConstructFromClassAndId()
@@ -46,9 +46,9 @@ class LinkTest extends TestCase
         $this->assertEquals(TestModel_1::getModelName(), $link->getModelName());
     }
 
-    public function testGetId()
+    public function testId()
     {
-        $this->assertSame($this->model->getId(), $this->link->getId());
+        $this->assertSame($this->model->id(), $this->link->id());
     }
 
     public function testGetModelName()
@@ -60,7 +60,7 @@ class LinkTest extends TestCase
     {
         $expected = json_encode([
             'model' => $this->model::getModelName(),
-            'id' => $this->model->getId()->toString(),
+            'id' => (string) $this->model->id(),
         ]);
         $this->assertEquals($expected, json_encode($this->link));
     }
