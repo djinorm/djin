@@ -8,14 +8,24 @@
 namespace DjinORM\Djin\Replicator;
 
 
-use DjinORM\Djin\Manager\Commit;
+use DjinORM\Djin\Repository\Storage\StorageInterface;
 
 interface ReplicatorInterface
 {
 
+    public function __construct(array $storages);
+
     /**
-     * @param Commit $commit
+     * Should return storage by name or return primary storage if name is null
+     * @param string|null $name
+     * @return StorageInterface
      */
-    public function commit(Commit $commit): void;
+    public function getStorage(string $name = null): StorageInterface;
+
+    public function insert(string $id, array $data): void;
+
+    public function update(string $id, array $data): void;
+
+    public function delete(string $id): void;
 
 }

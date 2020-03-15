@@ -8,8 +8,6 @@
 namespace DjinORM\Djin\Repository\Storage;
 
 
-use DjinORM\Djin\Manager\Commit;
-
 interface StorageInterface
 {
 
@@ -25,9 +23,10 @@ interface StorageInterface
      */
     public function findByIds($ids): array;
 
-    /**
-     * @param Commit $commit
-     */
-    public function commit(Commit $commit): void;
+    public function insert(string $id, array $data): void;
+
+    public function update(string $id, array $data): void;
+
+    public function delete(string $id): void;
 
 }

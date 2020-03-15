@@ -13,7 +13,6 @@ use DjinORM\Djin\Id\Id;
 use DjinORM\Djin\Manager\Commit;
 use DjinORM\Djin\Model\ModelInterface;
 use DjinORM\Djin\Replicator\ReplicatorInterface;
-use DjinORM\Djin\Repository\Storage\StorageInterface;
 use Exception;
 
 abstract class Repository
@@ -22,16 +21,11 @@ abstract class Repository
     /** @var ModelInterface[] */
     protected $registered;
 
-    /** @var StorageInterface[] */
-    protected $storages;
-    /**
-     * @var ReplicatorInterface
-     */
+    /** @var ReplicatorInterface */
     private $replicator;
 
-    public function __construct(array $storages, ReplicatorInterface $replicator)
+    public function __construct(ReplicatorInterface $replicator)
     {
-        $this->storages = $storages;
         $this->replicator = $replicator;
     }
 
@@ -43,7 +37,7 @@ abstract class Repository
      */
     public function findById($id, Exception $notFoundException = null): ?ModelInterface
     {
-        $storage = $this->getStorage();
+        $storage = $this->replicator->getStorage();
         $data = $storage->findById((string) $id);
         if (is_null($data)) {
             throw $notFoundException;
@@ -57,7 +51,7 @@ abstract class Repository
      */
     public function findByIds($ids): array
     {
-        $storage = $this->getStorage();
+        $storage = $this->replicator->getStorage();
         $array = $storage->findByIds(IdHelper::scalarizeMany($ids));
         return $this->populateMany($array);
     }
@@ -75,15 +69,6 @@ abstract class Repository
     public function freeUpMemory(): void
     {
         $this->registered = [];
-    }
-
-    protected function getStorage(string $name = null): StorageInterface
-    {
-        $primary = array_key_first($this->storages);
-        if (is_null($name)) {
-            return $this->storages[$primary];
-        }
-        return $this->storages[$name];
     }
 
     /**
